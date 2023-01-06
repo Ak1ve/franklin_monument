@@ -1,0 +1,52 @@
+<!--
+used for sections/order_item_section
+order_item: models.OrderItem
+-->
+
+<div class="list-group-item align-items-center" id="order_item{{order_item.id}}" data-type="{{order_item.cataloged_item.id}}">
+    <div class="d-flex w-100 justify-content-between">
+        <div class="d-flex w-100">
+            <h5 class="mb-1">{{ order_item.cataloged_item.type }}</h5>
+            <small class="text-secondary align-self-end">{{ order_item.cataloged_item.sub_type }}</small>
+            <div class="container ml-auto">
+                <button class="btn btn-sm btn-outline-primary" type="button" title="Edit"
+                        onclick="order_item_edit({{order_item.id}})"><span class="bi bi-pen"></span></button>
+                <button class="btn btn-sm btn-outline-danger" type="button" title="Delete"
+                        onclick="order_item_delete({{order_item.id}})"><span class="bi bi-trash"></span>
+                </button>
+            </div>
+            {% if order_item.dimensions %}
+            <div class="nowrap">
+                {{order_item.dimensions.length}}in x {{order_item.dimensions.width}}in x {{order_item.dimensions.height}}in
+            </div>
+            {% endif %}
+            <div class="ml-5 badge badge-pill badge-success align-middle align-self-start">
+                ${{order_item.price}}
+            </div>
+        </div>
+    </div>
+    <p class="mb-3">{{ order_item.cataloged_item.description }}</p>
+    <div class="d-flex">
+        <div>Specifications:</div>
+        <div class="d-flex flexbox">
+            {% for spec in order_item.specification_set.specifications.all %}
+            <div class="ml-3 align-self-center">
+                <small class="text-muted">{{spec.option.key}}:</small>
+                {% for value in spec.values.all %}
+                <div class="badge badge-pill badge-primary ml-1">{{value.label}}{% if value.subtext %}<small
+                        class="ml-1 align-self-end">{{value.subtext}}</small>{% endif %}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="d-flex mt-3 text-muted">
+        <div>Notes:</div>
+        <div class="ml-3 pmb-3">
+            {{ order_item.notes|linebreaks}}
+        </div>
+    </div>
+    {% if order_item.tax_exempt %}
+    <small>* This item is exempt from sales tax</small>
+    {% endif %}
+</div>

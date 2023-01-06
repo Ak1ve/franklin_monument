@@ -1,0 +1,101 @@
+<!--
+cemetery?: reference of cemetery if it is being used, d: None
+
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+    {% if cemetery %}
+        Edit "{{ cemetery.contact.organization }}"
+    {% else %}
+        New Address
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+<form id="address_submit" action="" class="container mb-5 mt-3">
+    {% csrf_token %}
+    <div class="container bg-light mb-5">
+        <h1 class="w-100 text-center">Enter an Address</h1>
+        <div class="d-flex justify-content-between mt-2">
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/address/'">Cancel</button>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+    </div>
+    {% include "forms/text.html" with id="contact_name" placeholder="Enter Contact name" label="Contact Name" help_text="Leave this black if there is no specific person to contact" %}
+    {% include "forms/text.html" with id="organization" placeholder="Enter organization name" label="Organization" required=True %}
+    {% include "forms/text.html" with id="email" placeholder="Enter email" label="Email" %}
+    {% include "forms/text.html" with id="phone_number" placeholder="Enter Phone Number" label="Phone Number" %}
+    {% include "forms/text.html" with id="fax_number" placeholder="Enter Fax Number" label="Fax Number" %}
+    {% include "forms/text.html" with id="website" placeholder="Enter Website" help_text="Click the blue underlined text to visit the website" label='<a href="#" target="_blank" id="website_link">Website<i class="bi bi-link"></i></a>'%}
+    {% include "forms/text.html" with id="address" placeholder="Enter Address" label='<a href="#" target="_blank" id="address_link">Address<i class="bi bi-link"></i></a>' help_text="The address is used to calculate distance.  Please enter it in the way it appears on Google Maps"%}
+    <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea class="form-control" id="notes" rows="10"></textarea>
+    </div>
+</form>
+
+<script>
+
+    function change_website() {
+        $("#website_link").prop("href", sanitize_link($("#website").val()));
+    }
+
+    function change_address() {
+
+        $("#address_link").prop("href", sanitize_link("http://maps.google.com/?q=" + $("#address").val()));
+    }
+
+
+    change_website($("#website").html());
+    change_address($("#address").html());
+
+    $("#address_submit").submit(function (e) {
+        var form = $(this);
+        e.preventDefault();
+        if (!form.valid()) {
+            return;
+        }
+        // as per models.CemeteryResponse
+        let body = {
+            contact_name: $("#contact_name").val(),
+            organization: $("#organization").val(),
+            email: $("#email").val(),
+            phone_number: $("#phone_number").val(),
+            fax_number: $("#fax_number").val(),
+            website: $("#website").val(),
+            address: $("#address").val(),
+            notes: $("#notes").val()
+        };
+
+        sendHttpAsync(window.location.href, "post", body).then(resp => {
+            window.location.href = "/address/";
+        }).catch(err => {
+            notify("danger", `Error: Could not submit Address.  ${err}`);
+        });
+    });
+
+    {% if cemetery %}
+    $("#contact_name").val("{{ cemetery.contact.name }}")
+    $("#organization").val("{{ cemetery.contact.organization }}")
+    $("#email").val("{{ cemetery.contact.email }}")
+    $("#phone_number").val("{{ cemetery.contact.phone_number }}")
+    $("#fax_number").val("{{ cemetery.contact.fax_number }}")
+    $("#website").val("{{ cemetery.contact.website }}")
+    $("#address").val("{{ cemetery.address }}")
+    $("#notes").val("{{ cemetery.contact.notes }}")
+    {% endif %}
+
+    $(document).ready(function () {
+        $("#address").change(change_address);
+        $("#website").change(change_website);
+        change_address();
+        change_website();
+    });
+</script>
+
+
+{% endblock %}
+

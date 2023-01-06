@@ -1,0 +1,99 @@
+<!--
+cemeteries: list of cemetery objects
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Address Book{% endblock %}
+
+{% block body %}
+
+<style>
+    .no-wrap {
+        white-space: nowrap;
+    }
+
+
+</style>
+
+<div class="container text-center p-2 mt-5">
+    <h1>Address Book</h1>
+    <button class="btn btn-success" type="button" onclick="window.location.href='/address/new';">New</button>
+</div>
+
+<div class="container bg-gradient-primary border p-2">
+    {% include "common/search.html" with target_id="address_elements" %}
+
+    <div class="list-group" id="address_elements">
+        {% for cemetery in cemeteries %}
+        <div class="list-group-item align-items-center" id="cemetery{{cemetery.id}}">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="no-wrap">{{ cemetery.contact.organization }}</h5>
+                <div class="container">
+                    <button class="btn btn-sm btn-outline-primary" type="button" title="Edit"
+                            onclick="address_edit({{cemetery.id}})"><span class="bi bi-pen"></span></button>
+                    <button class="btn btn-sm btn-outline-danger" type="button" title="Delete"
+                            onclick="address_delete({{cemetery.id}})"><span class="bi bi-trash"></span></button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <small class="d-flex">
+                    <div class="text-muted mr-1">Contact Name:</div>
+                    {{ cemetery.contact.name }}</small>
+                <small class="d-flex">
+                    <div class="text-muted mr-1">Location:</div>
+                    <a href="http://maps.google.com/?q={{cemetery.address}}" target="_blank">{{cemetery.address}}</a>
+                </small>
+                <small class="d-flex">
+                    <div class="text-muted mr-1">Phone Number:</div>
+                    {{cemetery.contact.phone_number}}</small>
+                <small class="d-flex">
+                    <div class="text-muted mr-1">Website:</div>
+                    <a href="{% if "http:" in cemetery.contact.website or "https:" in cemetery.contact.website %}
+                            {{ cemetery.contact.website }}
+                        {% else %}
+                            http://{{ cemetery.contact.website }}
+                        {% endif %}" target="_blank">
+                        {{ cemetery.contact.website }}
+                    </a></small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function item_confirm_delete(item_id, name) {
+        sendHttpAsync(`/items/${item_id}`, "delete", {}).then(resp => {
+            dismiss_modal();
+            notify("success", `"${name}" Successfully deleted`);
+            $(`#${item_id}`).remove();
+        }).catch(err => {
+            dismiss_modal();
+            notify("danger", `<strong>ERROR:</strong> "${name}" could not be deleted... (${err}) Ensure you are logged in as an administrator.  If this problem persists, please contact me.`)
+        });
+    }
+
+    function address_delete(address_id) {
+        let name = $(`#cemetery${address_id}`).find("h5").text();
+        $(document).find("nav").after(`
+            {% include "common/modal.html" with title="Are you sure you want to delete address \"${name}?\"" body="Deletion may cause unwanted changes" id="delete${address_id}" footer="<button type='button' data-dismiss='modal' class='btn btn-secondary'>Cancel</button><button type='button' onclick='address_confirm_delete(${address_id}, \"${name}\")' class='btn btn-danger'>Delete</button>" %}
+        `);
+        $(`#delete${address_id}`).modal("show");
+    }
+
+    function address_confirm_delete(address_id, name) {
+        sendHttpAsync(`/address/${address_id}`, "delete").then(resp => {
+            notify_for("success", `"${name}" successfully removed`, 3000);
+        }).catch(err => {
+            notify("danger", `Could not delete "${name}".  ${err}`);
+        })
+    }
+
+    function address_edit(address_id) {
+        window.location.href = `/address/${address_id}`;
+    }
+
+</script>
+
+{% endblock %}

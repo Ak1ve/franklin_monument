@@ -1,0 +1,66 @@
+<!--
+toggle script used for code of button pagination
+
+bg?: True: bg is changed, not buttons. default is False
+
+
+classes:
+    - toggle-btn: button for toggling the selection; data-activate="id" for what to activate of toggle-item
+    - toggle-item: item of toggle
+    - toggle-group: container of toggle-items. look at orders/templates/common/order_filer.html for example
+    - toggle-default: default selection of toggle-item
+
+-->
+
+<style>
+    .hidden {
+        overflow: hidden;  /* Hide the element content, while height = 0 */
+        height: 0;
+        opacity: 0;
+        transition: height 0ms 400ms, opacity 400ms 0ms;
+    }
+
+    .hidden.transition {
+        height: auto;
+        opacity: 1;
+        overflow: visible;
+        transition: height 0ms 0ms, opacity 600ms 0ms;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        $(".toggle-btn").click(function() {
+           {% if bg %}
+
+           $(this).removeClass("bg-white").addClass("bg-primary");
+           $(this).siblings().removeClass("bg-primary").addClass("bg-white");
+
+           {% else %}
+
+           $(this).removeClass("btn-secondary").addClass("btn-primary");
+           $(this).siblings().removeClass("btn-primary").addClass("btn-secondary");
+
+           {% endif %}
+
+           let toggle_id = $(this).data("activate");
+           $(`#${toggle_id}`).addClass("transition").siblings().removeClass("transition");
+        });
+        $(".toggle-item").addClass("hidden");
+        {% if bg %}
+
+        $(".toggle-btn").addClass("bg-white");
+
+        {% else %}
+
+        $(".toggle-btn").addClass("btn-secondary");
+
+        {% endif %}
+
+        $(".toggle-default").each(function (e) {
+            let select = `.toggle-btn[data-activate="${$(this).attr('id')}"]`;
+            $(select).click();
+        });
+    })
+
+</script>

@@ -1,0 +1,142 @@
+<!--
+order: ...
+overview: {delivery_methods, order_types}
+-->
+<h1 class="text-center">Overview</h1>
+<hr>
+<div class="container w-25 border border-info rounded text-center mb-5">
+    <div class="row">
+        <small class="col text-muted text-sm">Order Number</small>
+        <small class="col">421</small>
+    </div>
+    <div class="row">
+        <small class="col text-muted">Entered By</small>
+        <small class="col">April Hipp</small>
+    </div>
+    <div class="row">
+        <small class="col text-muted text-sm">Order Created</small>
+        <small class="col">10/18/2022</small>
+    </div>
+</div>
+<h5 class="text-center">Order Information</h5>
+<hr>
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <label class="align-self-center badge badge-pill badge-info">Deceased</label>
+        <input class="form-control w-25 ml-2" type="text">
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        <label class="badge badge-pill align-self-center badge-info">Order Type</label>
+        <select class="selectpicker ml-2">
+            {% for ty in overview.order_types %}
+            <option value="{{ty.id}}">{{ ty.type_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        <label class="align-self-center badge badge-pill badge-info">Promise Date</label>
+        <input class="form-control w-25 ml-2" data-provide="datepicker">
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        <label class="badge badge-pill align-self-center badge-info">Delivery Method</label>
+        <select class="selectpicker ml-2">
+            {% for delivery_method in overview.delivery_methods %}
+            <option value="{{delivery_method.id}}">{{delivery_method.method_name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        {% include "forms/check.html" with id="tax_exempt" label="Tax Exempt" label_class="badge badge-pill badge-info" input_class="ml-2" %}
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <h5 class="text-center mt-5">Customer Contact Information</h5>
+    <button class="btn btn-sm btn-outline-primary align-self-end ml-3" type="button" title="Edit"
+                        onclick="order_overview_contact_edit()"><span class="bi bi-pen"></span></button>
+</div>
+<hr>
+<div class="container d-flex justify-content-center">
+    <div class="list-group">
+        <div class="list-item d-flex">
+            <div class="text-muted mr-4">Name:</div>
+            <div id="order_contact_name">Austin Rockwell</div>
+        </div>
+        <div class="list-item d-flex">
+            <div class="text-muted mr-4">Organization:</div>
+            <div id="order_contact_organization">None</div>
+        </div>
+        <div class="list-item d-flex">
+            <div class="text-muted mr-4">Email:</div>
+            <div id="order_contact_email">rockwell.austin04@gmail.com</div>
+        </div>
+        <div class="list-item d-flex">
+            <div class="text-muted mr-4">Phone Number:</div>
+            <div id="order_contact_phone_number">None</div>
+        </div>
+        <div class="list-item d-flex">
+            <div class="text-muted mr-4">Fax Number:</div>
+            <div id="order_contact_fax_number">None</div>
+        </div>
+        <div class="list-item d-flex">
+            <div class="text-muted mr-4">Website:</div>
+            <a href="https://www.google.com" id="order_contact_website" target="_blank">www.google.com</a>
+        </div>
+    </div>
+</div>
+<div class="text-muted text-center mt-3">Contact Notes:</div>
+<div class="d-flex justify-content-center">
+    <div class="border rounded w-50" id="order_contact_notes">
+        <p class="mb-2">
+            Do not under ANY circumstance allow this man to contact you
+            <br>
+            He is mean :(
+        </p>
+    </div>
+</div>
+
+<h5 class="mt-3 text-center">Description / Notes</h5>
+<hr>
+<div class="container mb-3">
+    <textarea rows="2" class="form-control"></textarea>
+</div>
+
+<script>
+
+    function order_overview_contact_edit() {
+        $(`{% include "common/order_overview_contact_modal.html" %}`).insertAfter("nav");
+
+        $("#order_overview_contact_name").val($("#order_contact_name").text());
+        $("#order_overview_organization").val($("#order_contact_organization").text());
+        $("#order_overview_email").val($("#order_contact_email").text());
+        $("#order_overview_phone_number").val($("#order_contact_phone_number").text());
+        $("#order_overview_fax_number").val($("#order_contact_fax_number").text());
+        $("#order_overview_website").val($("#order_contact_website").text());
+        let text = $.map($("#order_contact_notes").children(), function(e, i) {
+            return $(e).html().trim().replaceAll("            ", '').replaceAll("\n", "").replaceAll("<br>", "\n");
+        })
+        console.log(text);
+        $("#order_overview_notes").val(text.join("\n\n"));
+        $("#order_overview_contact_modal").modal("show");
+    }
+
+    function order_overview_modal_close() {
+        dismiss_modal();
+    }
+
+    function order_overview_contact_submit() {
+        $("#order_contact_name").text($("#order_overview_contact_name").val());
+        $("#order_contact_organization").text($("#order_overview_organization").val());
+        $("#order_contact_email").text($("#order_overview_email").val());
+        $("#order_contact_phone_number").text($("#order_overview_phone_number").val());
+        $("#order_contact_fax_number").text($("#order_overview_fax_number").val());
+        let website = $("#order_overview_website").val();
+        $("#order_contact_website").text(website).prop("href", sanitize_link(website));
+        let notes = $("#order_contact_notes");
+        notes.children().remove();
+        for(let txt of $("#order_overview_notes").val().split("\n\n")) {
+            notes.append(`<p class="mb-2">${txt.replaceAll("\n", "<br>")}</p>`);
+        }
+        dismiss_modal();
+    }
+
+</script>

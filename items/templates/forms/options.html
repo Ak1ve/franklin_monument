@@ -1,0 +1,11 @@
+<!--
+The list of options designated to a specific item.
+options: a list of items.models.ItemOption
+container_class?: class of container d: "form-group
+-->
+
+{% for option in options %}
+    <div class="{{container_class|default:'form-group'}}">
+        {% include "forms/simple_select.html" with id="option{{option.id}}" label=option.key options=option.reduce %}
+    </div>
+{% endfor %}

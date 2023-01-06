@@ -1,0 +1,181 @@
+<!--
+items: [items.models.CatalogedItem]
+-->
+
+{% extends "base.html" %}
+
+
+{% block title %}Tasks{% endblock %}
+{% block body %}
+
+<style>
+
+.hidden {
+    position: absolute;
+    left: -999em;
+    display: none;
+}
+
+body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+.fit-content {
+    width: fit-content;
+}
+
+.sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+
+
+.scroll-y {
+    overflow-y: scroll;
+    max-height: 100vh !important;
+}
+
+
+</style>
+<div>
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="bg-light col-2 scroll-y">
+            <div class="text-center">
+                <h4>Item Select</h4>
+            </div>
+            <hr>
+            {% for item in items %}
+            <div class="container sidebar-container">
+                <div type="button" class="container p-1 align-items-center sidebar-content border rounded">
+                    <div class="d-flex">
+                        <h5>{{item.type}}</h5>
+                        <small class="ml-1 badge badge-primary align-self-center">{{item.sub_type}}</small>
+                    </div>
+                    <p class="text-xs h6">{{item.description}}</p>
+                    <div class="hidden" id="item{{item.id}}">
+                        <div class="container text-center">
+                            <h1>Edit {{item.type}}'s tasks</h1>
+                            <small class="text-muted">{{ item.description }}</small>
+                            <p>Please drag and drop the tasks to the corresponding order they should be completed in.</p>
+                        </div>
+                        <ul class="sortable">
+                            <!-- TODO not this lmao -->
+                            {% for task in item.tasks.tasks.all %}
+                                {% include "common/task.html" with label=task.label description=task.description %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            {% endfor %}
+
+            <!-- allow for more visibility  -->
+            <hr class="mb-5 pb-5 invisible">
+        </div>
+
+        <!-- Page Content -->
+        <div class="col-8" id="page_content" data-refers="">
+            <div class="text-center align-middle h-100">Please Select an Item to Continue</div>
+        </div>
+
+        <!-- Submission -->
+        <div class="col-2 bg-light scroll-y">
+            <div class="text-center">
+                <h3>Submit new task</h3>
+            </div>
+            <div class="form-group">
+                <label for="new_task_label">Label</label>
+                <input type="text" class="form-control" placeholder="Enter Label" id="new_task_label">
+                {% include "common/on_enter.html" with id="new_task_label" function="add_new_task()" %}
+            </div>
+            <div class="form-group">
+                <label for="new_task_description">Short Description</label>
+                <input type="text" class="form-control" placeholder="Enter Label" id="new_task_description">
+                {% include "common/on_enter.html" with id="new_task_description" function="add_new_task()" %}
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success" type="button" onclick="add_new_task()">Add task</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function container_mouse_enter(container) {
+        if (container.find(".sidebar-content").hasClass("border-primary")) {
+            return;
+        }
+        container.find(".sidebar-content").addClass("border-secondary text-secondary");
+        container.find(".badge").addClass("badge-secondary").removeClass("badge-primary");
+    }
+
+    function container_mouse_leave(container) {
+        if (container.find(".sidebar-content").hasClass("border-primary")) {
+            return;
+        }
+        container.find(".sidebar-content").removeClass("border-secondary text-secondary");
+        container.find(".badge").addClass("badge-primary").removeClass("badge-secondary");
+    }
+
+    function container_mouse_activate(container) {
+        container.find(".sidebar-content").removeClass("border-secondary text-secondary").addClass("border-primary text-primary");
+        container.find(".badge").addClass("badge-primary").removeClass("badge-secondary");
+    }
+
+    function container_mouse_deactivate(container) {
+        container.find(".sidebar-content").removeClass("border-primary text-primary");
+        container.find(".badge").removeClass("badge-primary").addClass("badge-secondary");
+        container_mouse_leave(container);
+    }
+
+    function send_task(obj) {
+        // uses models.ItemTasksResponse
+        let item_id = obj.prop("id").slice("item".length);
+        let tasks = Array.from(obj.find("ul").children()).map(e => {
+            return {label: $(e).find(".badge").text(), description: $(e).find(".text-muted").text()};
+        });
+        sendHttpAsync(`/tasks/${item_id}`, "post", {tasks: tasks})
+    }
+
+    function add_new_task() {
+        let label = $("#new_task_label");
+        let description = $("#new_task_description");
+        $("#page_content").find(".sortable").append(`{% include "common/task.html" with label="${label.val()}" description="${description.val()}" %}`)
+        label.val("");
+        description.val("");
+    }
+
+    function switch_viewed_task(obj) {
+        /* takes the inner content of the item select and moves it to the inner page content TODO FINISH
+        obj: obj of current item that wants to be viewed in the item select
+        */
+
+        let past_obj = $("#page_content").data("refers");
+        if (past_obj !== "") {
+            // send the task to be submitted
+            send_task($(`#item${past_obj}`).html($("#page_content").html()));
+        }
+
+        $("#page_content").html(obj.html()).data("refers", obj.prop("id").slice(4));
+        $("#page_content .sortable").sortable();
+
+    }
+
+    $(document).ready(function() {
+        $(".sidebar-container").mouseenter(function() {
+            container_mouse_enter($(this));
+        }).mouseleave(function() {
+            container_mouse_leave($(this));
+        }).click(function() {
+            switch_viewed_task($(this).find(".hidden"));
+            $(".sidebar-container .border-primary").map(function () { container_mouse_deactivate( $(this).parent() )});
+            container_mouse_activate($(this));
+        });
+    });
+
+
+</script>
+
+
+{% endblock %}

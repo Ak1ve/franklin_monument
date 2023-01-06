@@ -1,0 +1,18 @@
+<!--
+id: id of input
+label?: Label of input d: "Text"
+on_change?: function to be called when changed. must take element as param d: None
+required?: Field is required d: False
+help_text?: more info text d: ""
+help_class?: class that is used for help text d: "form-text text-muted"
+placeholder?: placeholder value d: ""
+container_class?: class of container d: "form-group"
+label_class?: class of label d: ""
+input_class?: class of input d: "form-control"
+-->
+
+<div class="{{container_class|default:'form-group'}}">
+    <label for="{{id}}" class="{{label_class|default:''}}">{{label|default:"Text"}}</label>
+    <input type="text" class="{{input_class|default:'form-control'}}" placeholder="{{placeholder|default:''}}" id="{{id}}" {% if help_text %}aria-describedby="{{id}}Help"{% endif %} {% if required %} required {% endif %} {% if on_change %} onchange="{{on_change}}" {% endif %} name="{{id}}">
+    {% if help_text %}<small id="{{id}}Help" class="{{help_class|default:'form-text text-muted'}}">{{help_text}}</small>{% endif %}
+</div>

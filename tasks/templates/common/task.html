@@ -1,0 +1,10 @@
+<!--
+label: label of task
+description: description of task
+-->
+
+<li class="ui-state-default border mb-3 fit-content pl-1 pr-1 align-middle">
+    <h5 class="badge badge-success align-self-center">{{ label }}</h5>
+    <small class="text-muted align-self-center">{{ description }}</small>
+    <span class="bi bi-trash text-danger align-self-center btn" type="button" onclick="$(this).parent().remove()"></span>
+</li>

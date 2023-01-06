@@ -1,0 +1,65 @@
+<!--
+items: CatalogedItem.objects.filter(is_deleted=False)
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Item Catalog{% endblock %}
+
+{% block body %}
+<div class="container text-center p-2 mt-5">
+    <h1>Item Catalog</h1>
+    <a href="new"  rel="" class="btn btn-success" role="button">New</a>
+</div>
+<div class="container bg-gradient-primary border p-2 ">
+    <!-- items use https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_anything&stacked=h -->
+    {% include "common/search.html" with input_id="item_catalog_search" target_id="item_catalog_elements" %}
+
+    <div class="list-group" id="item_catalog_elements">
+        {% for item in items %}
+            <div class="list-group-item align-items-center" id="{{ item.id }}">
+                <div class="d-flex w-100 justify-content-between">
+                    <div class="d-flex justify-content-start">
+                        <h5 class="mb-1">{{ item.type }}</h5>
+                        <small class="text-secondary align-self-end">{{ item.sub_type }}</small>
+                        <div class="container">
+                            <button class="btn btn-sm btn-outline-primary" type="button" title="Edit" onclick="item_option_edit({{item.id}})"><span class="bi bi-pen"></span></button>
+                            <button class="btn btn-sm btn-outline-danger" type="button" title="Delete" onclick="delete_item_catalog({{item.id}})"><span class="bi bi-trash"></span></button>
+                        </div>
+                    </div>
+                    <span class="badge badge-primary badge-pill h-100">{{ item.orders }} Orders</span>
+                </div>
+                <p class="mb-1">{{ item.description }}</p>
+                <small class="mr-auto align-text-bottom">This item is {% if not item.sizeable %}not {% endif %}sizeable</small>
+            </div>
+        {% endfor %}
+        </div>
+</div>
+
+<script>
+    function item_option_edit(item_id) {
+        window.location.href = `/items/${item_id}`;
+    }
+
+    function delete_item_catalog(item_id) {
+        let typ = $(`#${item_id}`).find("h5").text();
+        let num = $(`#${item_id}`).find("span").text().split(" ")[0];
+        $(document).find("nav").after(`
+            {% include "common/modal.html" with title="Are you sure you want to delete item \"${typ}?\"" body="Deletion will cause \"${typ}\" to be removed from ${num} orders." id="delete${item_id}" footer="<button type='button' data-dismiss='modal' class='btn btn-secondary'>Cancel</button><button type='button' onclick='item_confirm_delete(${item_id}, \"${typ}\")' class='btn btn-danger'>Delete</button>" %}
+        `);
+        $(`#delete${item_id}`).modal("show");
+    }
+    function item_confirm_delete(item_id, name) {
+        sendHttpAsync(`/items/${item_id}`, "delete", {}).then(resp => {
+            dismiss_modal();
+            notify("success", `"${name}" Successfully deleted`);
+            $(`#${item_id}`).remove();
+        }).catch(err => {
+            dismiss_modal();
+            notify("danger", `<strong>ERROR:</strong> "${name}" could not be deleted... (${err}) Ensure you are logged in as an administrator.  If this problem persists, please contact me.`)
+        });
+    }
+
+</script>
+
+{% endblock %}

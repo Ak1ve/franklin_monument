@@ -1,0 +1,11 @@
+<!--
+id: id of element to add listener
+function: function to call
+-->
+<script>
+$("#{{id}}").on('keypress',function(e) {
+    if(e.which == 13) {
+        {{ function }}
+    }
+});
+</script>
