@@ -8,8 +8,8 @@ id: id of task
 <div class="d-flex mb-2">
     <div class="mr-auto">{{ name }}<small class="text-muted ml-2 align-bottom">{{ description }}</small></div>
     <select class="selectpicker" title="Assign Task..." id="task{{ id }}">
-        <!-- TODO -->
-        <option value="1">Austin Rockwell</option>
-        <option value="2">April Hipp</option>
+        {% for user in users %}
+        <option value="{{user.id}}">{{user}}</option>
+        {% endfor %}
     </select>
 </div>

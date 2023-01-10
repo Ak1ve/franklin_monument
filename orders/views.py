@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.template import loader
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
@@ -39,7 +40,8 @@ def order_view(request, order_id: int):
                 "order_types": models.OrderType.objects.filter(is_deleted=False)}
     return render(request, "order_view.html", {"cataloged_items": cataloged_items,
                                                "order": models.Order.objects.get(id=order_id),
-                                               "overview": overview
+                                               "overview": overview,
+                                               "users": User.objects.all()
                                                })
 
 

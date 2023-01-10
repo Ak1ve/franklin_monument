@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "tasks",
     "addressbook",
     "contactable",
-    "orders"
+    "orders",
+    "users"
 ]
 
 MIDDLEWARE = [

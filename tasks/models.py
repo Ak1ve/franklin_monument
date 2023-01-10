@@ -44,9 +44,14 @@ class Task(models.Model):
     label = models.CharField(max_length=50)
     description = models.CharField(max_length=120)
     item_task = models.ForeignKey(ItemTasks, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     @classmethod
     def new_from_response(cls, response: TaskResponse):
         obj = cls(label=response.label, description=response.description)
         obj.save()
         return obj
+
+    def __str__(self):
+        deleted = self.is_deleted
+        return f"Task(#{self.id} {self.label}, {self.description}, {deleted=})"

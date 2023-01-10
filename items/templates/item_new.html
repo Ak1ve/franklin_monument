@@ -196,7 +196,7 @@ sub_types: all subtypes of CatalogedItem
 {% if cataloged_item %}
 $("#item_type").val("{{cataloged_item.type}}");
 $("#item_sub_type").val("{{cataloged_item.sub_type}}");
-$("#item_description").val("{{cataloged_item.description}}");
+$("#item_description").val(`{{cataloged_item.description|safe}}`);
 $("#item_commissionable").prop("checked", {% if cataloged_item.commissionable %}true{% else %}false{% endif %});
 $("#item_sizeable").prop("checked", {% if cataloged_item.sizeable %}true{% else %}false{% endif %});
 {% for option in options %}
