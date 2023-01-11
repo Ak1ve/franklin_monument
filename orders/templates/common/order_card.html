@@ -6,7 +6,7 @@ order: models.Order
     <div class="w-100">
         <div class="row">
             <div class="col-1 d-flex">
-                <span class="badge badge-{{order.overview.status_color}} align-middle align-self-center mr-3">{{order.overview.status}}</span>
+                <span class="badge badge-{{order.status_color}} align-middle align-self-center mr-3">{{order.status}}</span>
             </div>
             <div class="col-11 d-flex">
                 <h5 class="nowrap ml-4"><a href="/orders/{{order.id}}" class="text-reset">

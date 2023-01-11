@@ -8,10 +8,14 @@ help_class?: class that is used for help text d: "form-text text-muted"
 container_class?: class of container d: "form-check"
 input_class?: class of input d: "form-check-input"
 label_class? class of label d: "form-check-label"
+checked?: default value of checkbox d: False
 -->
 
 <div class="{{container_class|default:'form-check'}}">
-    <input class="{{input_class|default:'form-check-input'}}" type="checkbox" id="{{id}}" {% if on_change %} onchange="{{on_change}}" {% endif %} name="{{id}}">
+    <input class="{{input_class|default:'form-check-input'}}" type="checkbox" id="{{id}}" {% if on_change %} onchange="{{on_change}}" {% endif %} name="{{id}}"
+    {% if checked %}
+    checked
+    {% endif %}>
     <label class="{{label_class|default:'form-check-label'}}" for="{{id}}" {% if help_text %}aria-describedby="{{id}}Help"{% endif %}>{{label}}</label>
     {% if help_text %}<small id="{{id}}Help" class="{{help_class|default:'form-text text-muted'}}">{{help_text}}</small>{% endif %}
 </div>

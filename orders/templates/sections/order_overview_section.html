@@ -1,13 +1,18 @@
 <!--
 order: ...
-overview: {delivery_methods, order_types}
+overview: {delivery_methods, order_types, cemeteries}
 -->
-<h1 class="text-center">Overview</h1>
+<h1 class="text-center">
+    Overview
+</h1>
+<div class="d-flex justify-content-center">
+    <button class="btn btn-primary" type="button" onclick="order_overview_save()">Save</button>
+</div>
 <hr>
 <div class="container w-25 border border-info rounded text-center mb-5">
     <div class="row">
         <small class="col text-muted text-sm">Order Number</small>
-        <small class="col">421</small>
+        <small class="col">{{order.id}}</small>
     </div>
     <div class="row">
         <small class="col text-muted">Entered By</small>
@@ -15,7 +20,7 @@ overview: {delivery_methods, order_types}
     </div>
     <div class="row">
         <small class="col text-muted text-sm">Order Created</small>
-        <small class="col">10/18/2022</small>
+        <small class="col">{{order.order_created|date:'m/d/Y'}}</small>
     </div>
 </div>
 <h5 class="text-center">Order Information</h5>
@@ -23,11 +28,19 @@ overview: {delivery_methods, order_types}
 <div class="container">
     <div class="d-flex justify-content-center">
         <label class="align-self-center badge badge-pill badge-info">Deceased</label>
-        <input class="form-control w-25 ml-2" type="text">
+        <input class="form-control w-25 ml-2" type="text" id="order_overview_deceased">
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        <label class="badge badge-pill align-self-center badge-info">Cemetery</label>
+        <select class="selectpicker ml-2" data-live-search="true" id="order_overview_cemetery">
+            {% for cemetery in overview.cemeteries %}
+            <option value="{{cemetery.id}}">{{ cemetery.contact.organization }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div class="d-flex justify-content-center mt-3">
         <label class="badge badge-pill align-self-center badge-info">Order Type</label>
-        <select class="selectpicker ml-2">
+        <select class="selectpicker ml-2" id="order_overview_order_type">
             {% for ty in overview.order_types %}
             <option value="{{ty.id}}">{{ ty.type_name }}</option>
             {% endfor %}
@@ -35,71 +48,66 @@ overview: {delivery_methods, order_types}
     </div>
     <div class="d-flex justify-content-center mt-3">
         <label class="align-self-center badge badge-pill badge-info">Promise Date</label>
-        <input class="form-control w-25 ml-2" data-provide="datepicker">
+        <input class="form-control w-25 ml-2" data-provide="datepicker" id="order_overview_promise_date">
     </div>
     <div class="d-flex justify-content-center mt-3">
         <label class="badge badge-pill align-self-center badge-info">Delivery Method</label>
-        <select class="selectpicker ml-2">
+        <select class="selectpicker ml-2" id="order_overview_delivery_method">
             {% for delivery_method in overview.delivery_methods %}
             <option value="{{delivery_method.id}}">{{delivery_method.method_name}}</option>
             {% endfor %}
         </select>
     </div>
     <div class="d-flex justify-content-center mt-3">
-        {% include "forms/check.html" with id="tax_exempt" label="Tax Exempt" label_class="badge badge-pill badge-info" input_class="ml-2" %}
+        {% include "forms/check.html" with id="order_overview_tax_exempt" label="Tax Exempt" label_class="badge badge-pill badge-info" input_class="ml-2" checked=order.overview.tax_exempt %}
     </div>
 </div>
 <div class="d-flex justify-content-center">
     <h5 class="text-center mt-5">Customer Contact Information</h5>
     <button class="btn btn-sm btn-outline-primary align-self-end ml-3" type="button" title="Edit"
-                        onclick="order_overview_contact_edit()"><span class="bi bi-pen"></span></button>
+            onclick="order_overview_contact_edit()"><span class="bi bi-pen"></span></button>
 </div>
 <hr>
 <div class="container d-flex justify-content-center">
     <div class="list-group">
         <div class="list-item d-flex">
             <div class="text-muted mr-4">Name:</div>
-            <div id="order_contact_name">Austin Rockwell</div>
+            <div id="order_contact_name"></div>
         </div>
         <div class="list-item d-flex">
             <div class="text-muted mr-4">Organization:</div>
-            <div id="order_contact_organization">None</div>
+            <div id="order_contact_organization"></div>
         </div>
         <div class="list-item d-flex">
             <div class="text-muted mr-4">Email:</div>
-            <div id="order_contact_email">rockwell.austin04@gmail.com</div>
+            <div id="order_contact_email"></div>
         </div>
         <div class="list-item d-flex">
             <div class="text-muted mr-4">Phone Number:</div>
-            <div id="order_contact_phone_number">None</div>
+            <div id="order_contact_phone_number"></div>
         </div>
         <div class="list-item d-flex">
             <div class="text-muted mr-4">Fax Number:</div>
-            <div id="order_contact_fax_number">None</div>
+            <div id="order_contact_fax_number"></div>
         </div>
         <div class="list-item d-flex">
             <div class="text-muted mr-4">Website:</div>
-            <a href="https://www.google.com" id="order_contact_website" target="_blank">www.google.com</a>
+            <a href="" id="order_contact_website" target="_blank"></a>
         </div>
     </div>
 </div>
 <div class="text-muted text-center mt-3">Contact Notes:</div>
 <div class="d-flex justify-content-center">
     <div class="border rounded w-50" id="order_contact_notes">
-        <p class="mb-2">
-            Do not under ANY circumstance allow this man to contact you
-            <br>
-            He is mean :(
-        </p>
     </div>
 </div>
 
 <h5 class="mt-3 text-center">Description / Notes</h5>
 <hr>
 <div class="container mb-3">
-    <textarea rows="2" class="form-control"></textarea>
+    <textarea rows="2" class="form-control" id="order_overview_description"></textarea>
 </div>
-
+<hr>
 <script>
 
     function order_overview_contact_edit() {
@@ -111,11 +119,8 @@ overview: {delivery_methods, order_types}
         $("#order_overview_phone_number").val($("#order_contact_phone_number").text());
         $("#order_overview_fax_number").val($("#order_contact_fax_number").text());
         $("#order_overview_website").val($("#order_contact_website").text());
-        let text = $.map($("#order_contact_notes").children(), function(e, i) {
-            return $(e).html().trim().replaceAll("            ", '').replaceAll("\n", "").replaceAll("<br>", "\n");
-        })
-        console.log(text);
-        $("#order_overview_notes").val(text.join("\n\n"));
+
+        $("#order_overview_notes").val(order_overview_get_notes());
         $("#order_overview_contact_modal").modal("show");
     }
 
@@ -131,12 +136,70 @@ overview: {delivery_methods, order_types}
         $("#order_contact_fax_number").text($("#order_overview_fax_number").val());
         let website = $("#order_overview_website").val();
         $("#order_contact_website").text(website).prop("href", sanitize_link(website));
-        let notes = $("#order_contact_notes");
-        notes.children().remove();
-        for(let txt of $("#order_overview_notes").val().split("\n\n")) {
-            notes.append(`<p class="mb-2">${txt.replaceAll("\n", "<br>")}</p>`);
-        }
+        order_overview_set_notes($("#order_overview_notes").val());
         dismiss_modal();
     }
 
+    function order_overview_get_notes() {
+        let text = $.map($("#order_contact_notes").children(), function(e, i) {
+            return $(e).html().trim().replaceAll("            ", '').replaceAll("\n", "").replaceAll("<br>", "\n");
+        });
+        return text.join("\n\n");
+    }
+
+    function order_overview_set_notes(str) {
+        let notes = $("#order_contact_notes");
+        notes.children().remove();
+        for(let txt of str.split("\n\n")) {
+            notes.append(`<p class="mb-2">${txt.replaceAll("\n", "<br>")}</p>`);
+        }
+    }
+
+    function order_overview_save() {
+        let body = {
+            deceased: $("#order_overview_deceased").val(),
+            cemetery_id: $("#order_overview_cemetery").val(),
+            order_type_id: $("#order_overview_order_type").val(),
+            promise_date: $("#order_overview_promise_date").val(),
+            delivery_method_id: $("#order_overview_delivery_method").val(),
+            tax_exempt: $("#order_overview_tax_exempt").is(":checked"),
+            contact: {
+                name: $("#order_contact_name").text(),
+                organization: $("#order_contact_organization").text(),
+                email: $("#order_contact_organization").text(),
+                phone_number: $("#order_contact_phone_number").text(),
+                fax_number: $("#order_contact_fax_number").text(),
+                website: $("#order_contact_website").text(),
+                notes: order_overview_get_notes()
+            },
+            description_notes: $("#order_overview_description").val()
+        }
+
+        sendHttpAsync(current_url + "/overview", "post", body).then(success => {
+            notify_for("success", "Overview Successfully saved!", 2000);
+        }).catch(err => {
+            notify("danger", `ERROR: Could not save overview: ${err}`)
+        });
+    }
+
+    function order_overview_load() {
+        console.log($("#order_overview_deceased").val(`{{order.overview.deceased_name}}`));
+
+        set_select("#order_overview_cemetery", `{{order.overview.cemetery.id}}`);
+        set_select("#order_overview_order_type",`{{order.overview.order_type.id}}`);
+        $("#order_overview_promise_date").val(`{{order.overview.promise_date|date:'m/d/Y'}}`);
+        set_select("#order_overview_delivery_method", `{{order.overview.delivery_method.id}}`);
+        $("#order_overview_description").val(`{{order.overview.description}}`);
+        // contact
+
+        $("#order_contact_name").text(`{{order.overview.customer_contact.name}}`);
+        $("#order_contact_organization").text(`{{order.overview.customer_contact.organization}}`);
+        $("#order_contact_email").text(`{{order.overview.contact.email}}`);
+        $("#order_contact_phone_number").text(`{{order.overview.customer_contact.phone_number}}`);
+        $("#order_contact_fax_number").text(`{{order.overview.customer_contact.fax_number}}`);
+        $("#order_contact_website").text(`{{order.overview.customer_contact.website}}`).prop("href", sanitize_link(`{{order.overview.customer_contact.website}}`));
+        order_overview_set_notes(`{{order.overview.customer_contact.notes}}`);
+    }
+
+    $(document).ready(order_overview_load);
 </script>

@@ -19,8 +19,9 @@ users: all users in the list
         border-radius: 1em;
     }
 
+
 </style>
-<div class="w-100 mb-5 p-2 border d-flex">
+<div class="w-100 mb-2 p-2 border d-flex">
     <a class="p-2 align-self-center" href="/orders/">
         <span class="bi bi-arrow-return-left"> Order #{{ order.id }}</span>
     </a>
@@ -44,30 +45,37 @@ users: all users in the list
 <div class="row">
     <!-- selection bar -->
     <div class="col-2">
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_overview">Overview
-        </div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_participants">
-            Participants
-        </div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_items">Items</div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_design">Engraving
-            Design
-        </div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_proof">Design
-            Proofs
-        </div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_placement">Memorial
-            Placement
-        </div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_tasks">Tasks</div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_documents">
-            Documents
-        </div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_summary">Financial
-            Summary
-        </div>
-        <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_tracking">Expense
-            Tracking
+        <div class="ml-1">
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_overview">
+                Overview
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_participants">
+                Participants
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_items">Items
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_design">Engraving
+                Design
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_proof">Design
+                Proofs
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_placement">
+                Memorial
+                Placement
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_tasks">Tasks
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_documents">
+                Documents
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_summary">
+                Financial
+                Summary
+            </div>
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_tracking">Expense
+                Tracking
+            </div>
         </div>
     </div>
     <!-- body -->
@@ -88,10 +96,9 @@ users: all users in the list
             <h1 class="text-center">Proofs</h1>
         </div>
         <div class="toggle-item" id="order_placement">
-            <h1 class="text-center">Placement</h1>
         </div>
         <div class="toggle-item" id="order_tasks">
-            <h1 class="text-center">Tasks</h1>
+            {% include "sections/order_tasks_section.html" %}
         </div>
         <div class="toggle-item" id="order_documents">
             <h1 class="text-center">Documents</h1>
@@ -117,7 +124,8 @@ users: all users in the list
         $("#order_status").selectpicker("setStyle", "btn badge-paid badge-cancelled badge-active badge-production-hold badge-ready-to-invoice badge-invoiced", "remove").selectpicker("setStyle", "btn " + text, "add");
     });
 
-    $("#order_status").selectpicker("val", "{{order.overview.status}}").selectpicker("refresh").change();
+    $("#order_status").selectpicker("val", "{{order.status}}").selectpicker("refresh").change();
+
 </script>
 
 {% endblock %}

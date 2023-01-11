@@ -1,0 +1,19 @@
+<!--
+order: ...
+users: all users
+-->
+
+<style>
+    .w-30 {
+        width: 30%;
+    }
+</style>
+
+<h1 class="text-center">Tasks</h1>
+<hr>
+
+<div class="container bg-gradient-primary p-2 mt-3">
+    {% for item in order.item_set.items.all %}
+        {% include "common/order_task_item_card.html" with item=item %}
+    {% endfor %}
+</div>

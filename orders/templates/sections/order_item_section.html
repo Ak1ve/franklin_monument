@@ -33,16 +33,6 @@ users: all users
         hide("#order_item_specs");
     }
 
-    function order_item_set_select(select_query, ids) {
-        /*
-        Sets <select>s to their given values; use for order_item_edit
-        */
-        ids = Array.isArray(ids) ? ids : [ids];
-        $(`${select_query} option`).filter(function(i, e) {
-            return ids.includes(Number.parseInt($(e).prop("value")));
-        }).prop("selected", true).change();
-    }
-
     function order_item_edit(item_id) {
         let element = $(`#order_item${item_id}`);
         order_item_show_modal(item_id);
@@ -53,9 +43,9 @@ users: all users
         hide("#order_item_task_set");
         sendHttpAsync(current_url + `/item/${item_id}`, "get").then(resp => {
             let obj = JSON.parse(resp.body);
-            order_item_set_select("#order_item_type", obj.type_id);
+            set_select("#order_item_type", obj.type_id);
             for (let spec of obj.specifications) {
-                order_item_set_select(`#option${spec.option_id}`, spec.option_value_ids)
+                set_select(`#option${spec.option_id}`, spec.option_value_ids)
             }
             if (obj.dimensions !== null) {
                 $("#order_item_dimensions input").each(function (i) {
@@ -192,9 +182,11 @@ users: all users
         sendHttpAsync(current_url + `/item/${item_id}`, "delete").then(resp => {
             notify_for("success", "Item Successfully deleted", 3000);
             $(`#order_item${item_id}`).remove();
+            dismiss_modal();
             $(".modal_item_delete").remove();
         }).catch(err => {
             notify("danger", `ERROR: Could not delete item!: ${err}`);
+            dismiss_modal();
             $(".modal_item_delete").remove();
         });
     }
@@ -209,7 +201,7 @@ users: all users
         sendHttpAsync(`/users/assign/${refers}`, "get").then(x => {
             x = JSON.parse(x.body);
             for (let obj of x.tasks) {
-                order_item_set_select(`#task${obj.task_id}`, [obj.user_id]);
+                set_select(`#task${obj.task_id}`, obj.user_id);
             }
         }).catch(err => {
             console.log(err);

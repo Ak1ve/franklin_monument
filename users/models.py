@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 from tasks.models import Task
-from orders.models import Order
+from orders.models import OrderItem
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
@@ -23,10 +23,10 @@ class AutoAssignTaskSend:
 
 
 class UserTask(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_tasks")
-    task = models.ManyToManyField(Task)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="user_tasks")
-    assigned_on = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_tasks", null=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="user_tasks", null=True)
+    item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name="user_tasks", blank=True, null=True)
+    started_on = models.DateTimeField(blank=True, null=True)
     completed_on = models.DateTimeField(blank=True, null=True)
 
 

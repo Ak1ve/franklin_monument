@@ -1,41 +1,14 @@
+import datetime
 import random
 
+from django.contrib.auth.models import User
 from django.db import models
 from contactable.models import Contact
-
-
-from dataclasses_json import dataclass_json
-from dataclasses import dataclass
 
 # Create your models here.
 import items.models as item_models
 from addressbook.models import Cemetery
-
-
-@dataclass_json
-@dataclass
-class SpecificationResponse:
-    option_id: int
-    option_value_ids: list[int]
-
-
-@dataclass_json
-@dataclass
-class ItemTaskResponse:
-    task_id: int
-    user_id: int | None
-
-
-@dataclass_json
-@dataclass
-class OrderItemResponse:
-    type_id: int
-    specifications: list[SpecificationResponse]
-    dimensions: tuple[int, int, int] | None
-    price: str
-    tax_exempt: bool
-    notes: str
-    tasks: list[ItemTaskResponse]
+from .responses import SpecificationResponse, ItemTaskResponse, OrderItemResponse, OrderOverviewResponse
 
 
 class OrderType(models.Model):
@@ -55,30 +28,28 @@ class DeliveryMethod(models.Model):
 
 
 class Overview(models.Model):
-    class StatusChoices(models.TextChoices):
-        CANCELLED = "Cancelled"
-        ACTIVE = "Active"
-        PRODUCTION_HOLD = "Production Hold"
-        READY_TO_INVOICE = "Ready To Invoice"
-        INVOICED = "Invoiced"
-        PAID = "Paid"
-
-    status = models.CharField(choices=StatusChoices.choices, default=StatusChoices.ACTIVE, max_length=16)
     deceased_name = models.CharField(max_length=512, blank=True)
     order_type = models.ForeignKey(OrderType, on_delete=models.CASCADE, blank=True)
     promise_date = models.DateField(blank=True)
-    customer_contact = models.ForeignKey(Contact, on_delete=models.CASCADE, blank=True)
+    customer_contact: Contact = models.ForeignKey(Contact, on_delete=models.CASCADE, blank=True)
     tax_exempt = models.BooleanField(default=False)
     delivery_method = models.ForeignKey(DeliveryMethod, on_delete=models.CASCADE, blank=True)
     cemetery = models.ForeignKey(Cemetery, on_delete=models.CASCADE, blank=True, null=True)
     description = models.TextField(blank=True)
 
-    def status_color(self) -> str:
-        # this is for main.css badge colors
-        return str(self.status).lower().replace("/", "-").replace(" ", "-")
-
     def __str__(self):
-        return f"Overview(#{self.id}, {self.deceased_name}, status={self.status}, order_type={self.order_type}, contact={self.customer_contact})"
+        return f"Overview(#{self.id}, {self.deceased_name}, order_type={self.order_type}, contact={self.customer_contact})"
+
+    def edit_from_response(self, response: OrderOverviewResponse) -> None:
+        self.deceased_name = response.deceased
+        self.order_type = OrderType.objects.get(id=response.order_type_id)
+        self.promise_date = datetime.datetime.strptime(response.promise_date, "%m/%d/%Y")
+        self.customer_contact.edit_from_response(response.contact)
+        self.tax_exempt = response.tax_exempt
+        self.delivery_method = DeliveryMethod.objects.get(id=response.delivery_method_id)
+        self.cemetery = Cemetery.objects.get(id=response.cemetery_id)
+        self.description = response.description_notes
+        self.save()
 
 
 class ItemSet(models.Model):
@@ -137,7 +108,7 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=20, decimal_places=2)
     notes = models.TextField()
     tax_exempt = models.BooleanField()
-    # tasks = None  # TODO
+    # user_tasks: tasks.models.UserTask
 
     def as_send(self) -> OrderItemResponse:
         type_id: int
@@ -165,15 +136,27 @@ class Order(models.Model):
     """
     An order should have an overview, associated items, memorial placement
     """
+    class StatusChoices(models.TextChoices):
+        CANCELLED = "Cancelled"
+        ACTIVE = "Active"
+        PRODUCTION_HOLD = "Production Hold"
+        READY_TO_INVOICE = "Ready To Invoice"
+        INVOICED = "Invoiced"
+        PAID = "Paid"
+
+    status = models.CharField(choices=StatusChoices.choices, default=StatusChoices.ACTIVE, max_length=16)
     item_set = models.OneToOneField(ItemSet, null=True, blank=True, on_delete=models.CASCADE)
     order_created = models.DateTimeField(auto_now_add=True)
     overview = models.OneToOneField(Overview, on_delete=models.CASCADE, null=True)
-    # created_by
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     is_deleted = models.BooleanField(default=False)
-    # user_tasks
 
     def __str__(self):
         return f"Order(#{self.id})"
+
+    def status_color(self) -> str:
+        # this is for main.css badge colors
+        return str(self.status).lower().replace("/", "-").replace(" ", "-")
 
     def tasks_completed(self):
         # TODO

@@ -88,3 +88,13 @@ function sanitize_link(link) {
     let ret = (link.indexOf('://') === -1) ? 'http://' + link : link;
     return ret
 }
+
+function set_select(select_query, ids) {
+    /*
+    Sets <select>s to their given values;
+    */
+    ids = Array.isArray(ids) ? ids : [ids];
+    $(`${select_query} option`).filter(function(i, e) {
+        return ids.includes(Number.parseInt($(e).prop("value")));
+    }).prop("selected", true).change();
+}

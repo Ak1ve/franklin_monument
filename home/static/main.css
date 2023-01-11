@@ -29,7 +29,6 @@
 }
 
 
-
 .badge-production-hold {
     color: #fff;
     background-color: var(--gray);
@@ -63,4 +62,8 @@
 .badge-item {
     color: #fff;
     background-color: #cccccc;
+}
+
+.rounded-m {
+    border-radius: 25px;
 }

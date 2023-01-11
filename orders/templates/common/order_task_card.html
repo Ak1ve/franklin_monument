@@ -1,0 +1,63 @@
+<!--
+users: all users
+task: UserTask
+-->
+
+<div class="border container w-100 p-2 rounded-m bg-white mb-2">
+    <div class="row">
+        <div class="col-8">
+            <h5 class="align-self-start">
+                <div class="badge badge-pill {% if task.completed_on %}badge-success{% else %}badge-warning{% endif %}">
+                    {{ task.task.label }}
+                </div>
+                <small class="text-muted align-self-center ml-1">
+                    {{ task.task.description }}
+                </small>
+            </h5>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+            <select class="selectpicker">
+                <option>Bla</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <div class="btn btn-sm btn-outline-primary">Add Comment</div>
+            <!-- TODO Add only when adding a comment -->
+            <div class="d-flex mt-2">
+                <textarea class="form-control" type="text" rows="1"></textarea>
+            </div>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+            <div class="w-75">
+                <div class="d-flex">
+                    <div class="col-xs">
+                        Started:
+                    </div>
+                    <div class="col-xs ml-2">
+                        {% if task.started_on %}
+                        {{ task.started_on }}
+                        {% else %}
+                        <a href="javascript:void(0)" onclick="">Force start</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-xs">
+                        Completed:
+                    </div>
+                    <div class="col-xs text-muted ml-2">
+                        {% if task.completed_on %}
+                        {{ task.completed_on }}
+                        {% elif task.started_on %}
+                        <a href="javascript:void(0)" onclick="">Mark as Complete</a>
+                        {% else %}
+                        Not Completed
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
