@@ -7,6 +7,9 @@ users: all users
     .w-30 {
         width: 30%;
     }
+    .visibility-hidden {
+        visibility: hidden;
+    }
 </style>
 
 <h1 class="text-center">Tasks</h1>
@@ -17,3 +20,75 @@ users: all users
         {% include "common/order_task_item_card.html" with item=item %}
     {% endfor %}
 </div>
+
+<script>
+
+    function order_task_post_comment(task_id) {
+        let comment = $(`#order_task_add_comment_${task_id}`);
+        hide(comment.parent());
+        sendHttpAsync(`/orders/tasks/comment`, "POST", {content: comment.val(), user_task_id: task_id}).then(resp => {
+            $(`#order_task_comments_${task_id}`).append(task_comment_listener($(resp.body.body)));
+        }).catch(err => {
+            notify("danger", `Error: Could not post comment ${err}`);
+        })
+    }
+
+    function order_task_show_comment(task_id) {
+        let comment = $(`#order_task_add_comment_${task_id}`);
+        unhide(comment.parent());
+    }
+
+    function order_task_edit_comment(comment_id) {
+        let content = $(`.task-comment-${comment_id}`).find(".comment-content");
+        content.old_text = content.html();
+        let text = content.html().trim().replaceAll("<br>", "\n");
+        content.html(`<textarea class="form-control" type="text">${text}</textarea>`);
+        let el = $(`
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-outline-danger">Cancel</button>
+            <button class="btn btn-outline-primary ml-1">Save</button>
+        </div>
+        `).insertAfter(content.find("textarea"));
+        el.find(".btn-outline-danger").on("click", function() {order_task_comment_edit_cancel(content)});
+        el.find(".btn-outline-primary").on("click", function() {order_task_comment_edit_save(content)});
+    }
+
+    function order_task_comment_edit_cancel(content) {
+        content.html(content.old_text);
+    }
+
+    function order_task_comment_edit_save(content) {
+        let id = content.prop("id").substring("task_comment_".length);
+        sendHttpAsync(`/orders/tasks/comment/${id}`, "POST", {content: content.find("textarea").val(), user_task_id: -1}).then(resp => {
+            let a = $(task_comment_listener($(resp.body.body))).not("hr");
+            content.parent().parent().replaceWith(a);
+        }).catch(err => {
+            notify("danger", `Error: Could not post comment ${err}`);
+        });
+    }
+
+
+    function order_task_delete_comment(comment_id) {
+        sendHttpAsync(`/orders/tasks/comment/${comment_id}`, "DELETE").then(resp => {
+            $(`.task-comment-${comment_id}`).remove();
+        }).catch(err => {
+            notify("danger", `ERROR: Could not delete comment ${err}`);
+        });
+    }
+
+    function task_comment_listener(obj) {
+        obj.hover(function() {
+            unhide($(this).find(".show-on-hover"));
+        }, function() {
+            hide($(this).find(".show-on-hover"));
+        });
+        return obj;
+    }
+
+    $(document).ready(function() {
+        task_comment_listener($(".task-comment"));
+
+
+    });
+
+</script>

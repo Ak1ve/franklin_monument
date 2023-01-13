@@ -40,3 +40,10 @@ class OrderOverviewResponse:
     tax_exempt: bool
     contact: ContactableResponse
     description_notes: str
+
+
+@dataclass_json
+@dataclass
+class UserTaskCommentResponse:
+    content: str
+    user_task_id: int

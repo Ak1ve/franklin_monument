@@ -9,5 +9,7 @@ urlpatterns = [
     path("item/<int:item_id>", views.order_item_send),
     path("<int:order_id>/item", views.order_item_view),
     path("<int:order_id>/item/<int:item_id>", views.order_item_view),
-    path("<int:order_id>/overview", views.order_overview)
+    path("<int:order_id>/overview", views.order_overview),
+    path("tasks/comment", views.user_comment_view),
+    path("tasks/comment/<int:user_comment_id>", views.user_comment_view)
 ]

@@ -1,0 +1,25 @@
+<!-- comment: UserTaskComment Object -->
+
+<hr class="task-comment-{{comment.id}}">
+<div class="media task-comment task-comment-{{comment.id}}">
+    <img src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
+         class="rounded-circle mr-3" style="width: 30px;"
+         alt="Avatar"/>
+    <div class="media-body">
+        <div class="d-flex">
+            <div class="align-self-center">{{comment.user.username}}</div>
+            <div class="ml-3 small text-muted mr-auto align-self-center">{{comment.posted_on}}</div>
+            <div class="btn btn-sm"><span class="bi bi-trash visibility-hidden"></span></div>
+            <!-- TODO -->
+            <button class="btn btn-sm btn-outline-primary hidden show-on-hover"
+                    onclick="order_task_edit_comment({{comment.id}})"><span
+                    class="bi bi-pen"></span></button>
+            <button class="btn btn-sm btn-outline-danger ml-1 hidden show-on-hover"
+                    onclick="order_task_delete_comment({{comment.id}})"><span
+                    class="bi bi-trash"></span></button>
+        </div>
+        <div class="comment-content" id="task_comment_{{comment.id}}">
+            {{ comment.content|linebreaksbr }}
+        </div>
+    </div>
+</div>

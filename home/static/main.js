@@ -53,11 +53,20 @@ function sendHttpAsync(path, method, body) {
 }
 
 function hide(selector) {
-    $(selector).addClass("hidden").removeClass("transition");
+    if (typeof selector === "string") {
+        $(selector).addClass("hidden").removeClass("transition");
+        return;
+    }
+    selector.addClass("hidden").removeClass("transition");
 }
 
 function unhide(selector) {
-    $(selector).addClass("hidden").addClass("transition");
+    if (typeof selector == "string") {
+        $(selector).addClass("hidden").addClass("transition");
+        return;
+    }
+    selector.addClass("hidden").addClass("transition");
+
 }
 
 function notify(type, content) {

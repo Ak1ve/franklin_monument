@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseServerError
 from django.template import loader
@@ -6,9 +8,9 @@ from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from items.models import CatalogedItem
 from items.views import get_sub_types
 from . import models
-from users.models import UserTask
+from users.models import UserTask, UserTaskComment
 from tasks.models import Task
-from .responses import OrderItemResponse, OrderOverviewResponse
+from .responses import OrderItemResponse, OrderOverviewResponse, UserTaskCommentResponse
 from addressbook.models import Cemetery
 
 
@@ -170,3 +172,31 @@ def order_overview(request, order_id: int):
     overview: models.Overview = models.Order.objects.get(id=order_id).overview
     overview.edit_from_response(response)
     return HttpResponse(b"{}")
+
+
+# tasks
+def user_comment_view(request, user_comment_id: int = None):
+    """
+    DELETE: deletes user_comment
+    POST: Posts a comment
+    :param request:
+    :param user_comment_id:
+    :return:
+    """
+    if not request.user.is_superuser:
+        return HttpResponseServerError(b"{'err': 'Not authenticated'}")
+    if request.method == "POST":
+        response = UserTaskCommentResponse.from_json(request.body)
+        obj = None
+        if user_comment_id is None:
+            obj = UserTaskComment.from_response(response, request.user)
+        else:
+            obj = UserTaskComment.objects.get(id=user_comment_id)
+            obj.content = response.content
+            obj.posted_on = timezone.now()
+            obj.save()
+        return JsonResponse({"body": loader.render_to_string("common/order_task_comment.html", {"comment": obj})})
+    elif request.method == "DELETE":
+        obj = UserTaskComment.objects.get(id=user_comment_id)
+        obj.delete()
+        return HttpResponse("{}")
