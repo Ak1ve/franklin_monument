@@ -54,6 +54,11 @@
     background-color: var(--blue);
 }
 
+.badge-missing {
+    color: #fff;
+    background-color: var(--orange);
+}
+
 .badge-paid {
     color: #fff;
     background-color: var(--green);
@@ -61,9 +66,13 @@
 
 .badge-item {
     color: #fff;
-    background-color: #cccccc;
+    background-color: #aaa;
 }
 
 .rounded-m {
     border-radius: 25px;
+}
+
+.link-dark {
+    color: var(--dark) !important;
 }

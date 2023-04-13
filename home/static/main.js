@@ -106,4 +106,6 @@ function set_select(select_query, ids) {
     $(`${select_query} option`).filter(function(i, e) {
         return ids.includes(Number.parseInt($(e).prop("value")));
     }).prop("selected", true).change();
+    $(`${select_query}`).selectpicker("refresh");
+
 }

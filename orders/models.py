@@ -1,13 +1,12 @@
 import datetime
-import random
 
 from django.contrib.auth.models import User
 from django.db import models
 from contactable.models import Contact
-
 # Create your models here.
 import items.models as item_models
 from addressbook.models import Cemetery
+from document.models import DocumentFile
 from .responses import SpecificationResponse, ItemTaskResponse, OrderItemResponse, OrderOverviewResponse
 
 
@@ -54,23 +53,23 @@ class Overview(models.Model):
 
 class ItemSet(models.Model):
     # items
+    # order
     pass
 
 
 class ItemSpecificationSet(models.Model):
     # specifications = ItemSpecification
-    @classmethod
-    def from_response(cls, response: list[SpecificationResponse]):
-        obj = cls()
-        obj.save()
+    def set_from_response(self, response: list[SpecificationResponse]):
+        self.save()
+        self.specifications.all().delete()
         for spec in response:
             item_spec = ItemSpecification(option=item_models.ItemOption.objects.get(id=spec.option_id),
-                                          specification_set=obj)
+                                          specification_set=self)
             item_spec.save()
             item_spec.values.set(item_models.ItemOptionValue.objects.filter(id__in=spec.option_value_ids))
             item_spec.save()
-        obj.save()
-        return obj
+        self.save()
+        return self
 
     def as_send(self) -> list[SpecificationResponse]:
         return [x.as_send() for x in self.specifications.all()]
@@ -108,7 +107,7 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=20, decimal_places=2)
     notes = models.TextField()
     tax_exempt = models.BooleanField()
-    # user_tasks: tasks.models.UserTask
+    # user_tasks: users.models.UserTask
 
     def as_send(self) -> OrderItemResponse:
         type_id: int
@@ -128,8 +127,31 @@ class OrderItem(models.Model):
         return OrderItemResponse(type_id=type_id, specifications=specifications, dimensions=dimensions,
                                  price=price, tax_exempt=tax_exempt, notes=notes, tasks=tasks)
 
+    def task_status(self) -> str:
+        """
+        used for order_task_item_card
+        if ANY of the tasks are NOT started, returns missing
+        if not -> ANY task that is not completed returns warning
+        else -> success
+        :return:
+        """
+        not_complete = False
+        for user_task in self.user_tasks.all():
+            if user_task.started_on is None:
+                return "missing"
+            if user_task.completed_on is None:
+                not_complete = True
+        if not_complete:
+            return "warning"
+        return "success"
+
     def __str__(self):
         return f"OrderItem(item={self.cataloged_item.type}, dimensions={self.dimensions}, price={self.price}, specs={self.specification_set})"
+
+
+class DesignProofs(models.Model):
+    files = models.ManyToManyField(DocumentFile)
+    notes = models.TextField()
 
 
 class Order(models.Model):
@@ -145,7 +167,8 @@ class Order(models.Model):
         PAID = "Paid"
 
     status = models.CharField(choices=StatusChoices.choices, default=StatusChoices.ACTIVE, max_length=16)
-    item_set = models.OneToOneField(ItemSet, null=True, blank=True, on_delete=models.CASCADE)
+    item_set = models.OneToOneField(ItemSet, null=True, blank=True, on_delete=models.CASCADE, related_name="order")
+    proofs = models.OneToOneField(DesignProofs, null=True, blank=True, on_delete=models.CASCADE)
     order_created = models.DateTimeField(auto_now_add=True)
     overview = models.OneToOneField(Overview, on_delete=models.CASCADE, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -159,9 +182,17 @@ class Order(models.Model):
         return str(self.status).lower().replace("/", "-").replace(" ", "-")
 
     def tasks_completed(self):
-        # TODO
-        return random.randint(10, 100)
+        completed = 0
+        if self.item_set is None:
+            return 0
+        for item in self.item_set.items.all():
+            completed += len(item.user_tasks.exclude(completed_on__isnull=True))
+        return completed
 
     def total_tasks(self):
-        # TODO
-        return random.randint(100, 200)
+        total = 0
+        if self.item_set is None:
+            return 0
+        for item in self.item_set.items.all():
+            total += len(item.user_tasks.all())
+        return total

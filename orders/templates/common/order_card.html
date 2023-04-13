@@ -20,7 +20,7 @@ order: models.Order
     </div>
     <div class="row mt-2 mb-1">
         <div class="col-8">
-            <p>this is some text to describe things</p>
+            <p>{{order.overview.description}}</p>
             <div class="d-flex flex-wrap mt-1">
                 <small class="text-muted mr-2">items:</small>
                 {% for item in order.item_set.items.all %}

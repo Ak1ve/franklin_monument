@@ -40,7 +40,6 @@ users: all users
         $("#order_item_type").prop("disabled", true);
         $("#order_item_type").selectpicker("refresh");
         $("#order_item_modal").data("refers", item_id);
-        hide("#order_item_task_set");
         sendHttpAsync(current_url + `/item/${item_id}`, "get").then(resp => {
             let obj = JSON.parse(resp.body);
             set_select("#order_item_type", obj.type_id);
@@ -57,16 +56,14 @@ users: all users
                 $("#order_item_tax_exempt").prop("checked", true);
             }
             $("#order_item_notes").val(obj.notes);
+            hide("#order_item_task_set");
         }).catch(err => {
             notify("danger", `ERROR: Could not fetch item ${err}`)
         })
     }
 
     function order_item_close_modal() {
-        let modal = $("#order_item_modal");
-        modal.modal("hide");
-        $("body").removeClass('modal-open');
-        $(".modal-backdrop").remove();
+        dismiss_modal();
     }
 
     function order_item_render_json(body) {

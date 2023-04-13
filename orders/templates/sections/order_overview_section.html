@@ -166,7 +166,7 @@ overview: {delivery_methods, order_types, cemeteries}
             contact: {
                 name: $("#order_contact_name").text(),
                 organization: $("#order_contact_organization").text(),
-                email: $("#order_contact_organization").text(),
+                email: $("#order_contact_email").text(),
                 phone_number: $("#order_contact_phone_number").text(),
                 fax_number: $("#order_contact_fax_number").text(),
                 website: $("#order_contact_website").text(),
@@ -183,15 +183,14 @@ overview: {delivery_methods, order_types, cemeteries}
     }
 
     function order_overview_load() {
-        console.log($("#order_overview_deceased").val(`{{order.overview.deceased_name}}`));
-
-        set_select("#order_overview_cemetery", `{{order.overview.cemetery.id}}`);
-        set_select("#order_overview_order_type",`{{order.overview.order_type.id}}`);
+        $("#order_overview_deceased").val(`{{order.overview.deceased_name}}`);
+        set_select("#order_overview_cemetery", {{order.overview.cemetery.id}});
+        set_select("#order_overview_order_type",{{order.overview.order_type.id}});
         $("#order_overview_promise_date").val(`{{order.overview.promise_date|date:'m/d/Y'}}`);
-        set_select("#order_overview_delivery_method", `{{order.overview.delivery_method.id}}`);
+        set_select("#order_overview_delivery_method", {{order.overview.delivery_method.id}});
         $("#order_overview_description").val(`{{order.overview.description}}`);
-        // contact
 
+        // contact
         $("#order_contact_name").text(`{{order.overview.customer_contact.name}}`);
         $("#order_contact_organization").text(`{{order.overview.customer_contact.organization}}`);
         $("#order_contact_email").text(`{{order.overview.contact.email}}`);

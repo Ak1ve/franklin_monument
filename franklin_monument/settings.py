@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     "addressbook",
     "contactable",
     "orders",
-    "users"
+    "users",
+    "document"
 ]
 
 MIDDLEWARE = [

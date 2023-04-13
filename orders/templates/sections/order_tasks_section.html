@@ -35,7 +35,11 @@ users: all users
 
     function order_task_show_comment(task_id) {
         let comment = $(`#order_task_add_comment_${task_id}`);
-        unhide(comment.parent());
+        if (!comment.parent().hasClass("transition")) {
+            unhide(comment.parent());
+        } else {
+            hide(comment.parent());
+        }
     }
 
     function order_task_edit_comment(comment_id) {
@@ -85,10 +89,114 @@ users: all users
         return obj;
     }
 
+    function order_task_reset(obj) {
+        let task_id = obj.prop("id").substring("order_user_task_".length);
+        obj.find(".started-on-text").html(`<a href="javascript:void(0)" onclick="order_task_force_start(${task_id})">Force start</a>`);
+        obj.find(".completed-on-text").html("Not Completed");
+        obj.find(".badge").removeClass("badge-warning").removeClass("badge-success").addClass("badge-missing");
+    }
+
     $(document).ready(function() {
         task_comment_listener($(".task-comment"));
-
+        $("select.userpicker").on("change", function() {
+            let vals = $(this).val();
+            let select_id = $(this).prop("id");
+            select_id = select_id.substring("order_user_task_".length, select_id.length - "_select".length);
+            sendHttpAsync(`/orders/tasks/${select_id}`, "post", vals).then(resp => {
+                let root = $(this).parent().parent().parent().parent();
+                order_task_reset(root);
+            }).catch(err => {
+                notify("danger", `Error: Error updating User Task: ${err}`);
+            });
+        });
 
     });
+
+    function order_start_task(obj, time) {
+        obj.find(".started-on-text").html(`<div class="text-muted">${time}</div>`);
+
+        // not started is badge-missing, started is badge-warning
+        obj.find(".badge").removeClass("badge-missing").addClass("badge-warning");
+
+        let obj_id = obj.prop("id").substring("order_user_task_".length);
+        obj.find(".completed-on-text").html(`<a href="javascript:void(0)" onclick="order_task_mark_complete(${obj_id})">Mark as Complete</a>`);
+    }
+
+    function order_complete_task(obj, completed_time, start_time) {
+        obj.find(".completed-on-text").html(`<div class="text-muted">${completed_time}</div>`);
+        // started is badge-warning, finish is badge-success
+        obj.find(".badge").removeClass("badge-warning").addClass("badge-success");
+        if (start_time !== null) {
+            order_start_task(obj.next(), start_time);
+        }
+    }
+
+    function order_task_status(task_id) {
+        return sendHttpAsync(`/orders/tasks/status/${task_id}`, "get").then(resp => resp.body.status).catch(err => {
+            notify("danger", `ERROR: Could not fetch task status ${err}`);
+        });
+    }
+
+    function order_task_status_set(obj, status) {
+        obj.removeClass("badge-success").removeClass("badge-warning").removeClass("badge-missing").addClass(`badge-${status}`);
+    }
+
+    function order_task_force_start(task_id) {
+        sendHttpAsync(`/orders/tasks/start/${task_id}`, "post").then(resp => {
+            // resp: body: {"start_time": str}
+            order_start_task($(`#order_user_task_${task_id}`), resp.body.start_time);
+            order_task_status(task_id).then(status => {
+                let obj = $(`#order_user_task_${task_id}`).parent().parent().parent().find(".status-btn");
+                order_task_status_set(obj, status);
+            });
+
+        }).catch(err => {
+            notify("danger", `ERROR: Could not start task: ${err}`);
+        })
+    }
+
+    function order_task_mark_complete(task_id) {
+        sendHttpAsync(`/orders/tasks/complete/${task_id}`, "post").then(resp => {
+            // resp: body: {completed_time: str,  start_time: [of new task] str | null}
+            let current_task = $(`#order_user_task_${task_id}`);
+            order_complete_task(current_task, resp.body.completed_time, resp.body.start_time);
+            order_task_status(task_id).then(status => {
+                let obj = $(`#order_user_task_${task_id}`).parent().parent().parent().find(".status-btn");
+                order_task_status_set(obj, status);
+            });
+
+        }).catch(err => {
+            notify("danger", `ERROR: Could not complete task: ${err}`);
+        });
+    }
+
+    function order_task_auto_reassign(cataloged_item_id, obj) {
+        // return is resp: body: {"tasks": ["task_id": str, "user_id": int]}
+        sendHttpAsync(`/users/assign/${cataloged_item_id}`, "GET").then(resp => {
+            let tasks = JSON.parse(resp.body).tasks;
+            obj = $(obj).parent();
+            for (let task of tasks) {
+                let select = obj.find(`.userpicker.cataloged-task-${task.task_id}`);
+                select.val(task.user_id).selectpicker("refresh");
+                select.change();
+
+            }
+        }).catch(err => {
+            notify("danger", `ERROR: Could not auto reassign task... ${err}`);
+        });
+    }
+
+    function order_task_hide_content(obj) {
+        let button = $(obj);
+        let content = button.parent().parent().parent().find(".order-task-content");
+        if (button.text() === "Hide") {
+            hide(content);
+            button.text("Unhide");
+            return;
+        }
+        unhide(content);
+        button.text("Hide");
+
+    }
 
 </script>

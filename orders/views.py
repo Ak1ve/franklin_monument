@@ -1,3 +1,5 @@
+import json
+
 from django.utils import timezone
 
 from django.contrib.auth.models import User
@@ -5,13 +7,17 @@ from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseServer
 from django.template import loader
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 
+from document.views import save_request_file
 from items.models import CatalogedItem
 from items.views import get_sub_types
 from . import models
 from users.models import UserTask, UserTaskComment
-from tasks.models import Task
+from users.views import complete_task, start_task
 from .responses import OrderItemResponse, OrderOverviewResponse, UserTaskCommentResponse
 from addressbook.models import Cemetery
+
+
+TASK_DATE_FORMAT = "%m/%d/%y %I:%M %p"
 
 
 # Create your views here.
@@ -30,9 +36,15 @@ def order_new(request):
         return HttpResponseNotAllowed("{'err': 'Not Authenticated'}")
     order = models.Order(user=request.User)
     order.save()
+
     overview = models.Overview()
     overview.save()
+    proofs = models.DesignProofs()
+    proofs.save()
+
     order.overview = overview
+    order.proofs = proofs
+
     order.save()
 
     # return HttpResponseRedirect(f"/orders/{order.id}")
@@ -73,7 +85,8 @@ def create_item_from_response(response: OrderItemResponse, order_id: int) -> mod
         item_set.save()
         order.item_set = item_set
     cataloged_item = CatalogedItem.objects.get(id=response.type_id)
-    specifications = models.ItemSpecificationSet.from_response(response.specifications)
+    specifications = models.ItemSpecificationSet()
+    specifications.set_from_response(response.specifications)
     dimensions = None
     if response.dimensions is not None:
         obj = models.Vector3(length=float(response.dimensions[0]), width=float(response.dimensions[1]),
@@ -91,30 +104,30 @@ def create_item_from_response(response: OrderItemResponse, order_id: int) -> mod
     )  # TODO tasks
     item.save()
     order.save()
-    for task in response.tasks:
-        task_obj = Task.objects.get(id=task.task_id)
-        if task.user_id:
-            user_task = UserTask(user=User.objects.get(id=task.user_id), item=item, task=task_obj)
+    tasks_dict = {x.task_id: x.user_id for x in response.tasks if x.user_id}
+    for task in cataloged_item.tasks.tasks.all():
+        user_id = tasks_dict.get(task.id, None)
+        if user_id:
+            user_task = UserTask(user=User.objects.get(id=user_id), item=item, task=task)
             user_task.save()
             continue
-        # user_id is not supplied.. so leave it blank
-        UserTask(item=item, task=task_obj).save()
+        UserTask(user=None, item=item, task=task).save()
+
     return item
 
 
 def edit_item_from_response(response: OrderItemResponse, item_id: int) -> models.OrderItem:
     # this does not include tasks, because tasks are edited differently
     item: models.OrderItem = models.OrderItem.objects.get(id=item_id)
-    item.specification_set.delete()
-    spec_set = models.ItemSpecificationSet.from_response(response.specifications)
-    spec_set.save()
-    item.specification_set = spec_set
+    item.specification_set.set_from_response(response.specifications)
+
     if item.dimensions is not None:
         item.dimensions.delete()
         dimensions = models.Vector3(length=response.dimensions[0], width=response.dimensions[1],
                                     height=response.dimensions[2])
         dimensions.save()
         item.dimensions = dimensions
+        print(item.user_tasks.all())
     item.price = response.price
     item.notes = response.notes
     item.tax_exempt = response.tax_exempt
@@ -137,7 +150,6 @@ def order_item_view(request, order_id: int, item_id: int = None):
         # return item
         obj: OrderItemResponse = models.OrderItem.objects.get(id=item_id).as_send()
         return JsonResponse(obj.to_json(), safe=False)
-    # TODO order_item id!!
     if not request.user.is_authenticated:
         return HttpResponseNotAllowed(b"{'error': 'Not Authenticated'}")
     if request.method == "POST" and item_id is None:
@@ -147,6 +159,7 @@ def order_item_view(request, order_id: int, item_id: int = None):
         content = loader.render_to_string("common/order_item_card.html", {"order_item": item}, request, using=None)
         return JsonResponse({"body": content})
     if request.method == "POST" and item_id is not None:
+        # THIS IS WHERE THE ERROR IS HAPPENING
         item = edit_item_from_response(OrderItemResponse.from_json(request.body), item_id)
         content = loader.render_to_string("common/order_item_card.html", {"order_item": item}, request, using=None)
         return JsonResponse({"body": content})
@@ -169,6 +182,7 @@ def order_overview(request, order_id: int):
         return HttpResponseServerError(b"{'err': 'Not authenticated'}")
 
     response: OrderOverviewResponse = OrderOverviewResponse.from_json(request.body)
+    print(response)
     overview: models.Overview = models.Order.objects.get(id=order_id).overview
     overview.edit_from_response(response)
     return HttpResponse(b"{}")
@@ -200,3 +214,70 @@ def user_comment_view(request, user_comment_id: int = None):
         obj = UserTaskComment.objects.get(id=user_comment_id)
         obj.delete()
         return HttpResponse("{}")
+
+
+def user_task_view(request, task_id: int):
+    """
+    POST: change the assigned task.
+    data is just an array of user ids. either [1] or []
+    :param request:
+    :param task_id:
+    :return:
+    """
+    # TODO logic with starting / completing
+    if request.method != "POST" or not request.user.is_superuser:
+        return HttpResponseServerError("{'err': 'Not authorized'}")
+    task = UserTask.objects.get(id=task_id)
+    body = [int(x) for x in json.loads(request.body)]
+    if not len(body):
+        # cleared the user
+        task.user = None
+    else:
+        user = User.objects.get(id=body[0])
+        task.user = user
+    task.started_on = None
+    task.completed_on = None
+    task.save()
+    return HttpResponse("{}")
+
+
+def user_task_start(request, task_id: int):
+    if request.method != "POST" or not request.user.is_superuser:
+        return HttpResponseNotAllowed("{'err': 'Not allowed'}")
+    task = start_task(task_id)
+    return JsonResponse({"start_time": task.started_on.strftime(TASK_DATE_FORMAT)})
+
+
+def user_task_complete(request, task_id: int):
+    if request.method != "POST" or not request.user.is_superuser:
+        return HttpResponseNotAllowed("{'err': 'Not allowed'}")
+    current_task, next_task = complete_task(task_id)
+    start_time = next_task.started_on.strftime(TASK_DATE_FORMAT) if next_task is not None else None
+    return JsonResponse({"completed_time": current_task.completed_on.strftime(TASK_DATE_FORMAT),
+                         "start_time": start_time})
+
+
+def task_status(request, task_id):
+    status = UserTask.objects.get(id=task_id).item.task_status()
+    return JsonResponse({"status": status})
+
+
+# TODO tasks need to be updated when item information changes
+
+
+# proofs
+
+
+def proofs_upload(request, order_id: int):
+    file = save_request_file(request.FILES["Upload"])
+    order: models.Order = models.Order.objects.get(id=order_id)
+    order.proofs.files.add(file)
+    order.proofs.save()
+    return JsonResponse({"file_name": file.short_name(), "file_id": file.id})
+
+
+def proofs_edit(request, order_id: int):
+    order: models.Order = models.Order.objects.get(id=order_id)
+    order.proofs.notes = json.loads(request.body)["notes"]
+    order.proofs.save()
+    return HttpResponse(b"{}")

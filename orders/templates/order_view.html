@@ -49,15 +49,9 @@ users: all users in the list
             <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_overview">
                 Overview
             </div>
-            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_participants">
-                Participants
-            </div>
             <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_items">Items
             </div>
-            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_design">Engraving
-                Design
-            </div>
-            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_proof">Design
+            <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_proofs">Design
                 Proofs
             </div>
             <div class="toggle-btn btn-block btn border mb-0 mt-0 p-3 rounded-xl" data-activate="order_placement">
@@ -92,10 +86,11 @@ users: all users in the list
         <div class="toggle-item" id="order_design">
             <h1 class="text-center">Design</h1>
         </div>
-        <div class="toggle-item" id="order_proof">
-            <h1 class="text-center">Proofs</h1>
+        <div class="toggle-item" id="order_proofs">
+            {% include "sections/order_proofs_section.html" %}
         </div>
         <div class="toggle-item" id="order_placement">
+            {% include "sections/order_memorial_placement.html" %}
         </div>
         <div class="toggle-item" id="order_tasks">
             {% include "sections/order_tasks_section.html" %}

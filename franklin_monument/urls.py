@@ -24,5 +24,6 @@ urlpatterns = [
     path("address/", include("addressbook.urls")),
     path("orders/", include("orders.urls")),
     path("users/", include("users.urls")),
+    path("documents/", include("document.urls")),
     path("", include("home.urls")),
 ]
