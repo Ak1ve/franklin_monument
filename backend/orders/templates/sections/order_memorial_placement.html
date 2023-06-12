@@ -1,0 +1,195 @@
+<h1 class="text-center">
+    Memorial Placement
+</h1>
+<div class="d-flex justify-content-center mb-2">
+    <button class="btn btn-primary text-center" type="button" onclick="order_send_placement()">Save</button>
+
+</div>
+<style>
+    .placement-bar {
+        width: 200% !important;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        }
+</style>
+
+<div class="d-flex justify-content-center w-100 mb-3">
+    <div class="w-75">
+        <div class="form-check d-flex justify-content-center mb-3">
+            <input class="form-check-input" type="radio" name="placementStandHere" id="placement_read_here_top">
+            <label class="form-check-label mt-3">
+                Stand here to read Monument
+            </label>
+        </div>
+        <div id="order_placement_grid">
+            <div class="d-flex">
+                <div class="col placement-droppable p-0" id="placement_droppable_1"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_2"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_3"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_4"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_5"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_6"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_7"></div>
+                <div class="col p-0">&ZeroWidthSpace;</div>
+            </div>
+            <div class="d-flex mt-1 mb-1">
+                <textarea class="col text-center" id="placement_name_1"></textarea>
+                <textarea class="col text-center" id="placement_name_2"></textarea>
+                <textarea class="col text-center" id="placement_name_3"></textarea>
+                <textarea class="col text-center" id="placement_name_4"></textarea>
+            </div>
+            <div class="d-flex">
+                <div class="col placement-droppable p-0" id="placement_droppable_8"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_9"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_10"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_11"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_12"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_13"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_14"></div>
+                <div class="col p-0">&ZeroWidthSpace;</div>
+
+            </div>
+            <div class="d-flex mt-1 mb-1">
+                <textarea class="col text-center" id="placement_name_5"></textarea>
+                <textarea class="col text-center" id="placement_name_6"></textarea>
+                <textarea class="col text-center" id="placement_name_7"></textarea>
+                <textarea class="col text-center" id="placement_name_8"></textarea>
+            </div>
+            <div class="d-flex">
+                <div class="col placement-droppable p-0" id="placement_droppable_15"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_16"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_17"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_18"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_19"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_20"></div>
+                <div class="col placement-droppable p-0" id="placement_droppable_21"></div>
+                <div class="col p-0">&ZeroWidthSpace;</div>
+            </div>
+        </div>
+        <div class="form-check d-flex justify-content-center mt-3">
+            <input class="form-check-input" type="radio" name="placementStandHere" id="placement_read_here_bottom">
+            <label class="form-check-label mt-3">
+                Stand here to read Monument
+            </label>
+        </div>
+    </div>
+</div>
+
+
+<h3 class="text-center mt-5">
+    Cemetery Placement
+</h3>
+<hr>
+
+<div class="d-flex justify-content-center">
+    <div class="m-3">
+        <div class="d-flex">
+            <label class="align-self-center badge badge-pill badge-info mr-3" id>Section</label>
+            <input type="text" class="form-control" id="placement_section">
+        </div>
+        <div class="d-flex mt-2">
+            <label class="align-self-center badge badge-pill badge-info mr-3">Lot</label>
+            <input type="text" class="form-control" id="placement_lot">
+        </div>
+        <div class="d-flex mt-2">
+            <label class="align-self-center badge badge-pill badge-info mr-3">Grave</label>
+            <input type="text" class="form-control" id="placement_grave">
+        </div>
+        <div class="d-flex mt-2">
+            <label class="align-self-center badge badge-pill badge-info mr-3">Face Stone</label>
+            <select class="selectpicker" id="placement_face_stone">
+                <option value="Unspecified">Unspecified</option>
+                <option value="North">North</option>
+                <option value="South">South</option>
+                <option value="East">East</option>
+                <option value="West">West</option>
+            </select>
+        </div>
+        <div class="d-flex mt-2">
+            <label class="align-self-center badge badge-pill badge-info mr-3">Foundation Length</label>
+            <input type="text" class="form-control" id="placement_foundation_length">
+        </div>
+        <div class="d-flex mt-2">
+            <label class="align-self-center badge badge-pill badge-info mr-3">Foundation Width</label>
+            <input type="text" class="form-control" id="placement_foundation_width">
+        </div>
+        Notes
+        <textarea class="w-100" id="placement_notes"></textarea>
+    </div>
+</div>
+
+<script>
+
+    $(`#placement_droppable_{{order.placement.memorial_placement}}`).append(`<div class="bg-dark placement-bar text-light text-center" id="order_placement_drag">Monument</div>`);
+    function order_placement_set_draggable() {
+        $("#order_placement_drag").draggable({
+            cursor: "move",
+            helper: "clone",
+            snap: true,
+            snapTolerance: 100,
+        });
+    }
+    setInterval(order_placement_set_draggable, 1000); // this is a bad way of fixing it... oh well!
+
+    order_placement_set_draggable();
+    $(".placement-droppable").droppable({
+        hoverClass: "ui-state-active",
+        drop: function (ev, ui) {
+            $(this).text("");
+            $(ui.draggable).appendTo(this).data("in", true);
+        },
+    });
+
+    function order_send_placement() {
+        let placement_names = [];
+        for (let i = 1; i < 9; i++) {
+            placement_names.push($(`#placement_name_${i}`).val());
+        }
+        let memorial_placement = $("#order_placement_drag").parent().prop("id").substring("placement_droppable_".length);
+        let body = {
+          placement_names: placement_names,
+          read_top: $("#placement_read_here_top").prop("checked"),
+          memorial_placement: memorial_placement,
+          section: $("#placement_section").val(),
+          lot: $("#placement_lot").val(),
+          grave: $("#placement_grave").val(),
+          face_stone: $("#placement_face_stone").val(),
+          foundation_length: $("#placement_foundation_length").val(),
+          foundation_width: $("#placement_foundation_width").val(),
+          notes: $("#placement_notes").val(),
+        };
+
+        sendHttpAsync(current_url + "/placement", "post", body).then(success => {
+            notify_for("success", "Successfully Saved Placement Information", 2000);
+        }).catch(err => {
+            notify("danger", `Error saving placement information: ${err}`);
+        });
+    }
+
+    function order_set_placement() {
+        $("#placement_name_1").val("{{order.placement.placement_names.placement_1}}");
+        $("#placement_name_2").val("{{order.placement.placement_names.placement_2}}");
+        $("#placement_name_3").val("{{order.placement.placement_names.placement_3}}");
+        $("#placement_name_4").val("{{order.placement.placement_names.placement_4}}");
+        $("#placement_name_5").val("{{order.placement.placement_names.placement_5}}");
+        $("#placement_name_6").val("{{order.placement.placement_names.placement_6}}");
+        $("#placement_name_7").val("{{order.placement.placement_names.placement_7}}");
+        $("#placement_name_8").val("{{order.placement.placement_names.placement_8}}");
+        {% if order.placement.read_top %}
+        $("#placement_read_here_top").click();
+        {% else %}
+        $("#placement_read_here_bottom").click();
+        {% endif %}
+        $("#placement_section").val("{{order.placement.section}}");
+        $("#placement_lot").val("{{order.placement.lot}}");
+        $("#placement_grave").val("{{order.placement.grave}}");
+        $("#placement_foundation_length").val("{{order.placement.foundation_length}}");
+        $("#placement_foundation_width").val("{{order.placement.foundation_width}}");
+        $("#placement_notes").val("{{order.placement.notes}}");
+        $(`#placement_face_stone option[value="{{order.placement.face_stone}}"]`).prop("selected", true).change();
+        $("#placement_face_stone").selectpicker("refresh");
+    }
+
+    $(document).ready(order_set_placement);
+</script>

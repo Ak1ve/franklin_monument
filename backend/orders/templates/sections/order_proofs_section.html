@@ -1,0 +1,97 @@
+<h1 class="text-center">
+    Design Proofs
+</h1>
+
+<div class="d-flex justify-content-center w-100">
+    <div>
+        <form class="border p-1" enctype="multipart/form-data" id="order_proofs_file_form">
+            {% csrf_token %}
+            <input type="file" class="align-self-center" id="order_proofs_add_file" name="Upload">
+            <button type="button" class="btn btn-success btn-sm align-self-center" id="order_proofs_add_button">Add
+                Proof
+            </button>
+        </form>
+        <div class="progress hidden">
+            <div class="progress-bar" id="order_proofs_progress" role="progressbar" style="width: 0%" aria-valuenow="0"
+                 aria-valuemin="0"
+                 aria-valuemax="100"></div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3 d-flex flex-wrap justify-content-center" id="order_proofs_file_list">
+    {% for file in order.proofs.files.all %}
+    <div class="border p-1 mb-2 ml-2 mr-2 mb-1 mt-1">
+        <button type="button" class="close ml-5" title="Delete file" onclick="order_proofs_remove(this)">
+            <span class="text-danger" aria-hidden="true">&times;</span>
+        </button>
+        <span class="bi bi-file-pdf" style="font-size:20px;"><a target="_blank" href="/documents/{{file.id}}" class="link-dark">{{ file.short_name }}</a></span>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-5">
+    <h4 class="mt-5">Notes</h4>
+    <textarea class="w-100" rows="5" id="order_proofs_notes"></textarea>
+</div>
+
+<script>
+    function order_proofs_add_file() {
+        unhide($("#order_proofs_progess").parent());
+        $.ajax({
+            url: current_url + "/proofs/upload",
+            type: 'POST',
+
+            data: new FormData($('#order_proofs_file_form')[0]),
+
+            // Tell jQuery not to process data or worry about content-type
+            // You *must* include these options!
+            cache: false,
+            contentType: false,
+            processData: false,
+
+            xhr: function () {
+              var myXhr = $.ajaxSettings.xhr();
+              if (myXhr.upload) {
+                // For handling the progress of the upload
+                myXhr.upload.addEventListener('progress', function (e) {
+                  if (e.lengthComputable) {
+                    $('#order_proofs_progress').attr('aria-valuenow', e.loaded).css('width', `${e.loaded / e.total}`+'%').attr("aria-valuemax", e.total);
+                  }
+                }, false);
+              }
+              return myXhr;
+            }
+          }).done(function(body) {
+            let obj = $(`<div class="border p-1 mb-2 ml-2 mr-2 mb-1 mt-1"><button type="button" class="close ml-5" title="Delete file" onclick="order_proofs_remove(this)"><span class="text-danger" aria-hidden="true">&times;</span></button><span class="bi bi-file-pdf" style="font-size:20px;"><a target="_blank" href="/documents/${body.file_id}" class="link-dark">${body.file_name}</a></span></div>`);
+            $("#order_proofs_file_list").append(obj);
+            $("#order_proofs_add_file").val("");
+
+          }).fail(function() {
+            notify("danger", "Error: Could not upload file");
+          });
+    }
+
+    function order_proofs_remove(ths) {
+        let span = $(ths).next();
+        let del = span.children().first().attr("href");
+        sendHttpAsync(del, "delete").then(success => {
+            span.parent().remove();
+        }).catch(err => {
+            notify("danger", `Error: Could not remove file: ${err}`);
+        });
+
+    }
+
+    $(document).ready(function() {
+       $("#order_proofs_add_button").on("click", order_proofs_add_file);
+       $("#order_proofs_notes").val(`{{order.proofs.notes|default:''}}`).focusout(function() {
+            sendHttpAsync(current_url + "/proofs", "post", {"notes": $(this).val()}).then(success => {
+            }).catch(err => {
+               notify("danger", `Error: Could not save notes for Proofs ${err}`);
+            });
+
+       });
+    });
+
+</script>
