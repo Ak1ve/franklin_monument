@@ -255,8 +255,25 @@ export function OrderItemCard(item: OrderItem) {
 
 
 export default function Items(props: ItemsProps) {
+    /*
+    {
+        id: 2,
+        catalogedItem: basicCatalogedItem,
+        specifications: { 1: [1, 2, 3], 2: [10, 11, 12], 3: [100, 101, 102, 103], 7: [200, 201, 203] },
+        dimensions: {
+            length: 4.5,
+            width: 8.4,
+            height: 9.3
+        },
+        userTasks: [],
+        price: "4.50",
+        notes: "These are some notes to describe the item!!",
+        taxExempt: false,
+    }
+    */
     const [show, setShow] = useState(true);
     const itemModalState = useImmer<OrderItem>(items[1]); // TODO generate!!
+    console.log(items[1]);
     // TODO every cataloged item must be filtered for whether or not the cataloged item is deleted
     const selectHook = useImmer({ "catalogedItem": null });
     // TODO not "Submit Item" for title for standard modal 
@@ -299,7 +316,7 @@ export default function Items(props: ItemsProps) {
 
                             </div>
                             {/* TODO for users */}
-                            {basicSelect({ id: "orderItemTask" + task.id.toString, label: "User", options: [{ label: "Dog", value: "1" }, { label: "Dog", value: "2" }, { label: "Dog", value: "3" }] }, selectHook, "tasks" + task.id.toString())}
+                            {basicSelect({ id: "orderItemTask" + task.id.toString(), label: "User", options: [{ label: "Dog", value: "1" }, { label: "Dog", value: "2" }, { label: "Dog", value: "3" }] }, selectHook, "tasks" + task.id.toString())}
                         </div>
                     ))}
                 </ModalSection>

@@ -45,7 +45,7 @@ function basicGenerate<S, P extends React.HTMLProps<HTMLElement>>(
 export const basicInput: ElementFunc<StandardInputProps> =
     basicGenerate((props, updater, prop, value) => {
         return (
-            <StandardInput {...props} onChange={(x) => { updateProp(updater, prop, (x.target as HTMLInputElement).value) }} />
+            <StandardInput {...props} value={value !== null ? value : ""} onChange={(x) => { updateProp(updater, prop, (x.target as HTMLInputElement).value) }} />
         );
     });
 
@@ -70,13 +70,13 @@ export const basicCheckbox: ElementFunc<Omit<StandardCheckboxProps, "value">> =
 export const basicDatepicker: ElementFunc<Omit<StandardDatepickerProps, "value" | "onChange">> =
     basicGenerate((props, updater, prop, value) => {
         return (
-            <StandardDatepicker {...props} onChange={(x: any) => updateProp(updater, prop, x.target.value)} />
+            <StandardDatepicker {...props} value={value} onChange={(x: any) => updateProp(updater, prop, x.target.value)} />
         );
     });
 
 export const basicTextArea: ElementFunc<Omit<StandardTextAreaProps, "onChange">> =
     basicGenerate((props, updater, prop, value) => {
         return (
-            <StandardTextArea {...props} onChange={(x) => updateProp(updater, prop, (x.target as HTMLInputElement).value)} />
+            <StandardTextArea {...props} value={value} onChange={(x) => updateProp(updater, prop, (x.target as HTMLInputElement).value)} />
         );
     });
