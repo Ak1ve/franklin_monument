@@ -9,6 +9,7 @@ import { OrderOverview } from '@/models/Orders';
 import Items from '@/forms/orders/Items';
 import Tasks from '@/forms/orders/Tasks';
 import Placement from '@/forms/orders/Placement';
+import Proofs from '@/forms/orders/Proofs';
 const inter = Inter({ subsets: ['latin'] })
 
 
@@ -22,7 +23,7 @@ function FormComponent() {
   );
 }
 
-export default function Order() {
+export default function Order(postData: any) {
   const [body, setBody] = useState("Overview");
   const bodyNav = (name: string) => { return { name: name, onClick: () => setBody(name), active: body === name } };
   const navs = [
@@ -58,7 +59,11 @@ export default function Order() {
     bodyContent = <Overview initialState={emptyOrderOverview} onSave={(x: OrderOverview) => { }} />;
   } else if (body === "Items") {
     bodyContent = <Items />;
-  } else if (body === "Tasks") {
+  } else if (body === "Proofs") {
+    bodyContent = <Proofs />
+  }
+  
+  else if (body === "Tasks") {
     bodyContent = <Tasks />;
   } else if (body === "Memorial Placement") {
     bodyContent = <Placement />
