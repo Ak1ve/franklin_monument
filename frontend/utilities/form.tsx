@@ -77,6 +77,7 @@ export const basicDatepicker: ElementFunc<Omit<StandardDatepickerProps, "value" 
 export const basicTextArea: ElementFunc<Omit<StandardTextAreaProps, "onChange">> =
     basicGenerate((props, updater, prop, value) => {
         return (
-            <StandardTextArea {...props} value={value} onChange={(x) => updateProp(updater, prop, (x.target as HTMLInputElement).value)} />
+            <StandardTextArea {...props} value={value !== null ? value : ""} onChange={(x) => updateProp(updater, prop, (x.target as HTMLInputElement).value)} />
         );
     });
+

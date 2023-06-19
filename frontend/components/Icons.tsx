@@ -22,22 +22,21 @@ export interface IconButtonComponent {
 function generateIconButton(component: (props: IconProps) => React.ReactNode, defaultProps: IconButtonProps): IconButtonComponent {
     const func = (componentProps: IconButtonProps) => {
         const defaultedProps = {...defaultProps, ...componentProps};
-        const { width, height, iconClassName, children, textFacing, addClass, ...buttonProps } = defaultedProps;
-        if (addClass !== undefined) {
-            buttonProps.className = classNames(buttonProps.className, addClass);
-        }
-        if (textFacing === "left") {
-            return (
-                <button {...buttonProps} type="button">
-                    {children} {component({ width, height, iconClassName })}
-                </button>
-            );
-        }
-        return (
+        const { width, height, iconClassName, children, textFacing, href, addClass, ...buttonProps } = defaultedProps;
+        buttonProps.className = classNames(buttonProps.className, addClass);
+        const child = textFacing === "left" ? (
+            <button {...buttonProps} type="button">
+                {children} {component({ width, height, iconClassName })}
+            </button>
+        ) : (
             <button {...buttonProps} type="button">
                 {component({ width, height, iconClassName })} {children}
             </button>
-        )
+        );
+        if ("href" !== undefined) {
+            return <a href={href}>{child}</a>
+        }
+        return {child}
     }
     func.DEFAULT = defaultProps;
     return func;
@@ -45,7 +44,7 @@ function generateIconButton(component: (props: IconProps) => React.ReactNode, de
 
 export function Trash(props: IconProps) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" className={props.iconClassName} width={props.width || "16"} height={props.height || "16"} fill="currentColor" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /> </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" className={props.iconClassName} width={props.width} height={props.height} fill="currentColor" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /> </svg>
     );
 }
 
@@ -55,14 +54,27 @@ export function Edit(props: IconProps) {
     );
 }
 
+export function Back(props: IconProps) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" className={props.iconClassName} width={props.width} height={props.height} viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round"> <path stroke="none" d="M0 0h24v24H0z" fill="none" /> <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" /> </svg>
+    );
+}
+
 export const TrashButton = generateIconButton(Trash, {
     width: "20",
     height: "20",
-    className: "hover:text-red-600 transition-all hover:scale-125"
+    className: "hover:text-red-600 transition-all hover:scale-125 flex"
 });
 
 export const EditButton = generateIconButton(Edit, {
     width: "20",
     height: "20",
-    className: "hover:text-blue-600 transition-all hover:scale-125"
+    className: "hover:text-blue-600 transition-all hover:scale-125 flex"
+});
+
+export const BackButton = generateIconButton(Back, {
+    width: "20",
+    height: "20",
+    className: "hover:scale-125 transition-all hover:underline flex",
+    textFacing: "right"
 });
