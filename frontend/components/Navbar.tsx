@@ -5,6 +5,7 @@ const navElements = [
   { title: "Tasks", href: "tasks" },
   { title: "Items", href: "items" },
   { title: "Orders", href: "orders" },
+  { title: "Address Book", href: "addressbook" },
   { title: "Users", href: "#" },
 ];
 
@@ -15,7 +16,7 @@ export default function Navbar({ active = navElements[0].title }) {
     const cls = active === navElement.title ? selected : unselected;
     return (
       <li className={cls} key={navElement.title}>
-        <a href={navElement.href}>{navElement.title}</a>
+        <a href={"/" + navElement.href}>{navElement.title}</a>
       </li>
     );
   });
