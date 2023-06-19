@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { type } from "os";
 import React from "react";
+import { BackButton } from "./Icons";
 
 function OrderSideButton({ active, onClick, children }: { active: boolean, children: string, onClick?: () => any }) {
 
@@ -34,10 +35,7 @@ export default function OrderSidebar(
                 <div className="space-y-3">
                     <div className="flex items-center">
                         <h2 className="text-xl font-bold">
-                            <a href="#" className="underline flex">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-arrow-back-up" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round"> <path stroke="none" d="M0 0h24v24H0z" fill="none" /> <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" /> </svg>
-                                {header}
-                            </a>
+                            <BackButton href="#">{header}</BackButton>
                         </h2>
                     </div>
                     <div className="flex-1">
