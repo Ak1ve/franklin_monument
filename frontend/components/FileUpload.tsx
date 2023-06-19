@@ -2,7 +2,7 @@ import { Section } from "@/forms/Base";
 
 export default function FileUpload() {
   return (
-    <Section className="mt-5 hover:scale-105 transition-all">
+    <Section className="mt-5" innerClassName="hover:scale-105 transition-all">
       <label htmlFor="dropzone-file" className="w-full h-64 cursor-pointer">
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
           <svg
