@@ -92,7 +92,7 @@ export function ImageIcon(props: IconProps) {
 
 export function Kite(props: IconProps) {
     return (
-        <svg height={props.height} width={props.height} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="-51.2 -51.2 614.40 614.40" xmlSpace="preserve" transform="matrix(-1, 0, 0, 1, 0, 0)rotate(0)"><g  strokeWidth="0"></g><g strokeLinecap="round" strokeLinejoin="round" strokeWidth="4.096"></g><g > <g> <g> <polygon points="227.256,27.846 184.071,295.593 339.537,140.126 "></polygon> </g> </g> <g> <g> <polygon points="371.874,172.463 216.407,327.929 484.154,284.744 "></polygon> </g> </g> <g> <g> <polygon points="264.084,0 371.874,107.79 479.664,0 "></polygon> </g> </g> <g> <g> <polygon points="404.21,140.126 512,247.916 512,32.336 "></polygon> </g> </g> <g> <g> <path d="M161.684,317.979c-14.539,14.539-25.84,15.794-42.946,17.695c-19.76,2.197-44.35,4.928-70.232,30.811 c-25.884,25.882-28.615,50.473-30.811,70.232C15.794,453.822,14.539,465.124,0,479.664L32.336,512 c25.882-25.882,28.614-50.473,30.811-70.232c1.901-17.105,3.155-28.407,17.695-42.946c14.539-14.539,25.84-15.794,42.946-17.695 c19.76-2.197,44.35-4.928,70.232-30.811L161.684,317.979z"></path> </g> </g> </g></svg>
+        <svg fill="currentColor" height={props.height} width={props.width} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xmlSpace="preserve"><g strokeWidth="0"></g><g strokeLinecap="round" strokeLinejoin="round"></g><g > <g> <g> <polygon points="227.256,27.846 184.071,295.593 339.537,140.126 "></polygon> </g> </g> <g> <g> <polygon points="371.874,172.463 216.407,327.929 484.154,284.744 "></polygon> </g> </g> <g> <g> <polygon points="264.084,0 371.874,107.79 479.664,0 "></polygon> </g> </g> <g> <g> <polygon points="404.21,140.126 512,247.916 512,32.336 "></polygon> </g> </g> <g> <g> <path d="M161.684,317.979c-14.539,14.539-25.84,15.794-42.946,17.695c-19.76,2.197-44.35,4.928-70.232,30.811 c-25.884,25.882-28.615,50.473-30.811,70.232C15.794,453.822,14.539,465.124,0,479.664L32.336,512 c25.882-25.882,28.614-50.473,30.811-70.232c1.901-17.105,3.155-28.407,17.695-42.946c14.539-14.539,25.84-15.794,42.946-17.695 c19.76-2.197,44.35-4.928,70.232-30.811L161.684,317.979z"></path> </g> </g> </g></svg>
     );
 }
 
@@ -124,8 +124,8 @@ export const XButton = generateIconButton(X, {
     textFacing: "left"
 });
 export const KiteButton = generateIconButton(Kite, {
-    width: "30",
-    height: "30",
+    width: "40",
+    height: "40",
     textFacing: "right",
-
+    className: "flex"
 });
