@@ -1,11 +1,10 @@
-// CODE
-
 import Base from "../Base";
-
+import FileUpload from "@/components/FileUpload";
 
 export default function Proofs() {
-    return (
+  return (
     <Base sectionHeader="Based and Redpilled">
+      <FileUpload />
     </Base>
-    );
+  );
 }
