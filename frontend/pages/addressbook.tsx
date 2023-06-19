@@ -1,3 +1,4 @@
+import Address from "@/components/Address";
 import Navbar from "@/components/Navbar";
 
 export default function AddressBook() {
@@ -5,6 +6,7 @@ export default function AddressBook() {
     <div>
       <Navbar active="Tasks" />
       <div>Address Book</div>
+      <Address />
     </div>
   );
 }
