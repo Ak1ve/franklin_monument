@@ -126,6 +126,7 @@ export default function Placement() {
     faceStone: "north",
     foundationLength: "50",
     foundationWidth: "50",
+    notes: "N/A",
   });
 
   const options = [
