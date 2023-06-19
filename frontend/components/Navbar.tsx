@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Kite, KiteButton } from "./Icons";
 
 const navElements = [
   { title: "Dashboard", href: "dashboard" },
@@ -24,7 +25,9 @@ export default function Navbar({ active = navElements[0].title }) {
   return (
     <nav className="bg-gray-800 shadow shadow-gray-300 w-100 px-8 md:px-auto">
       <div className="md:h-16 h-28 mx-auto md:px-4 container flex items-center justify-between flex-wrap md:flex-nowrap">
-        <div className="text-sky-500 md:order-1 text-xl">Franklin Monument</div>
+        <div className="text-sky-500 md:order-1 text-xl">
+          Franklin Monument
+        </div>
         <div className="text-gray-600 order-3 w-full md:w-auto md:order-2">
           <ul className="flex font-semibold justify-between">
             {navbarElements}

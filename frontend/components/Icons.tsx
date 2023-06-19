@@ -72,25 +72,45 @@ export function X(props: IconProps) {
     )
 }
 
+export function PDF(props: IconProps) {
+    return (
+        <svg className={props.iconClassName} width={props.width} height={props.height} viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><g><path d="M325,105H250a5,5,0,0,1-5-5V25a5,5,0,0,1,10,0V95h70a5,5,0,0,1,0,10Z"/><path d="M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z"/><path d="M300,380H100a30,30,0,0,1-30-30V275a5,5,0,0,1,10,0v75a20,20,0,0,0,20,20H300a20,20,0,0,0,20-20V275a5,5,0,0,1,10,0v75A30,30,0,0,1,300,380Z"/><path d="M275,280H125a5,5,0,0,1,0-10H275a5,5,0,0,1,0,10Z"/><path  d="M200,330H125a5,5,0,0,1,0-10h75a5,5,0,0,1,0,10Z"/><path d="M325,280H75a30,30,0,0,1-30-30V173.17a30,30,0,0,1,30-30h.2l250,1.66a30.09,30.09,0,0,1,29.81,30V250A30,30,0,0,1,325,280ZM75,153.17a20,20,0,0,0-20,20V250a20,20,0,0,0,20,20H325a20,20,0,0,0,20-20V174.83a20.06,20.06,0,0,0-19.88-20l-250-1.66Z"/><path d="M145,236h-9.61V182.68h21.84q9.34,0,13.85,4.71a16.37,16.37,0,0,1-.37,22.95,17.49,17.49,0,0,1-12.38,4.53H145Zm0-29.37h11.37q4.45,0,6.8-2.19a7.58,7.58,0,0,0,2.34-5.82,8,8,0,0,0-2.17-5.62q-2.17-2.34-7.83-2.34H145Z"/><path d="M183,236V182.68H202.7q10.9,0,17.5,7.71t6.6,19q0,11.33-6.8,18.95T200.55,236Zm9.88-7.85h8a14.36,14.36,0,0,0,10.94-4.84q4.49-4.84,4.49-14.41a21.91,21.91,0,0,0-3.93-13.22,12.22,12.22,0,0,0-10.37-5.41h-9.14Z"/><path  d="M245.59,236H235.7V182.68h33.71v8.24H245.59v14.57h18.75v8H245.59Z"/></g></svg>
+    );
+}
+
+export function FileIcon(props: IconProps) {
+    return (
+        <svg  enable-background="new 0 0 48 48" height={props.height} id="Layer_1" version="1.1" viewBox="0 0 48 48" width={props.width} xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"><path clipRule="evenodd" d="M37,47H11c-2.209,0-4-1.791-4-4V5c0-2.209,1.791-4,4-4h18.973  c0.002,0,0.005,0,0.007,0h0.02H30c0.32,0,0.593,0.161,0.776,0.395l9.829,9.829C40.84,11.407,41,11.68,41,12l0,0v0.021  c0,0.002,0,0.003,0,0.005V43C41,45.209,39.209,47,37,47z M31,4.381V11h6.619L31,4.381z M39,13h-9c-0.553,0-1-0.448-1-1V3H11  C9.896,3,9,3.896,9,5v38c0,1.104,0.896,2,2,2h26c1.104,0,2-0.896,2-2V13z M33,39H15c-0.553,0-1-0.447-1-1c0-0.552,0.447-1,1-1h18  c0.553,0,1,0.448,1,1C34,38.553,33.553,39,33,39z M33,31H15c-0.553,0-1-0.447-1-1c0-0.552,0.447-1,1-1h18c0.553,0,1,0.448,1,1  C34,30.553,33.553,31,33,31z M33,23H15c-0.553,0-1-0.447-1-1c0-0.552,0.447-1,1-1h18c0.553,0,1,0.448,1,1C34,22.553,33.553,23,33,23  z" fillRule="evenodd"/></svg>
+    );
+}
+
+export function ImageIcon(props: IconProps) {
+    return (
+        <svg height={props.height} width={props.height} className={props.iconClassName} version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"  xmlnsXlink="http://www.w3.org/1999/xlink"><g fill-rule="evenodd"  stroke="none" strokeWidth="1"><g><path d="M22,24.0457281 L22,18 L11,18 L11,25 L11,25 L13.5,23 L14.9579388,24.2496618 L18.5930302,21 L22,24.0457281 L22,24.0457281 L22,24.0457281 Z M19.5,3 L9.00276013,3 C7.89666625,3 7,3.89833832 7,5.00732994 L7,27.9926701 C7,29.1012878 7.89092539,30 8.99742191,30 L24.0025781,30 C25.1057238,30 26,29.1017876 26,28.0092049 L26,10.5 L26,10 L20,3 L19.5,3 L19.5,3 L19.5,3 Z M19,4 L8.9955775,4 C8.44573523,4 8,4.45526288 8,4.99545703 L8,28.004543 C8,28.5543187 8.45470893,29 8.9999602,29 L24.0000398,29 C24.5523026,29 25,28.5550537 25,28.0066023 L25,11 L20.9979131,11 C19.8944962,11 19,10.1134452 19,8.99408095 L19,4 L19,4 Z M20,4.5 L20,8.99121523 C20,9.54835167 20.4506511,10 20.9967388,10 L24.6999512,10 L20,4.5 L20,4.5 Z M10,17 L10,27 L23,27 L23,17 L10,17 L10,17 Z M14,21 C14.5522848,21 15,20.5522848 15,20 C15,19.4477152 14.5522848,19 14,19 C13.4477152,19 13,19.4477152 13,20 C13,20.5522848 13.4477152,21 14,21 L14,21 Z"/></g></g></svg>
+    )
+}
+
+export function Kite(props: IconProps) {
+    return (
+        <svg height={props.height} width={props.width} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xmlSpace="preserve"><g strokeWidth="0"></g><g strokeLinecap="round" strokeLinejoin="round"></g><g> <g> <g> <polygon points="227.256,27.846 184.071,295.593 339.537,140.126 "></polygon> </g> </g> <g> <g> <polygon points="371.874,172.463 216.407,327.929 484.154,284.744 "></polygon> </g> </g> <g> <g> <polygon points="264.084,0 371.874,107.79 479.664,0 "></polygon> </g> </g> <g> <g> <polygon points="404.21,140.126 512,247.916 512,32.336 "></polygon> </g> </g> <g> <g> <path d="M161.684,317.979c-14.539,14.539-25.84,15.794-42.946,17.695c-19.76,2.197-44.35,4.928-70.232,30.811 c-25.884,25.882-28.615,50.473-30.811,70.232C15.794,453.822,14.539,465.124,0,479.664L32.336,512 c25.882-25.882,28.614-50.473,30.811-70.232c1.901-17.105,3.155-28.407,17.695-42.946c14.539-14.539,25.84-15.794,42.946-17.695 c19.76-2.197,44.35-4.928,70.232-30.811L161.684,317.979z"></path> </g> </g> </g></svg>
+    );
+}
+
 export const UserButton = generateIconButton(User, {
     width: "30",
     height: "30",
     className: "hover:scale-125 transition-all"
 });
-
-
 export const TrashButton = generateIconButton(Trash, {
     width: "20",
     height: "20",
     className: "hover:text-red-600 transition-all hover:scale-125 flex"
 });
-
 export const EditButton = generateIconButton(Edit, {
     width: "20",
     height: "20",
     className: "hover:text-blue-600 transition-all hover:scale-125 flex"
 });
-
 export const BackButton = generateIconButton(Back, {
     width: "20",
     height: "20",
@@ -102,4 +122,9 @@ export const XButton = generateIconButton(X, {
     height: "20",
     className: "hover:text-red-600 transition-all hover:scale-125 flex",
     textFacing: "left"
-})
+});
+export const KiteButton = generateIconButton(Kite, {
+    width: "30",
+    height: "30",
+    textFacing: "right",
+});
