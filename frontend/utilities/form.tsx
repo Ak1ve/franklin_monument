@@ -70,7 +70,7 @@ export const basicCheckbox: ElementFunc<Omit<StandardCheckboxProps, "value">> =
 export const basicDatepicker: ElementFunc<Omit<StandardDatepickerProps, "value" | "onChange">> =
     basicGenerate((props, updater, prop, value) => {
         return (
-            <StandardDatepicker {...props} value={value} onChange={(x: any) => updateProp(updater, prop, x.target.value)} />
+            <StandardDatepicker {...props} value={value !== null ? value : ""} onChange={(x: any) => updateProp(updater, prop, x.target.value)} />
         );
     });
 

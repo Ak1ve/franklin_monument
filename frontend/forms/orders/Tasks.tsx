@@ -14,6 +14,7 @@ import { getSelectValue, normalizeSelectValue } from "@/utilities/select";
 import Collapse from "@/components/Collapse";
 import classNames from "classnames";
 import StretchButton from "@/components/StretchButton";
+import { Edit, EditButton, Trash, TrashButton } from "@/components/Icons";
 
 const tasks = [{ id: 1, label: "Task 1", description: "This is a description", isDeleted: false },
 { id: 2, label: "Task 2", description: "Words are really cool!", isDeleted: false },
@@ -173,19 +174,19 @@ const items: Array<OrderItem> = [
                 comments: [
                     {
                         id: 1,
-                        user: {id: 5, userName: "USERNAME"},
+                        user: { id: 5, userName: "USERNAME" },
                         postedOn: new Date(2020, 5),
                         content: "This is a comment that is nice and fancy!!"
                     },
                     {
                         id: 2,
-                        user: {id: 5, userName: "USERNAME"},
+                        user: { id: 5, userName: "USERNAME" },
                         postedOn: new Date(2020, 5),
                         content: "This is a comment that is nice and fancy!!"
                     },
                     {
                         id: 3,
-                        user: {id: 5, userName: "USERNAME"},
+                        user: { id: 5, userName: "USERNAME" },
                         postedOn: new Date(2020, 5),
                         content: "This is a comment that is nice and fancy!!"
                     }
@@ -265,15 +266,18 @@ export function getTaskStatus(task: UserTask): TaskStatus {
     return TaskStatus.NOT_STARTED
 }
 
-export function Comment({comment}: {comment: TaskComment}) {
+export function Comment({ comment }: { comment: TaskComment }) {
     return (
         <div className="bg-gray-50 rounded-xl p-3 mb-3 last:mb-0">
-            <div className="flex justify-between">
-                <div>{comment.user.userName}</div>
-                <svg xmlns="http://www.w3.org/2000/svg" className="text-center align-middle"  width="16" height="16" fill="currentColor" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg>
+            <div className="flex">
+                <div className="text-sm">{comment.user.userName} <small className="text-gray-400">{comment.postedOn.toLocaleDateString()} {comment.postedOn.toLocaleTimeString()}</small></div>
+                <EditButton addClass="ml-auto" title="Edit Comment" />
+                {/* ADD BEHAVIOR */}
+                <TrashButton title="Delete Comment" />
             </div>
+            <p className="ml-4">{comment.content}</p>
         </div>
-    );   
+    );
 }
 
 
@@ -304,18 +308,18 @@ export function Task({ task, catalogedTasks }: { task: UserTask, catalogedTasks:
                 <div>
                     {
                         task.startedOn === null ?
-                        <span className="hover:underline text-blue-400 hover:cursor-pointer">Force Start</span> :
-                        <span className="color-secondary badge">{task.startedOn.toLocaleDateString() + " " + task.startedOn.toLocaleTimeString()}</span>
+                            <span className="hover:underline text-blue-400 hover:cursor-pointer">Force Start</span> :
+                            <span className="color-secondary badge">{task.startedOn.toLocaleDateString() + " " + task.startedOn.toLocaleTimeString()}</span>
                     }
                 </div>
                 <div>
                     {
-                        task.finishedOn === null ? 
-                            task.startedOn === null ? 
-                            <span className="text-gray-600 italic">Not Finished</span> :
-                            <span className="hover:underline text-blue-400 hover:cursor-pointer">Mark as Complete</span>
-                        :
-                        <span className="color-completed badge">{task.finishedOn.toLocaleDateString() + " " + task.finishedOn.toLocaleTimeString()}</span>
+                        task.finishedOn === null ?
+                            task.startedOn === null ?
+                                <span className="text-gray-600 italic">Not Finished</span> :
+                                <span className="hover:underline text-blue-400 hover:cursor-pointer">Mark as Complete</span>
+                            :
+                            <span className="color-completed badge">{task.finishedOn.toLocaleDateString() + " " + task.finishedOn.toLocaleTimeString()}</span>
                     }
                 </div>
                 <div>
@@ -323,7 +327,7 @@ export function Task({ task, catalogedTasks }: { task: UserTask, catalogedTasks:
                 </div>
             </div>
             <Collapse className="bg-gray-200 rounded-xl p-3 mt-3" visible={showComments}>
-                {task.comments.map(x => <Comment comment={x} key={x.id}/>)}
+                {task.comments.map(x => <Comment comment={x} key={x.id} />)}
             </Collapse>
         </div>
     </>
@@ -361,11 +365,11 @@ export function TasksCard(item: OrderItem) {
                     </div>
                     <p>{item.notes}</p>
                     <SpecificationCards orderItem={item} catalogedItem={item.catalogedItem} showOptions={true} />
-                    <StretchButton initialState={true} containerClass="mt-3" buttonClass={"rounded-full px-4 " + getItemStatus(item)} onClick={() => {setShowTasks(!showTasks)}}>Tasks</StretchButton>
+                    <StretchButton initialState={true} containerClass="mt-3" buttonClass={"rounded-full px-4 " + getItemStatus(item)} onClick={() => { setShowTasks(!showTasks) }}>Tasks</StretchButton>
                     <Collapse visible={showTasks}>
-                    <div className="">
-                        {item.userTasks.map(x => <Task task={x} catalogedTasks={catalogedTasks} key={x.id} />)}
-                    </div>
+                        <div className="">
+                            {item.userTasks.map(x => <Task task={x} catalogedTasks={catalogedTasks} key={x.id} />)}
+                        </div>
                     </Collapse>
                 </div>
             </Section>
