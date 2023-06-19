@@ -1,5 +1,6 @@
 import React from "react";
 import { ButtonTypes, StandardButton } from "./Inputs";
+import { XButton } from "./Icons";
 
 
 export interface ModalProps {
@@ -26,14 +27,7 @@ export default function Modal(props: ModalProps) {
                                     <h3 className="text-2xl font-semibold">
                                         {props.title}
                                     </h3>
-                                    <button
-                                        className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                        onClick={props.onExit}
-                                    >
-                                        <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
-                                            x
-                                        </span>
-                                    </button>
+                                    <XButton addClass="ml-auto p-1" onClick={props.onExit} />
                                 </div>
                                 {/*body*/}
                                 <div className="p-10 w-full overflow-y-scroll h-96">

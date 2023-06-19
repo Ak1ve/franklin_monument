@@ -14,7 +14,7 @@ import { getSelectValue, normalizeSelectValue } from "@/utilities/select";
 import Collapse from "@/components/Collapse";
 import classNames from "classnames";
 import StretchButton from "@/components/StretchButton";
-import { Edit, EditButton, Trash, TrashButton } from "@/components/Icons";
+import { Edit, EditButton, Trash, TrashButton, UserButton } from "@/components/Icons";
 
 const tasks = [{ id: 1, label: "Task 1", description: "This is a description", isDeleted: false },
 { id: 2, label: "Task 2", description: "Words are really cool!", isDeleted: false },
@@ -270,7 +270,8 @@ export function Comment({ comment }: { comment: TaskComment }) {
     return (
         <div className="bg-gray-50 rounded-xl p-3 mb-3 last:mb-0">
             <div className="flex">
-                <div className="text-sm">{comment.user.userName} <small className="text-gray-400">{comment.postedOn.toLocaleDateString()} {comment.postedOn.toLocaleTimeString()}</small></div>
+                <UserButton href="#" />
+                <div className="text-m">{comment.user.userName} <small className="text-gray-400 text-xs">{comment.postedOn.toLocaleDateString()} {comment.postedOn.toLocaleTimeString()}</small></div>
                 <EditButton addClass="ml-auto" title="Edit Comment" />
                 {/* ADD BEHAVIOR */}
                 <TrashButton title="Delete Comment" />

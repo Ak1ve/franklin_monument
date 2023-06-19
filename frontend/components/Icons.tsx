@@ -33,10 +33,10 @@ function generateIconButton(component: (props: IconProps) => React.ReactNode, de
                 {component({ width, height, iconClassName })} {children}
             </button>
         );
-        if ("href" !== undefined) {
+        if (href !== undefined) {
             return <a href={href}>{child}</a>
         }
-        return {child}
+        return child;
     }
     func.DEFAULT = defaultProps;
     return func;
@@ -60,6 +60,25 @@ export function Back(props: IconProps) {
     );
 }
 
+export function User(props: IconProps) {
+    return (
+        <svg className={props.iconClassName}  width={props.width} height={props.height} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g data-name="Layer 7" id="Layer_7"><path d="M19.75,15.67a6,6,0,1,0-7.51,0A11,11,0,0,0,5,26v1H27V26A11,11,0,0,0,19.75,15.67ZM12,11a4,4,0,1,1,4,4A4,4,0,0,1,12,11ZM7.06,25a9,9,0,0,1,17.89,0Z"/></g></svg>
+    )
+}
+
+export function X(props: IconProps) {
+    return (
+        <svg className={props.iconClassName} height={props.height} viewBox="0 0 16 16" width={props.width} xmlns="http://www.w3.org/2000/svg"><polygon points="8 9.414 3.707 13.707 2.293 12.293 6.586 8 2.293 3.707 3.707 2.293 8 6.586 12.293 2.293 13.707 3.707 9.414 8 13.707 12.293 12.293 13.707 8 9.414"/></svg>
+    )
+}
+
+export const UserButton = generateIconButton(User, {
+    width: "30",
+    height: "30",
+    className: "hover:scale-125 transition-all"
+});
+
+
 export const TrashButton = generateIconButton(Trash, {
     width: "20",
     height: "20",
@@ -78,3 +97,9 @@ export const BackButton = generateIconButton(Back, {
     className: "hover:scale-125 transition-all hover:underline flex",
     textFacing: "right"
 });
+export const XButton = generateIconButton(X, {
+    width: "20",
+    height: "20",
+    className: "hover:text-red-600 transition-all hover:scale-125 flex",
+    textFacing: "left"
+})

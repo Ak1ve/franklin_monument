@@ -11,10 +11,10 @@ export default function Base({ sectionHeader, subheader, children, className }: 
     );
 }
 
-export function Section({ className, children}: { children?: any, className?: string}) {
+export function Section({ className, children, innerClassName}: { children?: any, className?: string, innerClassName?: string}) {
     return (
         <div className={"flex w-full justify-center " + className}>
-            <div className="bg-white shadow shadow-gray-200 w-8/12 rounded-xl drop-shadow-xl">
+            <div className={"bg-white shadow shadow-gray-200 w-8/12 rounded-xl drop-shadow-xl " + innerClassName}>
                 <div className="px-3">
                     {children}
                 </div>
