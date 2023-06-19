@@ -84,11 +84,11 @@ export default function Order(postData: any) {
   }
   // <Overview initialState={emptyOrderOverview} onSave={(x: OrderOverview) => {console.log(x)}}/>
   return (
-    <>
+    <div className="overflow-x-clip">
       <Navbar active="*****" />
       <OrderSidebar header="Order" navs={navs}>
         {bodyContent}
       </OrderSidebar>
-    </>
+    </div>
   );
 }

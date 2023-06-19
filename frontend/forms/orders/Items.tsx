@@ -228,8 +228,8 @@ export function SpecificationCards({ orderItem, catalogedItem, showOptions }: { 
 export function OrderItemCard(item: OrderItem) {
     const [showOptions, setShowOptions] = useState(false);
     return (
-        <li className="mt-5 w-full flex justify-center hover:scale-105 hover:cursor-pointer" key={item.id as string}>
-            <Section className="transition">
+        <li className="mt-5 w-full flex justify-center" key={item.id as string}>
+            <Section className="transition" innerClassName="hover:scale-105 hover:cursor-pointer">
                 <div className="px-10 py-5" onMouseEnter={() => setShowOptions(true)} onMouseLeave={() => setShowOptions(false)}>
                     <div className="flex justify-between">
                         <h3 className="text-lg align-text-top">{item.catalogedItem.type} <span className="text-sm text-gray-500 align-text-bottom">{item.catalogedItem.subType}</span></h3>
@@ -306,7 +306,7 @@ export default function Items(props: ItemsProps) {
                 {/* TODO remove if not editing tasks */}
                 <ModalSection header={<div className="flex w-100 justify-between">
                     Tasks
-                    <StandardButton className="text-sm">Auto Assign Tasks</StandardButton>
+                <StandardButton className="text-sm">Auto Assign Tasks</StandardButton>
                 </div>}>
                     {itemModalState[0].catalogedItem.tasks.filter(task => !task.isDeleted).map(task => (
                         <div className="grid grid-cols-2 mb-3 hover:bg-green-50 outline outline-1 outline-gray-300 p-3 rounded-xl" key={task.id}>
