@@ -74,7 +74,7 @@ function Order({ order }: { order: OrderType }) {
       {x}
     </span>
   ));
-  const header = (<div className="flex text-black">
+  const header = (<div className="flex">
     <span className={classNames("mr-2 badge", colorStatus(order.status))}>
       {order.status}
     </span>
@@ -154,9 +154,7 @@ function Order({ order }: { order: OrderType }) {
 export default function OrderList() {
   const orderElements = orders.map((x) => <Order key={x as any} order={x} />);
   const [visible, setVisible] = useState(false);
-
-  return (
-    <div className="gap-2 grid place-items-center my-4">
+  /* <div className="gap-2 grid place-items-center my-4">
       <div className="mt-5 md:w-7/12 w-11/12 text-lg">
         <label
           htmlFor="default-search"
@@ -205,5 +203,10 @@ export default function OrderList() {
       <Collapse visible={visible}>Hello there!</Collapse>
       {orderElements}
     </div>
+    */
+  return (
+    <ListView searchPlaceholder="Search orders..." filter="Hello">
+      {orderElements}
+    </ListView>
   );
 }
