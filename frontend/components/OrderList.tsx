@@ -2,6 +2,7 @@ import classNames from "classnames";
 import Collapse from "./Collapse";
 import { useState } from "react";
 import StretchButton from "./StretchButton";
+import ListView, { ListCard } from "@/forms/ListView";
 
 type CemeteryType = {
   id: Number;
@@ -73,6 +74,32 @@ function Order({ order }: { order: OrderType }) {
       {x}
     </span>
   ));
+  const header = (<div className="flex text-black">
+    <span className={classNames("mr-2 badge", colorStatus(order.status))}>
+      {order.status}
+    </span>
+    <a
+      className="hover:text-sky-300 underline text-lg font-medium"
+      href={`/orders/${order.id}`}
+    >
+      {order.deceased}
+    </a>
+    <div className="ml-auto text-green-700 bg-green-200 rounded-full px-2.5">
+      {order.tasks as any}%
+    </div>
+  </div>);
+  const leftSide = [
+    <>Customer: {order.customer.name}</>,
+    <>Phone: {order.customer.phone}</>,
+    <>Email:<a className="underline ml-1" href="#">{order.customer.email}</a></>,
+    <>Website:<a className="underline ml-1" href="#">{order.customer.email}</a></>,
+  ];
+  const rightSide = [
+    <>Cemetery: {order.cemetery.name}</>,
+    <>Address:<a className="underline ml-1" href="#">{order.cemetery.address}</a></>
+  ];
+  return <ListCard leftFields={leftSide} rightFields={rightSide} footer={items} header={header} />
+  /*
   return (
     <div className="order-card-primary" key={order.id as any}>
       <div className="flex">
@@ -121,6 +148,7 @@ function Order({ order }: { order: OrderType }) {
       <div className="flex gap-2 text-gray-600 text-sm">{items}</div>
     </div>
   );
+  */
 }
 
 export default function OrderList() {
