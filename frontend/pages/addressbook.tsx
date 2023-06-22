@@ -16,12 +16,7 @@ export function AddressCard({
 }) {
   const header = (
     <div className="flex">
-      <a
-        className="hover:text-sky-300 underline text-lg font-medium"
-        href={`${address.organization}`}
-      >
-        {address.organization}
-      </a>
+      <div className="text-lg font-medium">{address.organization}</div>
       <EditButton addClass="ml-auto" title="Edit Address" onClick={onClick} />
       <TrashButton title="Delete Address" />
     </div>
@@ -36,18 +31,23 @@ export function AddressCard({
       </a>
     </>,
     <>
-      Website:
-      <a className="underline ml-1" href={address.website}>
-        {address.website}
+      Fax:
+      <a className="underline ml-1" href="#">
+        {address.fax_number}
       </a>
     </>,
   ];
   const rightSide = [
-    <>Cemetery: {address.organization}</>,
     <>
-      Address:
+      Cemetery Address:
       <a className="underline ml-1" href="#">
         {address.address}
+      </a>
+    </>,
+    <>
+      Website:
+      <a className="underline ml-1" href={address.website}>
+        {address.website}
       </a>
     </>,
   ];
@@ -81,6 +81,16 @@ export default function AddressBook() {
       website: "https://qhipp.dev",
       notes: "The coolest guy",
       address: "123 Sesame St",
+    },
+    {
+      name: "Austin Rockwell",
+      organization: "Among Us Cemetery",
+      email: "ANR@noemail.com",
+      phone_number: "1234567890",
+      fax_number: "0987654321",
+      website: "https://austinrockwell.net",
+      notes: "The other guy",
+      address: "69 Mullberry St",
     },
   ];
   const addressElements = addresses.map((x) => (
