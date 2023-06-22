@@ -74,7 +74,6 @@ function Order({ order }: { order: OrderType }) {
   ));
   const header = (<div className="flex">
     <HeaderBadge className={colorStatus(order.status)}>{order.status}</HeaderBadge>
-  
     <a className="hover:text-sky-300 underline text-lg font-medium" href={`/orders/${order.id}`}>
       {order.deceased}
     </a>

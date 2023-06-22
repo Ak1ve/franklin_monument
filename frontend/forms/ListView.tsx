@@ -19,7 +19,7 @@ export function FooterBadge({ children, className }: { children?: any, className
 }
 
 export function HeaderBadge({ children, className }: { children?: any, className?: string }) {
-  return (<span className={"mr-2 badge" + className}>
+  return (<span className={"mr-2 badge " + className}>
     {children}
   </span>);
 }
