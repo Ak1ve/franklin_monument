@@ -1,48 +1,58 @@
 import Navbar from "@/components/Navbar";
-import ListView, { FooterBadge, HeaderBadge } from "@/forms/ListView";
+import ListView, { FooterBadge, HeaderBadge, ListCard } from "@/forms/ListView";
 import { CatalogedItem, ItemOption } from "@/models/CatalogedItem";
+import { pool } from "@/utilities/api";
 
 const catalogedItems: CatalogedItem[] = [
-  {id: 1, type: "Monument", subType: "Memorial", description: "This is the description of the Cataloged Item.  It is used",
-  commissionable: true, sizeable: true, isDeleted: false, tasks: [{}, {}, {}], options: [{
-    id: 1, key: "Color", values: [{}, {}, {}, {}], isDeleted: false, allowMulti: true, allowNull: false, 
-  }]},
-  {id: 2, type: "Base", subType: "Memorial", description: "This is the description of the Cataloged Item.  It is used.  BAHAHAH NOT",
-  commissionable: true, sizeable: true, isDeleted: false, tasks: [{}, {}, {}], options: [{
-    id: 1, key: "Color", values: [{}, {}, {}], isDeleted: false, allowMulti: true, allowNull: false, 
-  }]},
+  {
+    id: 1, type: "Monument", subType: "Memorial", description: "This is the description of the Cataloged Item.  It is used",
+    commissionable: true, sizeable: true, isDeleted: false, tasks: [], options: [{
+      id: 1, key: "Color", values: [], isDeleted: false, allowMulti: true, allowNull: false,
+    }]
+  },
+  {
+    id: 2, type: "Base", subType: "Memorial", description: "This is the description of the Cataloged Item.  It is used.  BAHAHAH NOT",
+    commissionable: true, sizeable: true, isDeleted: false, tasks: [], options: [{
+      id: 1, key: "Color", values: [], isDeleted: false, allowMulti: true, allowNull: false,
+    }, {
+      id: 3, key: "Color", values: [], isDeleted: false, allowMulti: true, allowNull: false,
+    },
+    {
+      id: 4, key: "Color", values: [], isDeleted: false, allowMulti: true, allowNull: false,
+    },
+    {
+      id: 5, key: "Color", values: [], isDeleted: false, allowMulti: true, allowNull: false,
+    },
+    {
+      id: 6, key: "Color", values: [], isDeleted: false, allowMulti: true, allowNull: false,
+    }]
+  },
 ]
 
-export function optionProgressionColor(option: ItemOption) {
-  let amt = option.values.length;
-  const colorStrength = Math.max(Math.min(amt, 1), 9).toString() + "00";
-  return `bg-sky-${colorStrength}`;
-}
 
-export function ItemCard({catalogedItem}: {catalogedItem: CatalogedItem}) {
-  const items = catalogedItem.options.map((x) => (
-    <FooterBadge key={x.id} className={optionProgressionColor(x)}>{x.key}</FooterBadge>
+export function ItemCard({ catalogedItem }: { catalogedItem: CatalogedItem }) {
+  const options = catalogedItem.options.map((x) => (
+    <FooterBadge key={x.id} className="bg-gray-200">{x.key}</FooterBadge>
   ));
   const header = (<div className="flex">
-    <HeaderBadge className="bg-sky-100">{catalogedItem.subType}</HeaderBadge>
-    <a className="hover:text-sky-300 underline text-lg font-medium" href={`/items/${catalogedItem.id}`}>
+    <HeaderBadge className="bg-fuchsia-200 text-fuchsia-500">{catalogedItem.subType}</HeaderBadge>
+    <a className="text-fuchsia-500 hover:text-fuchsia-300 underline text-lg font-medium" href={`/items/${catalogedItem.id}`}>
       {catalogedItem.type}
     </a>
-    <div className="ml-auto text-green-700 bg-green-200 rounded-full px-2.5">
-      {order.tasks as any}%
-    </div>
   </div>);
-  const leftSide = [
-    <>Customer: {order.customer.name}</>,
-    <>Phone: {order.customer.phone}</>,
-    <>Email:<a className="underline ml-1" href="#">{order.customer.email}</a></>,
-    <>Website:<a className="underline ml-1" href="#">{order.customer.email}</a></>,
+  const leftSide = [<>{catalogedItem.description}</>
   ];
   const rightSide = [
-    <>Cemetery: {order.cemetery.name}</>,
-    <>Address:<a className="underline ml-1" href="#">{order.cemetery.address}</a></>
+    <>This item {pool(catalogedItem.commissionable)} commissionable</>,
+    <>This item {pool(catalogedItem.sizeable)} sizeable</>
   ];
-  return <ListCard leftFields={leftSide} rightFields={rightSide} footer={<div className="flex gap-2 text-gray-600 text-sm">{items}</div>} header={header} />
+  const footer = (
+    <div className="flex gap-2 text-gray-600 text-sm">
+      {options}
+      <a className="rounded-full px-2 color-active ml-auto hover:scale-105 trasition-all hover:cursor-pointer hover:underline" href={`/tasks/${catalogedItem.id}`}>{catalogedItem.tasks.length} tasks</a>
+    </div>
+  );
+  return <ListCard leftFields={leftSide} rightFields={rightSide} footer={footer} header={header} />
 }
 
 export default function Items() {
@@ -50,7 +60,7 @@ export default function Items() {
     <div>
       <Navbar active="Items" />
       <ListView searchPlaceholder="Search cataloged items..." filter="Hello! :)">
-
+        {catalogedItems.map(x => <ItemCard catalogedItem={x} key={x.id} />)}
       </ListView>
     </div>
   );

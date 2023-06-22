@@ -6,7 +6,7 @@ import { InputGrid, StandardButton, StandardDatepicker, StandardInput, StandardS
 import { Order, OrderOverview } from "@/models/Orders";
 import { basicCheckbox, basicDatepicker, basicInput, basicSelect, basicTextArea } from "@/utilities/form";
 import { ImmerHook, Updater, useImmer } from "use-immer";
-import { FileIcon, ImageIcon, PDF } from "@/components/Icons";
+import { FileIcon, ImageIcon, PDF, PlusButton } from "@/components/Icons";
 
 
 const cemeteries = [
@@ -49,6 +49,7 @@ export default function Overview(props: OverviewProps) {
             <PDF width="50" height="50"/>
             <FileIcon width="50" height="50"/>
             <ImageIcon width="50" height="50" />
+            <PlusButton>Add</PlusButton>
             <Section className="mt-10">
                 <h2 className="section-header">Order Information</h2>
                 {basicInput({ id: "deceasedName", label: "Deceased Name", placeholder: "Insert Text" }, overviewHook)}

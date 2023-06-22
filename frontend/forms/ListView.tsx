@@ -2,6 +2,7 @@ import Collapse from "@/components/Collapse";
 import StretchButton from "@/components/StretchButton";
 import classNames from "classnames";
 import { useState } from "react";
+import { TextSpan } from "typescript";
 
 
 export interface ListCardProps {
@@ -11,17 +12,13 @@ export interface ListCardProps {
   footer?: React.ReactNode
 }
 
-export function FooterBadge({ children, className }: { children?: any, className?: string }) {
+export function FooterBadge(props: React.HTMLProps<HTMLSpanElement>) {
   return (
-    <span className={"rounded-full px-2 " + className}>
-      {children}
-    </span>);
+    <span {...props} className={"rounded-full px-2 " + props.className} />);
 }
 
-export function HeaderBadge({ children, className }: { children?: any, className?: string }) {
-  return (<span className={"mr-2 badge " + className}>
-    {children}
-  </span>);
+export function HeaderBadge(props: React.HTMLProps<HTMLSpanElement>) {
+  return (<span  {...props} className={"mr-2 badge " + props.className}/>);
 }
 
 export function ListCard(props: ListCardProps) {

@@ -58,3 +58,7 @@ export function unflattenIDMap<K extends string | number, V>(
         return { id: x as K, value: map[x as keyof MapType<K, V>] };
     });
 }
+
+export function pool(bool: boolean) {
+    return bool ? "is" : "is not";
+  }

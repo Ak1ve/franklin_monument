@@ -96,6 +96,45 @@ export function Kite(props: IconProps) {
     );
 }
 
+export function Plus(props: IconProps) {
+    return (
+        <svg className={props.iconClassName} fill="currentColor" width={props.width} height={props.height} xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd"><path d="M11.5 0c6.347 0 11.5 5.153 11.5 11.5s-5.153 11.5-11.5 11.5-11.5-5.153-11.5-11.5 5.153-11.5 11.5-11.5zm0 1c5.795 0 10.5 4.705 10.5 10.5s-4.705 10.5-10.5 10.5-10.5-4.705-10.5-10.5 4.705-10.5 10.5-10.5zm.5 10h6v1h-6v6h-1v-6h-6v-1h6v-6h1v6z"/></svg>
+    );
+}
+
+export function Search(props: IconProps) {
+    return (
+        <svg
+                aria-hidden="true"
+                className={props.iconClassName}
+                fill="none"
+                width={props.width}
+                height={props.height}
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+    );
+}
+
+export const PlusButton = generateIconButton(Plus, {
+    width: "24",
+    height: "24",
+    className: "color-active badge transition-all hover:scale-125 flex",
+    textFacing: "left"
+});
+export const SearchButton = generateIconButton(Search, {
+    width: "",
+    height: "",
+    iconClassName: "w-5 h-5 text-gray-500 dark:text-gray-400"
+});
 export const UserButton = generateIconButton(User, {
     width: "30",
     height: "30",

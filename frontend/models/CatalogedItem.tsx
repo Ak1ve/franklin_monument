@@ -17,7 +17,7 @@ export interface ItemOption {
 }
 
 export interface CatalogedItem {
-    id: Number | string
+    id: number | string
     type: string
     subType: string
     description: string
