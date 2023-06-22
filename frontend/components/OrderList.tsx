@@ -2,7 +2,7 @@ import classNames from "classnames";
 import Collapse from "./Collapse";
 import { useState } from "react";
 import StretchButton from "./StretchButton";
-import ListView, { ListCard } from "@/forms/ListView";
+import ListView, { FooterBadge, HeaderBadge, ListCard } from "@/forms/ListView";
 
 type CemeteryType = {
   id: Number;
@@ -70,14 +70,11 @@ function colorStatus(status: string) {
 
 function Order({ order }: { order: OrderType }) { 
   const items = order.items.map((x) => (
-    <span key={x} className="bg-gray-200 rounded-full px-2">
-      {x}
-    </span>
+    <FooterBadge key={x} className="bg-gray-200">{x}</FooterBadge>
   ));
   const header = (<div className="flex">
-    <span className={classNames("mr-2 badge", colorStatus(order.status))}>
-      {order.status}
-    </span>
+    <HeaderBadge className={colorStatus(order.status)}>{order.status}</HeaderBadge>
+  
     <a className="hover:text-sky-300 underline text-lg font-medium" href={`/orders/${order.id}`}>
       {order.deceased}
     </a>
