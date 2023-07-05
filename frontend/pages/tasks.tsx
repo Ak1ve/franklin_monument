@@ -32,7 +32,7 @@ export function TaskCard({
       <HeaderBadge className={colorStatus("Active")}>{"Joe"}</HeaderBadge>
       <a
         className="hover:text-sky-300 underline text-lg font-medium"
-        href={`/tasks/${""}`}
+        href={`/tasks/${item.id}`}
       >
         {"Mama"}
       </a>
@@ -113,9 +113,6 @@ export default function Tasks() {
       <ListView searchPlaceholder="Search orders..." filter="Hello">
         {taskElements}
       </ListView>
-      {/* <Base sectionHeader="Address Book" className="mt-10">
-        <AddressCard address={addresses[0]} onClick={setShowModal} />
-      </Base> */}
     </div>
   );
 }

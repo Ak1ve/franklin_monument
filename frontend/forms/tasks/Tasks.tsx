@@ -1,12 +1,13 @@
 import { InputGrid } from "@/components/Inputs";
 import { basicInput, basicSelect, basicTextArea } from "@/utilities/form";
 import options from "tailwind-datepicker-react/types/Options";
-import { Section } from "../Base";
+import Base, { Section } from "../Base";
 import { useImmer } from "use-immer";
 import Navbar from "@/components/Navbar";
 import { StandardModal } from "@/components/Modal";
 import { useState } from "react";
 import { CatalogedTask } from "@/models/Tasks";
+import { EditButton, TrashButton } from "@/components/Icons";
 
 export function TaskForm() {
   const task = useImmer({
@@ -33,9 +34,15 @@ export function TaskCard({
 }) {
   return (
     <>
-      <Section>
-        <div>Label: {"Thing"}</div>
-        <div>Description: {"Stuff"}</div>
+      <Section className="mt-5">
+        <div className="flex">
+          <div className="text-green-400 text-xl">{task.label}</div>
+          <EditButton addClass="ml-auto" title="Edit Task" onClick={onClick} />
+          <TrashButton title="Delete Task" />
+        </div>
+        <div className="text-gray-400 text-sm mt-5">
+          Description: {task.description}
+        </div>
       </Section>
     </>
   );
@@ -52,15 +59,27 @@ export default function TaskList() {
 
   const tasks: Array<CatalogedTask> = [
     {
-      id: "",
-      label: "",
-      description: "",
+      id: "1",
+      label: "Task 1",
+      description: "This is how you do task 1",
       isDeleted: false,
     },
     {
-      id: "",
-      label: "",
-      description: "",
+      id: "2",
+      label: "Task 2",
+      description: "This is how you do task 2",
+      isDeleted: false,
+    },
+    {
+      id: "3",
+      label: "Task 3",
+      description: "This is how you do task 3",
+      isDeleted: false,
+    },
+    {
+      id: "4",
+      label: "Task 4",
+      description: "This is how you do task 4",
       isDeleted: false,
     },
   ];
@@ -71,7 +90,6 @@ export default function TaskList() {
 
   return (
     <div>
-      <Navbar active="Address Book" />
       <StandardModal
         showModal={showModal}
         title=""
