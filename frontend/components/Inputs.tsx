@@ -141,6 +141,13 @@ export function StandardCheckbox(props: StandardCheckboxProps) {
 
 export function InputGrid({ children, maxColumns = undefined }: { children: any; maxColumns?: number; }) {
   const count = Children.count(children);
+  if (count === 1) {
+    return (
+      <div className="flex flex-wrap mb-2">
+        {children}
+      </div>
+    )
+  }
   const columns = maxColumns === undefined ? count : maxColumns; 
   const numRows = Math.ceil(count / columns);
   let rows = new Array(numRows);

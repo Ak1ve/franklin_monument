@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 
 
 
@@ -61,4 +62,6 @@ export function unflattenIDMap<K extends string | number, V>(
 
 export function pool(bool: boolean) {
     return bool ? "is" : "is not";
-  }
+}
+
+export type UseStateHook<T> = [T, Dispatch<SetStateAction<T>>];

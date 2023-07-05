@@ -145,7 +145,7 @@ const items: Array<OrderItem> = [
     {
         id: 1,
         catalogedItem: basicCatalogedItem,
-        specifications: {1: [2, 3], 2: [10]},
+        specifications: { 1: [2, 3], 2: [10] },
         dimensions: {
             length: 4.5,
             width: 8.4,
@@ -205,22 +205,32 @@ function getFullSpecs(orderItem: OrderItem, catalogedItem: CatalogedItem): Array
     });
 }
 
-export function SpecificationCards({ orderItem, catalogedItem, showOptions }: { orderItem: OrderItem, catalogedItem: CatalogedItem, showOptions: boolean }) {
+export function OptionCard({ option, values, header}: { option: ItemOption, values?: ItemOptionValue[],
+    header?: JSX.Element
+}) {
+    const vals = values === undefined ? option.values : values as ItemOptionValue[];
+    
     return (
-            <Collapse visible={showOptions} className="flex flex-wrap w-100">
-                {getFullSpecs(orderItem, catalogedItem).map(obj => (
-                    <div key={obj.option.id} className="mt-2 shadow-lg drop-shadow p-1 rounded-lg bg-sky-100 mr-3">
-                        <h3 className="underline text-black text-center text-m mb-1">{obj.option.key}</h3>
-                        <div className="flex flex-wrap text-sm">
-                            {obj.values.map(val => (
-                                <div className="badge bg-white m-1">
-                                    {val.label}{val.subtext === "" ? "" : ` - ${val.subtext}`}
-                                </div>
-                            ))}
-                        </div>
+        <div className="mt-2 shadow-lg drop-shadow-sm p-1 rounded-lg bg-sky-100 mr-3">
+            {header === undefined ? <h3 className="underline text-black text-center text-m mb-1">{option.key}</h3> : header}
+            <div className="flex flex-wrap text-sm">
+                {vals.map(val => (
+                    <div className="badge bg-white m-1">
+                        {val.label}{val.subtext === "" ? "" : ` - ${val.subtext}`}
                     </div>
                 ))}
-            </Collapse>
+            </div>
+        </div>
+    )
+}
+
+export function SpecificationCards({ orderItem, catalogedItem, showOptions }: { orderItem: OrderItem, catalogedItem: CatalogedItem, showOptions: boolean }) {
+    return (
+        <Collapse visible={showOptions} className="flex flex-wrap w-100">
+            {getFullSpecs(orderItem, catalogedItem).map(obj => (
+                <OptionCard key={obj.option.id} option={obj.option} values={obj.values} />
+            ))}
+        </Collapse>
     )
 }
 
@@ -306,7 +316,7 @@ export default function Items(props: ItemsProps) {
                 {/* TODO remove if not editing tasks */}
                 <ModalSection header={<div className="flex w-100 justify-between">
                     Tasks
-                <StandardButton className="text-sm">Auto Assign Tasks</StandardButton>
+                    <StandardButton className="text-sm">Auto Assign Tasks</StandardButton>
                 </div>}>
                     {itemModalState[0].catalogedItem.tasks.filter(task => !task.isDeleted).map(task => (
                         <div className="grid grid-cols-2 mb-3 hover:bg-green-50 outline outline-1 outline-gray-300 p-3 rounded-xl" key={task.id}>
