@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Base, { Section } from "@/forms/Base";
 import ListView, { FooterBadge, HeaderBadge, ListCard } from "@/forms/ListView";
 import AddressForm from "@/forms/addressbook/Address";
+import { TaskForm } from "@/forms/tasks/Tasks";
 import { Address } from "@/models/Address";
 import { CatalogedItem, ItemOption } from "@/models/CatalogedItem";
 import { CatalogedTask } from "@/models/Tasks";
@@ -29,24 +30,22 @@ export function TaskCard({
 
   const header = (
     <div className="flex">
-      <HeaderBadge className={colorStatus("Active")}>{"Joe"}</HeaderBadge>
+      <HeaderBadge className={colorStatus("Active")}>
+        {item.subType}
+      </HeaderBadge>
       <a
         className="hover:text-sky-300 underline text-lg font-medium"
         href={`/tasks/${item.id}`}
       >
-        {"Mama"}
+        {item.type}
       </a>
       <div className="ml-auto text-green-700 bg-green-200 rounded-full px-2.5">
         {"Yo" as any}%
       </div>
     </div>
   );
-  const leftSide = [
-    <>Type: {item.type}</>,
-    <>Subtype: {item.subType}</>,
-    <>Description: {item.description} </>,
-  ];
-  const rightSide = [<>Description: {item.description}</>];
+  const leftSide = [<>Description: {item.description} </>];
+  const rightSide = [""];
 
   return (
     <ListCard
@@ -71,13 +70,15 @@ export default function Tasks() {
     {
       id: 1,
       label: "Label",
-      description: "Description",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
       isDeleted: false,
     },
     {
       id: 2,
       label: "Label2",
-      description: "Description2",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
       isDeleted: false,
     },
   ];
@@ -87,7 +88,20 @@ export default function Tasks() {
       id: 5,
       type: "Type",
       subType: "Subtype",
-      description: "Description",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
+      commissionable: true,
+      sizeable: true,
+      options: [],
+      tasks: catalogedTask,
+      isDeleted: false,
+    },
+    {
+      id: 2,
+      type: "Type2",
+      subType: "Subtype2",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
       commissionable: true,
       sizeable: true,
       options: [],
@@ -108,7 +122,7 @@ export default function Tasks() {
         onSubmit={onSubmit}
         onCancel={onCancel}
       >
-        <AddressForm />
+        <TaskForm />
       </StandardModal>
       <ListView searchPlaceholder="Search orders..." filter="Hello">
         {taskElements}
