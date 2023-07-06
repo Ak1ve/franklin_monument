@@ -9,6 +9,7 @@ import { useState } from "react";
 import { CatalogedTask } from "@/models/Tasks";
 import { EditButton, TrashButton } from "@/components/Icons";
 import DraggableList from "react-draggable-lists";
+import useWindowDimensions from "@/utilities/window";
 
 export function TaskForm() {
   const task = useImmer({
@@ -47,7 +48,7 @@ export function TaskCard({
   );
 }
 
-export default function TaskList() {
+export default function TaskList(this: any) {
   const [showModal, setShowModal] = useState(false);
 
   const onSubmit = () => {};
@@ -83,13 +84,11 @@ export default function TaskList() {
     },
   ];
 
-  //   const taskElements = tasks.map((x) => (
-  //     <TaskCard key={x as any} task={x} onClick={setShowModal} />
-  //   ));
+  const taskElements = tasks.map((x) => (
+    <TaskCard key={x as any} task={x} onClick={setShowModal} />
+  ));
 
-  const onMoveEnd = (newList: any) => {
-    console.log(newList);
-  };
+  const { height, width } = useWindowDimensions();
 
   return (
     <div>
@@ -110,19 +109,19 @@ export default function TaskList() {
           New Item
         </StandardButton>
       </div>
-      <div className="w-full">
-        <DraggableList
-          width={1500}
-          height={100}
-          rowSize={1}
-          //onMoveEnd={onMoveEnd}
-        >
+
+      <div style={{ width: 1000, margin: "0 auto" }}>
+        <DraggableList width={1000} height={100} rowSize={1}>
           {tasks.map((x) => (
             <TaskCard key={x as any} task={x} onClick={setShowModal} />
           ))}
         </DraggableList>
       </div>
       {/* {taskElements} */}
+      {/* <div>
+        <div>{width}</div>
+        <div>{height}</div>
+      </div> */}
     </div>
   );
 }
