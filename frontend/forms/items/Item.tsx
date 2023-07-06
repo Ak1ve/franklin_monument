@@ -5,7 +5,7 @@ import { basicCheckbox, basicInput, basicTextArea } from "@/utilities/form";
 import { OptionCard } from "../orders/Items";
 import { CatalogedItem, ItemOption } from "@/models/CatalogedItem";
 import { ItemCard } from "@/pages/items";
-import { EditButton, TrashButton } from "@/components/Icons";
+import { Edit, EditButton, TrashButton } from "@/components/Icons";
 import { StandardModal } from "@/components/Modal";
 import { Dispatch, SetStateAction, useState } from "react";
 import { UseStateHook } from "@/utilities/api";
@@ -149,8 +149,20 @@ function ItemOptionCard({ option }: { option: ItemOption }) {
 // TODO if an ItemOption is removed from the CatalogedItem Reference, dont DELETE the item, just remove
 // the reference.  HOWEVER if the the item option is not referenced at ALL, then delete it!
 
+function OptionValueCard({ label, sublabel }: { label: string, sublabel: string }) {
+    return (
+        <div className="w-80 rounded-xl border shadow-2xl p-4 flex">
+            <div className="text-lg">{label}</div>
+            <div className="text-sm text-gray-400 ml-1 self-end">{sublabel}</div>
+            <EditButton addClass="ml-auto self-center"/>
+            <TrashButton addClass="self-center" />
+        </div>
+    );
+}
+
 function OptionValueForm() {
     const form = useImmer({});
+
     return (
         <>
             <h2 className="section-header">Values</h2>
@@ -158,13 +170,16 @@ function OptionValueForm() {
             <div className="grid grid-cols-12">
                 <div className="col-span-10">
                     <InputGrid>
-                    {basicInput({ id: "optionValueLabel", label: "Label", placeholder: "Enter text..." }, form)}
-                    {basicInput({ id: "optionValueSublabel", label: "Additional Info", placeholder: "Enter text..." }, form)}
+                        {basicInput({ id: "optionValueLabel", label: "Label", placeholder: "Enter text..." }, form)}
+                        {basicInput({ id: "optionValueSublabel", label: "Additional Info", placeholder: "Enter text..." }, form)}
                     </InputGrid>
                 </div>
                 <div className="col-span-2 self-end mb-8">
                     <StandardButton type={ButtonTypes.ACTIVE} className="self-end">Add Value</StandardButton>
                 </div>
+            </div>
+            <div className="flex flex-wrap p-2 gap-8">
+                <OptionValueCard label="Hello!" sublabel="Gray and Yellow"/>
             </div>
         </>
     );
@@ -176,7 +191,7 @@ function OptionModal({ hook }: { hook: UseStateHook<boolean> }) {
     }
     const form = useImmer({});
     return (
-        <StandardModal title="Enter Title" showModal={hook[0]} onCancel={onCancel}>
+        <StandardModal title="Options" showModal={hook[0]} onCancel={onCancel}>
             {basicInput({ id: "optionName", label: "Option Name", placeholder: "Enter text..." }, form)}
             <InputGrid maxColumns={3}>
                 {basicCheckbox({ id: "allowMulti", label: "Allow multi-selection" }, form)}
