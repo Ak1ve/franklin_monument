@@ -109,14 +109,16 @@ export default function TaskList(this: any) {
           New Item
         </StandardButton>
       </div>
+      {!showModal && (
+        <div style={{ width: 1000, margin: "0 auto" }}>
+          <DraggableList width={1000} height={100} rowSize={1}>
+            {tasks.map((x) => (
+              <TaskCard key={x as any} task={x} onClick={setShowModal} />
+            ))}
+          </DraggableList>
+        </div>
+      )}
 
-      <div style={{ width: 1000, margin: "0 auto" }}>
-        <DraggableList width={1000} height={100} rowSize={1}>
-          {tasks.map((x) => (
-            <TaskCard key={x as any} task={x} onClick={setShowModal} />
-          ))}
-        </DraggableList>
-      </div>
       {/* {taskElements} */}
       {/* <div>
         <div>{width}</div>
