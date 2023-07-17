@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
-import OrderSidebar from "@/components/OrderSidebar";
+import Sidebar from "@/components/Sidebar";
 import {
   InputGrid,
   StandardCheckbox,
@@ -86,9 +86,9 @@ export default function Order(postData: any) {
   return (
     <div className="overflow-x-clip">
       <Navbar active="*****" />
-      <OrderSidebar header="Order" navs={navs}>
+      <Sidebar header="Order" href="/orders" navs={navs}>
         {bodyContent}
-      </OrderSidebar>
+      </Sidebar>
     </div>
   );
 }
