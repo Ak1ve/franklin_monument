@@ -1,6 +1,10 @@
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import Admin from "@/forms/users/Admin";
 import AssignableTasks from "@/forms/users/AssignableTasks";
+import CurrentTasks from "@/forms/users/CurrentTasks";
+import Information from "@/forms/users/Information";
+import Permissions from "@/forms/users/Permissions";
 import { useState } from "react";
 
 export default function UserView() {
@@ -19,14 +23,14 @@ export default function UserView() {
   let bodyContent;
   if (body === "Assignable Tasks") {
     bodyContent = <AssignableTasks />;
-    //   } else if (body === "Permissions") {
-    //     bodyContent = <Permissions />;
-    //   } else if (body === "CurrentTasks") {
-    //     bodyContent = <CurrentTasks />;
-    //   } else if (body === "Information") {
-    //     bodyContent = <Information />;
-    //   } else if (body === "Admin") {
-    //     bodyContent = <Admin />;
+  } else if (body === "Permissions") {
+    bodyContent = <Permissions />;
+  } else if (body === "Current Tasks") {
+    bodyContent = <CurrentTasks />;
+  } else if (body === "Information") {
+    bodyContent = <Information />;
+  } else if (body === "Admin") {
+    bodyContent = <Admin />;
   } else {
     bodyContent = <></>;
   }
