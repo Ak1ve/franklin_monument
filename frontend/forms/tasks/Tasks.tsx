@@ -17,15 +17,50 @@ export function TaskForm() {
     description: "The coolest guy",
   });
 
+  const options = [
+    { label: "Creation", value: "Creation" },
+    { label: "All Tasks Completed", value: "All Tasks Completed" },
+    { label: "Task 1", value: "Task 1" },
+    { label: "Task 2", value: "Task 2" },
+  ];
+
   return (
     <>
       <InputGrid>
         {basicInput({ id: "label", label: "Label" }, task)}
         {basicTextArea({ id: "description", label: "Description" }, task)}
       </InputGrid>
+      {basicSelect({ id: "label", label: "QCH", options: options }, task)}
     </>
   );
 }
+
+const tasks: Array<CatalogedTask> = [
+  {
+    id: "1",
+    label: "Task 1",
+    description: "This is how you do task 1",
+    isDeleted: false,
+  },
+  {
+    id: "2",
+    label: "Task 2",
+    description: "This is how you do task 2",
+    isDeleted: false,
+  },
+  {
+    id: "3",
+    label: "Task 3",
+    description: "This is how you do task 3",
+    isDeleted: false,
+  },
+  {
+    id: "4",
+    label: "Task 4",
+    description: "This is how you do task 4",
+    isDeleted: false,
+  },
+];
 
 export function TaskCard({
   task,
@@ -56,33 +91,6 @@ export default function TaskList(this: any) {
   const onCancel = () => {
     setShowModal(false);
   };
-
-  const tasks: Array<CatalogedTask> = [
-    {
-      id: "1",
-      label: "Task 1",
-      description: "This is how you do task 1",
-      isDeleted: false,
-    },
-    {
-      id: "2",
-      label: "Task 2",
-      description: "This is how you do task 2",
-      isDeleted: false,
-    },
-    {
-      id: "3",
-      label: "Task 3",
-      description: "This is how you do task 3",
-      isDeleted: false,
-    },
-    {
-      id: "4",
-      label: "Task 4",
-      description: "This is how you do task 4",
-      isDeleted: false,
-    },
-  ];
 
   const taskElements = tasks.map((x) => (
     <TaskCard key={x as any} task={x} onClick={setShowModal} />

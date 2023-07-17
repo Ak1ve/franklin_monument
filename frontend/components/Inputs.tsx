@@ -70,9 +70,13 @@ export function StandardInput(props: StandardInputProps) {
     props.containerClass,
     "w-full px-3 mb-3 md:mb-4 input-group"
   );
-  const inputClassName = classNames("input-primary", {
-    "input-invalid": props.errorText,
-  }, props.inputClass);
+  const inputClassName = classNames(
+    "input-primary",
+    {
+      "input-invalid": props.errorText,
+    },
+    props.inputClass
+  );
   return (
     <div className={containerClassName}>
       <label className={labelClassName} htmlFor={props.id}>
@@ -89,15 +93,15 @@ export function StandardInput(props: StandardInputProps) {
 
 export interface StandardCheckboxProps
   extends Omit<React.HTMLProps<HTMLInputElement>, "value"> {
-  id: string
-  label: string
-  errorText?: string
-  helpText?: string
-  labelClass?: string
-  helpClass?: string
-  textErrorClass?: string
-  containerClass?: string
-  inputClass?: string
+  id: string;
+  label: string;
+  errorText?: string;
+  helpText?: string;
+  labelClass?: string;
+  helpClass?: string;
+  textErrorClass?: string;
+  containerClass?: string;
+  inputClass?: string;
 }
 
 export function StandardCheckbox(props: StandardCheckboxProps) {
@@ -117,9 +121,13 @@ export function StandardCheckbox(props: StandardCheckboxProps) {
     props.containerClass,
     "w-full px-3 mb-3 md:mb-4 input-group justify-center text-center self-center"
   );
-  const inputClassName = classNames("input-primary mr-2", {
-    "input-invalid": props.errorText,
-  }, props.inputClass);
+  const inputClassName = classNames(
+    "input-primary mr-2",
+    {
+      "input-invalid": props.errorText,
+    },
+    props.inputClass
+  );
   return (
     <div className={containerClassName}>
       <label className={labelClassName} htmlFor={props.id}>
@@ -139,16 +147,18 @@ export function StandardCheckbox(props: StandardCheckboxProps) {
   );
 }
 
-export function InputGrid({ children, maxColumns = undefined }: { children: any; maxColumns?: number; }) {
+export function InputGrid({
+  children,
+  maxColumns = undefined,
+}: {
+  children: any;
+  maxColumns?: number;
+}) {
   const count = Children.count(children);
   if (count === 1) {
-    return (
-      <div className="flex flex-wrap mb-2">
-        {children}
-      </div>
-    )
+    return <div className="flex flex-wrap mb-2">{children}</div>;
   }
-  const columns = maxColumns === undefined ? count : maxColumns; 
+  const columns = maxColumns === undefined ? count : maxColumns;
   const numRows = Math.ceil(count / columns);
   let rows = new Array(numRows);
   for (let i = 0; i < numRows; i++) {
@@ -166,7 +176,7 @@ export function InputGrid({ children, maxColumns = undefined }: { children: any;
 }
 
 export interface StandardDatepickerProps
-  extends Omit<StandardInputProps, "type"> { }
+  extends Omit<StandardInputProps, "type"> {}
 
 export function StandardDatepicker(props: StandardDatepickerProps) {
   const labelClassName = classNames(props.labelClass, "input-label");
@@ -182,9 +192,13 @@ export function StandardDatepicker(props: StandardDatepickerProps) {
     props.containerClass,
     "w-full px-3 mb-3 md:mb-4 input-group"
   );
-  const inputClassName = classNames("input-primary", {
-    "input-invalid": props.errorText,
-  }, props.inputClass);
+  const inputClassName = classNames(
+    "input-primary",
+    {
+      "input-invalid": props.errorText,
+    },
+    props.inputClass
+  );
   return (
     <div className={containerClassName}>
       <label className={labelClassName} htmlFor={props.id}>
@@ -227,9 +241,13 @@ export function StandardTextArea(props: StandardTextAreaProps) {
     props.containerClass,
     "w-full px-3 mb-3 md:mb-4 input-group"
   );
-  const inputClassName = classNames("input-primary", {
-    "input-invalid": props.errorText,
-  }, props.inputClass);
+  const inputClassName = classNames(
+    "input-primary",
+    {
+      "input-invalid": props.errorText,
+    },
+    props.inputClass
+  );
   return (
     <div className={containerClassName}>
       <label className={labelClassName} htmlFor={props.id}>
