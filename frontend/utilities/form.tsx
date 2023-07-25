@@ -27,22 +27,31 @@ function updateProp<S>(updater: Updater<S>, property: keyof S | string, value: a
 }
 
 
-interface ElementFunc<P> {
-    <S>(props: P, hook: ImmerHook<S>, property?: keyof S | string): JSX.Element;
+export interface HookProps<S> {
+    hook: ImmerHook<S>
+    prop: keyof S | string
+    errorText: string
 }
 
+export type BasicProps<S, P extends React.HTMLProps<HTMLElement>> = HookProps<S> & P;
+
+interface ElementFunc<P extends React.HTMLProps<HTMLElement>> {
+    <S>(props: BasicProps<S, P>): JSX.Element;
+}
+
+
 function basicGenerate<S, P extends React.HTMLProps<HTMLElement>>(
-    generator: (props: P, updater: Updater<S>, prop: keyof S | string, value: any) => JSX.Element
+    generator: (props: BasicProps<S, P>, updater: Updater<S>, prop: keyof S | string, value: any) => JSX.Element
 ): ElementFunc<P> {
-    return (props, hook, property) => {
-        const [state, updater] = hook;
-        const prop = (property || props.id) as keyof S;
+    return (props) => {
+        const [state, updater] = props.hook;
+        const prop = (props.prop || props.id) as keyof S;
         let value = extractProp(state, prop);
-        return generator(props, updater as any, prop, value);
+        return generator(props as any /* ik its bad shh */, updater as any, prop, value);
     };
 }
 
-export const basicInput: ElementFunc<StandardInputProps> =
+export const BasicInput: ElementFunc<StandardInputProps> =
     basicGenerate((props, updater, prop, value) => {
         return (
             <StandardInput {...props} value={value !== null ? value : ""} onChange={(x) => { updateProp(updater, prop, (x.target as HTMLInputElement).value) }} />
@@ -52,7 +61,7 @@ export const basicInput: ElementFunc<StandardInputProps> =
 /**
  * NOTE: Select does not take `GroupOption` values!!
  */
-export const basicSelect: ElementFunc<Omit<StandardSelectProps, "onChange" | "value">> =
+export const BasicSelect: ElementFunc<Omit<StandardSelectProps, "onChange" | "value">> =
     basicGenerate((props, updater, prop, value) => {
         return (
             // getSelectValue(props.options as Array<Option>, value)
@@ -60,21 +69,21 @@ export const basicSelect: ElementFunc<Omit<StandardSelectProps, "onChange" | "va
         );
     });
 
-export const basicCheckbox: ElementFunc<Omit<StandardCheckboxProps, "value">> =
+export const BasicCheckbox: ElementFunc<Omit<StandardCheckboxProps, "value">> =
     basicGenerate((props, updater, prop, value) => {
         return (
             <StandardCheckbox {...props} onChange={(x) => updateProp(updater, prop, !value)} />
         );
     });
 
-export const basicDatepicker: ElementFunc<Omit<StandardDatepickerProps, "value" | "onChange">> =
+export const BasicDatepicker: ElementFunc<Omit<StandardDatepickerProps, "value" | "onChange">> =
     basicGenerate((props, updater, prop, value) => {
         return (
             <StandardDatepicker {...props} value={value !== null ? value : ""} onChange={(x: any) => updateProp(updater, prop, x.target.value)} />
         );
     });
 
-export const basicTextArea: ElementFunc<Omit<StandardTextAreaProps, "onChange">> =
+export const BasicTextArea: ElementFunc<Omit<StandardTextAreaProps, "onChange">> =
     basicGenerate((props, updater, prop, value) => {
         return (
             <StandardTextArea {...props} value={value !== null ? value : ""} onChange={(x) => updateProp(updater, prop, (x.target as HTMLInputElement).value)} />

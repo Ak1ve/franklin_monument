@@ -30,7 +30,7 @@ export function TaskForm() {
         {basicInput({ id: "label", label: "Label" }, task)}
         {basicTextArea({ id: "description", label: "Description" }, task)}
       </InputGrid>
-      {basicSelect({ id: "label", label: "QCH", options: options }, task)}
+      {basicSelect({ id: "label", label: "QCH", options: options, isMultiple: true }, task)}
     </>
   );
 }
