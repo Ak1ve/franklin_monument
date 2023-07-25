@@ -60,6 +60,9 @@ export interface ModelSchema<S> {
 
 export type Data<X> = X extends ModelSchema<infer I> ? I : never;
 
-export default function createSchema<S>(schema: z.ZodType<S>, route: Route<S>): ModelSchema<S> {
+export function createSchema<S>(schema: z.ZodType<S>, route: Route<S>): ModelSchema<S> {
     return {route, schema};
 }
+
+const cs = createSchema;
+export default cs;

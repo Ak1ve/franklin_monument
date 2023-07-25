@@ -1,8 +1,7 @@
 import {z} from "zod";
-import ModelForm, { ModelSchema, standardRoute } from "../schema";
+import {standardRoute } from "../schema";
 import createSchema  from "../schema";
 import { Snowflake } from "./base";
-import { standardGet } from "../route";
 const cs = createSchema;
 
 export const HelloType = cs(
