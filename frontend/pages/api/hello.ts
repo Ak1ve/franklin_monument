@@ -10,6 +10,5 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  console.log("API THING")
   res.status(200).json({ name: 'John Doebruh', goose: 2 })
 }

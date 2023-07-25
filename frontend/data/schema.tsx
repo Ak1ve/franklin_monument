@@ -41,10 +41,10 @@ export function divyResultHook<S>(stateHook: ImmerHook<S | null>, errors: UseSta
     })
 }
 
-type GetRouteParamsType<S> = Omit<RouteParams<S>, "schema"|"path"|"query"> & {router: NextRouter, schema: ModelSchema<S>};
-export function getRouteParams<S>({ router, schema, data, onSuccess, onError }: GetRouteParamsType<S>): RouteParams<S> {
+type GetRouteParamsType<S> = Omit<RouteParams<S>, "schema"|"path"|"query"> & {router: NextRouter, schema: ModelSchema<S>, path?: string};
+export function getRouteParams<S>({ router, schema, data, onSuccess, onError, path }: GetRouteParamsType<S>): RouteParams<S> {
     return {
-        path: router.pathname,
+        path: path || router.pathname,
         query: router.query,
         schema: schema.schema,
         data: data,

@@ -1,7 +1,7 @@
 import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import Base, { Section } from "../Base";
 import { useImmer } from "use-immer";
-import { basicCheckbox, basicInput, basicTextArea } from "@/utilities/form";
+import { BasicCheckbox, BasicInput, BasicTextArea } from "@/utilities/form";
 import { OptionCard } from "../orders/Items";
 import { CatalogedItem, ItemOption } from "@/models/CatalogedItem";
 import { ItemCard } from "@/pages/items";
@@ -161,7 +161,8 @@ function OptionValueCard({ label, sublabel }: { label: string, sublabel: string 
 }
 
 function OptionValueForm() {
-    const form = useImmer({});
+    // TODO FINISH THIS?? HELLO?
+    const form = useImmer({} as unknown);
     
     return (
         <>
@@ -170,7 +171,7 @@ function OptionValueForm() {
             <div className="grid grid-cols-12">
                 <div className="col-span-10">
                     <InputGrid>
-                        {basicInput({ id: "optionValueLabel", label: "Label", placeholder: "Enter text..." }, form)}
+                        <BasicInput hook={form} label="Label" placeholder="Enter text..." prop="optionValueLabel" />
                         {basicInput({ id: "optionValueSublabel", label: "Additional Info", placeholder: "Enter text..." }, form)}
                     </InputGrid>
                 </div>

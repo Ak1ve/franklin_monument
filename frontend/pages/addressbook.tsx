@@ -94,9 +94,9 @@ export default function AddressBook() {
     },
   ];
   const addressElements = addresses.map((x) => (
-    <AddressCard key={x as any} address={x} onClick={setShowModal} />
+    <AddressCard key={x.name as any} address={x} onClick={setShowModal} />
   ));
-
+    //  TODO make AddressForm Dynamic!
   return (
     <div>
       <Navbar active="Address Book" />
@@ -106,7 +106,7 @@ export default function AddressBook() {
         onSubmit={onSubmit}
         onCancel={onCancel}
       >
-        <AddressForm />
+        <AddressForm path="/addressbook/1"/>  
       </StandardModal>
       <ListView searchPlaceholder="Search orders..." filter="Hello">
         {addressElements}

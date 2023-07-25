@@ -20,7 +20,6 @@ export interface  FormActions<S> {
 }
 
 
-
 /**
  * The props of function Order({HERE})
  */
@@ -36,18 +35,17 @@ export interface ComponentProps<S> {
  * i.e. <OrderForm props={HERE} />
 */
 export interface FormComponentProps {
-
+    path?: string  // Default is current page
 }
 
-function doNothing(..._: any) {
-
-}
+function doNothing(..._: any) {}
 
 export function formComponent<S>(schema: ModelSchema<S>, component: (props: ComponentProps<S>) => JSX.Element): (formProps?: FormComponentProps) => JSX.Element {   
     return (formProps) => {
         const stateHook = useImmer(null) as ImmerHook<S | null>;
         const errorHook = useState(null) as UseStateHook<MethodError<S> | null>;
         const router = useRouter();
+        const path = formProps?.path;
         const [errors, setErrors] = useState(null as { [x: string]: string; } | null);
         if (errorHook[0]?.error?.type === "Validation" && errors === null) {
             const errs = {} as {[x: string]: string};
@@ -65,8 +63,9 @@ export function formComponent<S>(schema: ModelSchema<S>, component: (props: Comp
             setErrors(null);
         };
         useEffect(() => {
-            schema.route.get!(getRouteParams({router, schema})).then(divyResultHook(stateHook, errorHook));
+            schema.route.get!(getRouteParams({path, router, schema})).then(divyResultHook(stateHook, errorHook));
         }, []);
+        console.log(errorHook);
         if (stateHook[0] === null) {
             return <>Loading...</>;
         }
@@ -79,20 +78,20 @@ export function formComponent<S>(schema: ModelSchema<S>, component: (props: Comp
         const form: FormActions<S> = {
             get: (then) => {
                 //ref.current.forceUpdate();
-                schema.route.get!(getRouteParams({ router, schema })).then(
+                schema.route.get!(getRouteParams({path, router, schema })).then(
                     divyResult(then || doNothing, errorHook[1])
                 )
             },
             post: (then) => {
                 //setState(!state);
                 console.log("POSTING...", stateHook);
-                schema.route.post!(getRouteParams({router, schema, data: stateHook[0]!})).then(
+                schema.route.post!(getRouteParams({path, router, schema, data: stateHook[0]!})).then(
                     divyResult(then || doNothing, errorHook[1])
                 )
             },
             delete: (then) => {
                 //setState(!state);
-                let data = schema.route.delete!(getRouteParams({ router, schema })).then(
+                let data = schema.route.delete!(getRouteParams({path, router, schema })).then(
                     divyResult(then || doNothing, errorHook[1])
                 );
             }

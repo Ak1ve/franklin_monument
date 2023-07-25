@@ -30,7 +30,7 @@ function updateProp<S>(updater: Updater<S>, property: keyof S | string, value: a
 export interface HookProps<S> {
     hook: ImmerHook<S>
     prop: keyof S | string
-    errorText: string
+    errorText?: string
 }
 
 export type BasicProps<S, P extends React.HTMLProps<HTMLElement>> = HookProps<S> & P;
