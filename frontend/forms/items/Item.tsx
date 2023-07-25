@@ -172,7 +172,7 @@ function OptionValueForm() {
                 <div className="col-span-10">
                     <InputGrid>
                         <BasicInput hook={form} label="Label" placeholder="Enter text..." prop="optionValueLabel" />
-                        {basicInput({ id: "optionValueSublabel", label: "Additional Info", placeholder: "Enter text..." }, form)}
+                        <BasicInput hook={form} label="Additional Info" placeholder="Enter text..." prop="optionValueSublabel" />
                     </InputGrid>
                 </div>
                 <div className="col-span-2 self-end mb-8">
@@ -193,9 +193,9 @@ function OptionModal({ hook }: { hook: UseStateHook<boolean> }) {
     const form = useImmer({});
     return (
         <StandardModal title="Options" showModal={hook[0]} onCancel={onCancel}>
-            {basicInput({ id: "optionName", label: "Option Name", placeholder: "Enter text..." }, form)}
+            <BasicInput prop= "optionName" label= "Option Name" placeholder="Enter text..." hook={form} />
             <InputGrid maxColumns={3}>
-                {basicCheckbox({ id: "allowMulti", label: "Allow multi-selection" }, form)}
+                <BasicCheckbox prop="allowMulti" label="Allow multi-selection" hook={form} />
             </InputGrid>
             <OptionValueForm />
         </StandardModal>
@@ -212,14 +212,14 @@ export default function ItemForm() {
                 <Section className="mt-10">
                     <h2 className="section-header mb-2">Item Information</h2>
                     <InputGrid>
-                        {basicInput({ id: "type", label: "Item Type", placeholder: "Enter text..." }, form)}
-                        {basicInput({ id: "subtype", label: "Item Subtype", placeholder: "Enter text..." }, form)}
+                        <BasicInput prop="type" label="Item Type" placeholder="Enter text..." hook={form} />
+                        <BasicInput prop= "subtype" label= "Item Subtype" placeholder= "Enter text..." hook={form} />
                     </InputGrid>
                     <InputGrid>
-                        {basicCheckbox({ id: "commissionable", label: "Commissionable" }, form)}
-                        {basicCheckbox({ id: "sizeable", label: "Has Dimensions" }, form)}
+                        <BasicCheckbox prop= "commissionable" label= "Commissionable" hook={form} />
+                        <BasicCheckbox prop= "sizeable" label= "Has Dimensions" hook={form} />
                     </InputGrid>
-                    {basicTextArea({ id: "description", label: "Description" }, form)}
+                    <BasicTextArea prop= "description" label= "Description" hook={form} />
                 </Section>
                 <Section className="mt-10 mb-10">
                     <h2 className="section-header">Options</h2>

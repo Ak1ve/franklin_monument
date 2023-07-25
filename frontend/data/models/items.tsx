@@ -1,39 +1,33 @@
-import {z} from "zod";
-import ModelForm, { ModelSchema, standardRoute } from "../schema";
-import createSchema  from "../schema";
+import { z } from "zod";
+import { standardRoute } from "../schema";
+import cs from "../schema";
 import { Snowflake } from "./base";
-const cs = createSchema;
+import { CatalogedTask } from "./tasks";
 
-/*
-export interface ItemOption {
-    id: string | number
-    key: string
-    allowNull: boolean
-    allowMulti: boolean
-    isDeleted: boolean
-    values: ItemOptionValue[]
-}
+export const ItemOptionValue = cs(z.object({
+    id: Snowflake,
+    label: z.string(),
+    subtext: z.string(),
+    isDeleted: z.boolean()
+}), standardRoute());
 
-export interface CatalogedItem {
-    id: number | string
-    type: string
-    subType: string
-    description: string
-    commissionable: boolean
-    sizeable: boolean
-    options: ItemOption[]
-    tasks: CatalogedTask[]
-    isDeleted: boolean
-}
-*/
+export const ItemOption = cs(z.object({
+    id: Snowflake,
+    key: z.string(),
+    allowNull: z.boolean(),
+    allowMulti: z.boolean(),
+    isDeleted: z.boolean(),
+    values: z.array(ItemOptionValue.schema)
+}), standardRoute());
 
-export const ItemOption = cs(
-    z.object({
-        id: Snowflake,
-        type: z.string(),
-        subType: z.string(),
-        description: z.string(),
-        // TODO
-    }),
-    standardRoute()
-)
+export const CatalogedItem = cs(z.object({
+    id: Snowflake,
+    type: z.string(),
+    subType: z.string(),
+    description: z.string(),
+    commissionable: z.boolean(),
+    sizeable: z.boolean(),
+    options: z.array(ItemOption.schema),
+    tasks: z.array(CatalogedTask.schema),
+    isDeleted: z.boolean()
+}), standardRoute());

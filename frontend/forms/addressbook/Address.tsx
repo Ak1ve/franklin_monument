@@ -44,7 +44,6 @@ const address = useImmer({
 return (
   <>
     <InputGrid>
-
       {basicInput({ id: "name", label: "Contact Name" }, address)}
       {basicInput({ id: "organization", label: "Organization" }, address)}
     </InputGrid>

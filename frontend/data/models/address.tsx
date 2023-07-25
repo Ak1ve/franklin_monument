@@ -1,8 +1,7 @@
 import {z} from "zod";
-import ModelForm, { ModelSchema, standardRoute } from "../schema";
-import createSchema  from "../schema";
+import {standardRoute } from "../schema";
+import cs from "../schema";
 import { Snowflake } from "./base";
-const cs = createSchema;
 
 export const Address = cs(
     // TODO actual validation LMAO

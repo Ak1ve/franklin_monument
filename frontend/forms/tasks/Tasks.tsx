@@ -1,5 +1,5 @@
 import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
-import { basicInput, basicSelect, basicTextArea } from "@/utilities/form";
+import { BasicInput, BasicSelect, BasicTextArea } from "@/utilities/form";
 import options from "tailwind-datepicker-react/types/Options";
 import Base, { Section } from "../Base";
 import { useImmer } from "use-immer";
@@ -15,6 +15,7 @@ export function TaskForm() {
   const task = useImmer({
     label: "Quinn Hipp",
     description: "The coolest guy",
+    somethingBruh: "ello govenor"
   });
 
   const options = [
@@ -27,10 +28,10 @@ export function TaskForm() {
   return (
     <>
       <InputGrid>
-        {basicInput({ id: "label", label: "Label" }, task)}
-        {basicTextArea({ id: "description", label: "Description" }, task)}
+        <BasicInput prop="label" label="Label" hook={task} />
+        <BasicTextArea prop="description" label="Description" hook={task} />
       </InputGrid>
-      {basicSelect({ id: "label", label: "QCH", options: options, isMultiple: true }, task)}
+      <BasicSelect prop="somethingBruh" label="QCH" options={options} isMultiple={true} hook={task} />
     </>
   );
 }
