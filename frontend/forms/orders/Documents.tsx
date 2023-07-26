@@ -1,4 +1,4 @@
-import { basicTextArea } from "@/utilities/form";
+import { BasicTextArea } from "@/utilities/form";
 import Base, { Section } from "../Base";
 import FileUpload from "@/components/FileUpload";
 import { useImmer } from "use-immer";
@@ -11,7 +11,7 @@ export default function Documents() {
     <Base sectionHeader="Documents">
       <FileUpload />
       <Section className="mt-10">
-        {basicTextArea({ id: "notes", label: "Notes" }, docs)}
+        <BasicTextArea prop= "notes" label= "Notes" hook={docs} />
       </Section>
     </Base>
   );

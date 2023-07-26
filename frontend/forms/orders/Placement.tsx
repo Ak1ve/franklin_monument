@@ -3,8 +3,7 @@ import Base, { Section } from "../Base";
 import { HTML5Backend, getEmptyImage } from "react-dnd-html5-backend";
 import { CSSProperties, FC, memo, useCallback, useState } from "react";
 import { InputGrid, StandardTextArea } from "@/components/Inputs";
-import { basicCheckbox, basicInput, basicTextArea } from "@/utilities/form";
-import { basicSelect } from "@/utilities/form";
+import { BasicCheckbox, BasicInput, BasicTextArea, BasicSelect } from "@/utilities/form";
 import { useImmer } from "use-immer";
 
 function Bar() {
@@ -48,15 +47,9 @@ function PlacementBin({
 }
 
 function basicPlacement(id: string, hook: any) {
-  return basicTextArea(
-    {
-      id,
-      label: "",
-      inputClass: "!p-0 !mb-0 text-center",
-      containerClass: "!p-0 !mb-0",
-      placeholder: "Enter Text...",
-    },
-    hook
+  return (
+    <BasicTextArea label="" inputClass="!p-0 !mb-0 text-center"
+      containerClass="!p-0 !mb-0" placeholder="Enter Text..." hook={hook} prop={id} />
   );
 }
 
@@ -146,27 +139,18 @@ export default function Placement() {
       <Section className="mt-10 mb-10">
         <h2 className="section-header mb-5">Cemetery Placement</h2>
         <InputGrid>
-          {basicInput({ id: "section", label: "Section" }, place)}
-          {basicInput({ id: "lot", label: "Lot" }, place)}
+          <BasicInput prop="section" label="Section" hook={place} />
+          <BasicInput prop="lot" label="Lot" hook={place} />
         </InputGrid>
         <InputGrid>
-          {basicInput({ id: "grave", label: "Grave" }, place)}
-          {basicSelect(
-            { id: "faceStone", label: "Face Stone", options: options },
-            place
-          )}
+          <BasicInput prop="grave" label="Grave" hook={place} />
+          <BasicSelect prop="faceStone" label="Face Stone" options={options} hook={place} />
         </InputGrid>
         <InputGrid>
-          {basicInput(
-            { id: "foundationLength", label: "Foundation Length" },
-            place
-          )}
-          {basicInput(
-            { id: "foundationWidth", label: "Foundation Width" },
-            place
-          )}
+          <BasicInput prop="foundationLength" label="Foundation Length" hook={place} />
+          <BasicInput prop="foundationWidth" label="Foundation Width" hook={place} />
         </InputGrid>
-        {basicTextArea({ id: "notes", label: "Notes" }, place)}
+        <BasicTextArea prop="notes" label="Notes" hook={place} />
       </Section>
     </Base>
   );

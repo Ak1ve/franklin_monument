@@ -16,6 +16,7 @@ import Tasks from "@/forms/orders/Tasks";
 import Placement from "@/forms/orders/Placement";
 import Proofs from "@/forms/orders/Proofs";
 import Documents from "@/forms/orders/Documents";
+import { useRouter } from "next/router";
 const inter = Inter({ subsets: ["latin"] });
 
 function FormComponent() {
@@ -28,7 +29,9 @@ function FormComponent() {
   return <></>;
 }
 
-export default function Order(postData: any) {
+export default function Order() {
+  // const router = useRouter();
+  // console.log(router.asPath)
   const [body, setBody] = useState("Overview");
   const bodyNav = (name: string) => {
     return { name: name, onClick: () => setBody(name), active: body === name };
@@ -92,3 +95,4 @@ export default function Order(postData: any) {
     </div>
   );
 }
+

@@ -3,7 +3,7 @@ import Base, { Section } from "../Base";
 import Modal, { ModalSection, StandardModal } from "@/components/Modal";
 import { ButtonTypes, InputGrid, StandardButton, StandardSelect } from "@/components/Inputs";
 import { ImmerHook, useImmer } from "use-immer";
-import { basicCheckbox, basicInput, basicSelect, basicTextArea } from "@/utilities/form";
+import { BasicCheckbox, BasicInput, BasicSelect, BasicTextArea } from "@/utilities/form";
 import { SelectValue } from "react-tailwindcss-select/dist/components/type";
 import { CatalogedItem, ItemOption, ItemOptionValue } from "@/models/CatalogedItem";
 import { getSelectValue, normalizeSelectValue } from "@/utilities/select";
@@ -292,7 +292,7 @@ export default function Items(props: ItemsProps) {
             <StandardModal title="Submit Item" showModal={show} onCancel={() => setShow(false)}>
                 <ModalSection header="Calaloged Item">
                     {/* TODO */}
-                    {basicSelect({ id: "catalogedItem", label: "Item", options: [{ label: "Hooks", value: "1" }, { label: "Hooks", value: "2" }] }, selectHook)}
+                    <BasicSelect prop="catalogedItem" label= "Item" options={[{ label: "Hooks", value: "1" }, { label: "Hooks", value: "2" }]} hook={selectHook} />
                 </ModalSection>
                 <ModalSection header="Specifications">
                     <InputGrid maxColumns={2}>
@@ -302,16 +302,16 @@ export default function Items(props: ItemsProps) {
                 <ModalSection header="Item Details">
                     {itemModalState[0].catalogedItem.sizeable &&
                         <InputGrid>
-                            {basicInput({ id: "orderItemLength", label: "Length", type: "number", step: "any" }, itemModalState, "dimensions.length")}
-                            {basicInput({ id: "orderItemWidth", label: "Width", type: "number", step: "any" }, itemModalState, "dimensions.width")}
-                            {basicInput({ id: "orderItemHeight", label: "Height", type: "number", step: "any" }, itemModalState, "dimensions.height")}
+                            <BasicInput label="Length" type="number" step= "any" hook={itemModalState} prop="dimensions.length" />
+                            <BasicInput label="Width" type="number" step= "any" hook={itemModalState} prop="dimensions.width" />
+                            <BasicInput label="Height" type="number" step= "any" hook={itemModalState} prop="dimensions.height" />
                         </InputGrid>
                     }
                     <InputGrid>
-                        {basicInput({ id: "orderItemPrice", label: "Price", type: "number", step: ".01" }, itemModalState, "price")}
-                        {basicCheckbox({ id: "orderItemTaxExempt", label: "Tax Exempt" }, itemModalState, "taxExempt")}
+                        <BasicInput label= "Price" type= "number" step= ".01" hook={itemModalState} prop="price" />
+                        <BasicCheckbox label="Tax Exempt"  hook={itemModalState} prop="taxExempt" />
                     </InputGrid>
-                    {basicTextArea({ id: "orderItemNotes", label: "Notes", rows: 5 }, itemModalState, "notes")}
+                    <BasicTextArea label= "Notes" rows={5} hook={itemModalState} prop="notes" />
                 </ModalSection>
                 {/* TODO remove if not editing tasks */}
                 <ModalSection header={<div className="flex w-100 justify-between">
@@ -326,7 +326,7 @@ export default function Items(props: ItemsProps) {
 
                             </div>
                             {/* TODO for users */}
-                            {basicSelect({ id: "orderItemTask" + task.id.toString(), label: "User", options: [{ label: "Dog", value: "1" }, { label: "Dog", value: "2" }, { label: "Dog", value: "3" }] }, selectHook, "tasks" + task.id.toString())}
+                            <BasicSelect prop={"tasks" + task.id.toString()} label="User" options={[{ label: "Dog", value: "1" }, { label: "Dog", value: "2" }, { label: "Dog", value: "3" }]} hook={selectHook} />
                         </div>
                     ))}
                 </ModalSection>
