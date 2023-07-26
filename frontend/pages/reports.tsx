@@ -1,19 +1,21 @@
 import { InputGrid } from "@/components/Inputs";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import { formComponent } from "@/data/form";
+import { Report } from "@/data/models/reports";
 import Base, { Section } from "@/forms/Base";
-import { basicDatepicker } from "@/utilities/form";
+import { BasicDatepicker } from "@/utilities/form";
 import { useState } from "react";
 import { useImmer } from "use-immer";
 
-export function ReportHeader() {
+const ReportHeader = formComponent(Report, ({ register, errors }) => {
   const reportHook = useImmer("1/1/00");
   return (
     <Section className="mt-10">
       <h2 className="section-header mb-5 mt-2">Select a Start and End Date</h2>
       <InputGrid>
-        {basicDatepicker({ id: "startDate", label: "Start Date" }, reportHook)}
-        {basicDatepicker({ id: "endDate", label: "End Date" }, reportHook)}
+        <BasicDatepicker label="Start Date" {...register("startDate")} />
+        <BasicDatepicker label="End Date" {...register("endDate")} />
       </InputGrid>
       <button
         type="button"
@@ -23,7 +25,7 @@ export function ReportHeader() {
       </button>
     </Section>
   );
-}
+});
 
 export function Home() {
   return (
