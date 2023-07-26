@@ -8,6 +8,7 @@ const navElements = [
   { title: "Orders", href: "orders" },
   { title: "Address Book", href: "addressbook" },
   { title: "Users", href: "users" },
+  { title: "Reports", href: "reports" },
 ];
 
 export default function Navbar({ active = navElements[0].title }) {

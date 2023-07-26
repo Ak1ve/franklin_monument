@@ -10,6 +10,7 @@ import { CatalogedTask } from "@/models/Tasks";
 import { EditButton, TrashButton } from "@/components/Icons";
 import DraggableList from "react-draggable-lists";
 import useWindowDimensions from "@/utilities/window";
+import { catalogedTasks } from "@/dummydata";
 
 export function TaskForm() {
   const task = useImmer({
@@ -35,32 +36,33 @@ export function TaskForm() {
   );
 }
 
-const tasks: Array<CatalogedTask> = [
-  {
-    id: "1",
-    label: "Task 1",
-    description: "This is how you do task 1",
-    isDeleted: false,
-  },
-  {
-    id: "2",
-    label: "Task 2",
-    description: "This is how you do task 2",
-    isDeleted: false,
-  },
-  {
-    id: "3",
-    label: "Task 3",
-    description: "This is how you do task 3",
-    isDeleted: false,
-  },
-  {
-    id: "4",
-    label: "Task 4",
-    description: "This is how you do task 4",
-    isDeleted: false,
-  },
-];
+// const tasks: Array<CatalogedTask> = [
+//   {
+//     id: "1",
+//     label: "Task 1",
+//     description: "This is how you do task 1",
+//     isDeleted: false,
+//   },
+//   {
+//     id: "2",
+//     label: "Task 2",
+//     description: "This is how you do task 2",
+//     isDeleted: false,
+//   },
+//   {
+//     id: "3",
+//     label: "Task 3",
+//     description: "This is how you do task 3",
+//     isDeleted: false,
+//   },
+//   {
+//     id: "4",
+//     label: "Task 4",
+//     description: "This is how you do task 4",
+//     isDeleted: false,
+//   },
+// ];
+const tasks = catalogedTasks;
 
 export function TaskCard({
   task,

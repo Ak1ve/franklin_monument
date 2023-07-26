@@ -1,6 +1,7 @@
 import { EditButton, TrashButton } from "@/components/Icons";
 import Modal, { StandardModal } from "@/components/Modal";
 import Navbar from "@/components/Navbar";
+import { catalogedItems, catalogedTasks } from "@/dummydata";
 import Base, { Section } from "@/forms/Base";
 import ListView, { FooterBadge, HeaderBadge, ListCard } from "@/forms/ListView";
 import AddressForm from "@/forms/addressbook/Address";
@@ -66,49 +67,52 @@ export default function Tasks() {
     setShowModal(false);
   };
 
-  const catalogedTask: Array<CatalogedTask> = [
-    {
-      id: 1,
-      label: "Label",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
-      isDeleted: false,
-    },
-    {
-      id: 2,
-      label: "Label2",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
-      isDeleted: false,
-    },
-  ];
+  // const catalogedTask: Array<CatalogedTask> = [
+  //   {
+  //     id: 1,
+  //     label: "Label",
+  //     description:
+  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
+  //     isDeleted: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     label: "Label2",
+  //     description:
+  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
+  //     isDeleted: false,
+  //   },
+  // ];
 
-  const items: Array<CatalogedItem> = [
-    {
-      id: 5,
-      type: "Type",
-      subType: "Subtype",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
-      commissionable: true,
-      sizeable: true,
-      options: [],
-      tasks: catalogedTask,
-      isDeleted: false,
-    },
-    {
-      id: 2,
-      type: "Type2",
-      subType: "Subtype2",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
-      commissionable: true,
-      sizeable: true,
-      options: [],
-      tasks: catalogedTask,
-      isDeleted: false,
-    },
-  ];
+  // const items: Array<CatalogedItem> = [
+  //   {
+  //     id: 5,
+  //     type: "Type",
+  //     subType: "Subtype",
+  //     description:
+  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
+  //     commissionable: true,
+  //     sizeable: true,
+  //     options: [],
+  //     tasks: catalogedTask,
+  //     isDeleted: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     type: "Type2",
+  //     subType: "Subtype2",
+  //     description:
+  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pulvinar nibh ac tristique porta. Proin ante nunc, mattis vel diam quis, aliquet dignissim tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam cursus erat.",
+  //     commissionable: true,
+  //     sizeable: true,
+  //     options: [],
+  //     tasks: catalogedTask,
+  //     isDeleted: false,
+  //   },
+  // ];
+  const catalogedTask = catalogedTasks;
+  const items = catalogedItems;
+
   const taskElements = items.map((x) => (
     <TaskCard key={x as any} item={x} onClick={setShowModal} />
   ));
