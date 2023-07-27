@@ -1,4 +1,4 @@
-import { InputGrid } from "@/components/Inputs";
+import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import { BasicInput, BasicSelect, BasicTextArea } from "@/utilities/form";
 import options from "tailwind-datepicker-react/types/Options";
 import { Section } from "../Base";
@@ -7,7 +7,7 @@ import { formComponent } from "@/data/form";
 import { Address } from "@/data/models/address";
 
 
-const AddressForm = formComponent(Address, ({ register, errors }) => {
+const AddressForm = formComponent(Address, ({ register, errors, form }) => {
   return (
     <>
     <InputGrid>
@@ -24,6 +24,7 @@ const AddressForm = formComponent(Address, ({ register, errors }) => {
     </InputGrid>
     <BasicInput label="Address" {...register("address")}/>
     <BasicTextArea label="Notes" {...register("notes")}/>
+    <StandardButton type={ButtonTypes.ACTIVE} onClick={() => form.post()}>Post</StandardButton>
   </>
   )
 });

@@ -2,7 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5b6fe9ea-259d-4d21-8dd7-47e3aefb3486" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/data/Formbase.tsx" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/permissions/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/permissions/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/permissions/apps.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/permissions/migrations/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/permissions/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/permissions/tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/permissions/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/franklin_monument.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/franklin_monument.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tasks/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tasks/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/data/form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/data/form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/data/models/address.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/data/models/address.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/data/route.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/data/route.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/forms/addressbook/Address.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/forms/addressbook/Address.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,12 +26,19 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="jrl4a7ex" />
+  </component>
   <component name="ProjectId" id="2RGiXpXjaAZhhLU1AA6JTC2IThe" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
   </component>
@@ -31,5 +52,19 @@
       <updated>1686882861869</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>

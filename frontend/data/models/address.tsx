@@ -16,5 +16,18 @@ export const Address = cs(
         notes: z.string(),
         address: z.string()
     }),
-    standardRoute()
+    {
+        get: (params) => (new Promise(resolve => resolve({success: true, data:{
+            id: 5,
+            name: params.path,
+            organization: params.path,
+            email: params.path,
+            phoneNumber: params.path,
+            faxNumber: params.path,
+            website: params.path,
+            notes: params.path,
+            address: params.path,
+    }})))
+    }
+    // standardRoute()
 )

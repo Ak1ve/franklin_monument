@@ -65,7 +65,6 @@ export function formComponent<S>(schema: ModelSchema<S>, component: (props: Comp
         useEffect(() => {
             schema.route.get!(getRouteParams({path, router, schema})).then(divyResultHook(stateHook, errorHook));
         }, []);
-        console.log(errorHook);
         if (stateHook[0] === null) {
             return <>Loading...</>;
         }
@@ -84,7 +83,6 @@ export function formComponent<S>(schema: ModelSchema<S>, component: (props: Comp
             },
             post: (then) => {
                 //setState(!state);
-                console.log("POSTING...", stateHook);
                 schema.route.post!(getRouteParams({path, router, schema, data: stateHook[0]!})).then(
                     divyResult(then || doNothing, errorHook[1])
                 )

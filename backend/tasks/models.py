@@ -44,6 +44,10 @@ class Task(models.Model):
     label = models.CharField(max_length=50)
     description = models.CharField(max_length=120)
     item_task = models.ForeignKey(ItemTasks, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
+    triggers_after = models.ManyToManyField("self", blank=True)
+    order_number = models.IntegerField(default=0)
+    triggers_at_beginning = models.BooleanField(default=False)
+    triggers_at_all_tasks = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
 
     @classmethod

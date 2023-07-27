@@ -157,7 +157,7 @@ export function standardPost<S>(prepend: string = "/api/", append: string = ""):
 }
 
 // TODO MOVE ROUTE AWAY FROM SCHEMA
-export interface Route<S, Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output> {
+export interface Route<S> {
     get?: MethodFunction<S>
     post?: MethodFunction<S>
     delete?: MethodFunction<S>
