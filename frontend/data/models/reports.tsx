@@ -8,8 +8,8 @@ export const Report = cs(
   z.object({
     id: Snowflake,
     name: z.string(),
-    startDate: z.string(),
-    endDate: z.string(),
+    startDate: z.date(),
+    endDate: z.date(),
   }),
-  standardRoute()
+  {}
 );
