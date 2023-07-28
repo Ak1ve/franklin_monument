@@ -1,17 +1,19 @@
 import { EditButton, TrashButton } from "@/components/Icons";
 import Modal, { StandardModal } from "@/components/Modal";
 import Navbar from "@/components/Navbar";
+import { Address } from "@/data/models/address";
+import { Data } from "@/data/schema";
+import { addresses } from "@/dummydata";
 import Base, { Section } from "@/forms/Base";
 import ListView, { ListCard } from "@/forms/ListView";
 import AddressForm from "@/forms/addressbook/Address";
-import { Address } from "@/models/Address";
 import { useState } from "react";
 
 export function AddressCard({
   address,
   onClick,
 }: {
-  address: Address;
+  address: Data<typeof Address>;
   onClick: any;
 }) {
   const header = (
@@ -23,7 +25,7 @@ export function AddressCard({
   );
   const leftSide = [
     <>Contact Name: {address.name}</>,
-    <>Phone: {address.phone_number}</>,
+    <>Phone: {address.phoneNumber}</>,
     <>
       Email:
       <a className="underline ml-1" href="#">
@@ -33,7 +35,7 @@ export function AddressCard({
     <>
       Fax:
       <a className="underline ml-1" href="#">
-        {address.fax_number}
+        {address.faxNumber}
       </a>
     </>,
   ];
@@ -71,32 +73,12 @@ export default function AddressBook() {
     setShowModal(false);
   };
 
-  const addresses: Array<Address> = [
-    {
-      name: "Quinn Hipp",
-      organization: "Pet Cemetery",
-      email: "qhipp@noemail.com",
-      phone_number: "4195777420",
-      fax_number: "",
-      website: "https://qhipp.dev",
-      notes: "The coolest guy",
-      address: "123 Sesame St",
-    },
-    {
-      name: "Austin Rockwell",
-      organization: "Among Us Cemetery",
-      email: "ANR@noemail.com",
-      phone_number: "1234567890",
-      fax_number: "0987654321",
-      website: "https://austinrockwell.net",
-      notes: "The other guy",
-      address: "69 Mullberry St",
-    },
-  ];
-  const addressElements = addresses.map((x) => (
+  const addressList = addresses;
+
+  const addressElements = addressList.map((x) => (
     <AddressCard key={x.name as any} address={x} onClick={setShowModal} />
   ));
-    //  TODO make AddressForm Dynamic!
+  //  TODO make AddressForm Dynamic!
   return (
     <div>
       <Navbar active="Address Book" />
@@ -106,7 +88,7 @@ export default function AddressBook() {
         onSubmit={onSubmit}
         onCancel={onCancel}
       >
-        <AddressForm path="/addressbook/1"/>  
+        <AddressForm path="/addressbook/1" />
       </StandardModal>
       <ListView searchPlaceholder="Search orders..." filter="Hello">
         {addressElements}

@@ -1,13 +1,21 @@
 import Navbar from "@/components/Navbar";
+import { User } from "@/data/models/user";
+import { Data } from "@/data/schema";
+import { users } from "@/dummydata";
 import ListView, { FooterBadge, HeaderBadge, ListCard } from "@/forms/ListView";
-import { User } from "@/models/User";
 import { useState } from "react";
 
 function colorStatus(status: string) {
   return "color-" + status.toLowerCase().replaceAll(" ", "-");
 }
 
-export function UserCard({ user, onClick }: { user: User; onClick: any }) {
+export function UserCard({
+  user,
+  onClick,
+}: {
+  user: Data<typeof User>;
+  onClick: any;
+}) {
   const header = (
     <div className="flex">
       <HeaderBadge className={colorStatus("Active")}>{"Active"}</HeaderBadge>
@@ -37,26 +45,9 @@ export function UserCard({ user, onClick }: { user: User; onClick: any }) {
 export default function Users() {
   const [showModal, setShowModal] = useState(false);
 
-  const users: Array<User> = [
-    {
-      id: 1,
-      userName: "Billy Bob",
-    },
-    {
-      id: 2,
-      userName: "Austin",
-    },
-    {
-      id: 3,
-      userName: "Quinn",
-    },
-    {
-      id: 47,
-      userName: "Coach Kent Murphy",
-    },
-  ];
+  const userList = users;
 
-  const userElements = users.map((x) => (
+  const userElements = userList.map((x) => (
     <UserCard key={x as any} user={x} onClick={setShowModal} />
   ));
   return (

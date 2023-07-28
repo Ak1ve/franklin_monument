@@ -1,4 +1,4 @@
-import { InputGrid } from "@/components/Inputs";
+import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { Report } from "@/data/models/reports";
@@ -23,12 +23,12 @@ const ReportHeader = () => {
         />
         <BasicDatepicker label="End Date" hook={reportHook} prop="endDate" />
       </InputGrid>
-      <button
-        type="button"
-        className="bg-sky-500 hover:bg-sky-600 text-gray-50 w-fit focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-4 py-2"
-      >
-        Update
-      </button>
+      <div className="flex gap-2 pb-2">
+        <StandardButton type={ButtonTypes.ACTIVE} className="ml-auto">
+          Load
+        </StandardButton>
+        <StandardButton type={ButtonTypes.STANDARD}>Export</StandardButton>
+      </div>
     </Section>
   );
 };
@@ -56,9 +56,9 @@ export function UserReport() {
   return <div>User Report</div>;
 }
 
-export function FinanceReport() {
+export function FinancialSummary() {
   return (
-    <Base sectionHeader="Finance Report">
+    <Base sectionHeader="Financial Summary">
       <ReportHeader />
       HEYO
     </Base>
@@ -73,14 +73,14 @@ export default function Reports() {
   const navs = [
     bodyNav("Home"),
     bodyNav("User Report"),
-    bodyNav("Finance Report"),
+    bodyNav("Financial Summary"),
   ];
 
   let bodyContent;
   if (body === "User Report") {
     bodyContent = <UserReport />;
-  } else if (body === "Finance Report") {
-    bodyContent = <FinanceReport />;
+  } else if (body === "Financial Summary") {
+    bodyContent = <FinancialSummary />;
   } else if (body === "Home") {
     bodyContent = <Home />;
   } else {
