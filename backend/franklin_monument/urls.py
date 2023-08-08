@@ -16,14 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django_nextjs.render import render_nextjs_page_sync
+
+
+def index(request):
+    return render_nextjs_page_sync(request)
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("items/", include("items.urls")),
-    path("tasks/", include("tasks.urls")),
-    path("address/", include("addressbook.urls")),
-    path("orders/", include("orders.urls")),
-    path("users/", include("users.urls")),
-    path("documents/", include("document.urls")),
-    path("", include("home.urls")),
+    path("", index),
+    path("orders/", index),
+    path('api/auth/', include('authentication.urls')),
 ]

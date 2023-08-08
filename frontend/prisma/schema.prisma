@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id  Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name  String?
+  organization  String?
+  email String? @unique
+  phoneNumber String?
+  faxNumber String?
+  website String?
+  notes String?
+  address String?
+  user User?
+}
+
+
+model User {
+  id  Int @id @default(autoincrement())
+  
+  contact Contact @relation(fields: [contactId], references: [id])
+  contactId Int @unique
+  
+  // Permissions
+  canCreateCatalogedItems Boolean @default(false)
+  canEditCatalogedItems Boolean @default(false)
+  canDeleteCatalogedItems Boolean @default(false)
+  canViewCatalogedItems Boolean @default(true)
+
+  //  CatalogedTasks
+  canCreateCatalogedTasks Boolean @default(false)
+  canEditCatalogedTasks Boolean @default(false)
+  canDeleteCatalogedTasks Boolean @default(false)
+  canViewCatalogedTasks Boolean @default(true)
+
+  //  Address
+  canCreateAddresses  Boolean @default(false)
+  canEditAddresses  Boolean @default(false)
+  canDeleteAddresses  Boolean @default(false)
+  canViewAddresses  Boolean @default(true)
+
+  //  Orders
+  canCreateOrders Boolean @default(false)
+  canEditOrders Boolean @default(false)
+  canViewOrders Boolean @default(false)
+
+  //  force start a UserTask in the items/[id] menu
+  canForceStartTasks  Boolean @default(false)
+  //  upload documents in Order proofs or documents
+  canUploadDocuments  Boolean @default(false)
+  //  make a comment in Order Tasks
+  canMakeTaskComments Boolean @default(false)
+  //  mark an Order tasks as complete that isn't theirs
+  canMarkForeignTasksComplete  Boolean @default(false)
+  //  add an order item
+  canCreateOrderItems Boolean @default(false)
+  canEditOrderItems Boolean @default(false)
+  //  review financial info for order items and Order financial summary
+  canViewOrderFinancials  Boolean @default(false)
+
+
+  //  Reports
+  canViewReports  Boolean @default(false)
+
+  // Users
+  canCreateUsers  Boolean @default(false)
+  canEditUsers  Boolean @default(false)
+  canDeleteUsers  Boolean @default(false)
+}
+
+model CatalogedItem {
+  id  Int @id @default(autoincrement())
+  type  String
+  subtype String
+  description String
+  catalogedTasks CatalogedTask[]
+  isCommissionable  Boolean
+  isSizeable  Boolean
+  deleted DateTime?
+  options CatalogedItemOption[]
+}
+
+model CatalogedItemOptionValue {
+  id  Int @id @default(autoincrement())
+  label String
+  subtext String
+  deleted DateTime?
+  catalogedItemOptionId Int
+  catalogedItemOption CatalogedItemOption @relation(fields: [catalogedItemOptionId], references: [id])
+}
+
+model CatalogedItemOption {
+  id  Int @id @default(autoincrement())
+  key String
+  allowNull Boolean @default(true)
+  allowMulti  Boolean @default(true)
+  deleted DateTime?
+  values  CatalogedItemOptionValue[]
+  catalogedItemId Int
+  catalogedItem CatalogedItem @relation(fields: [catalogedItemId], references: [id])
+}
+
+model CatalogedTask {
+  id  Int @id @default(autoincrement())
+  label String
+  description String
+  collation Int
+  catalogedItem CatalogedItem @relation(fields: [catalogedItemId], references: [id])
+  catalogedItemId Int @unique
+
+  triggersTaskId  Int?
+  triggersTask  CatalogedTask?  @relation("CatalogedTaskTrigger", fields: [triggersTaskId], references: [id])
+  triggersAfter CatalogedTask[] @relation("CatalogedTaskTrigger")
+  triggersAtBeginning Boolean @default(false)
+  triggersAfterAllTasks Boolean @default(false)
+
+  deleted DateTime?
+
+}

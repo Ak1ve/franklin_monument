@@ -9,11 +9,15 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+SITE_ID = 1
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,10 +48,29 @@ INSTALLED_APPS = [
     "contactable",
     "orders",
     "users",
-    "document"
+    "document",
+    # auth
+    "authentication.apps.AuthenticationConfig",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+    "django.contrib.sites",  # make sure 'django.contrib.sites' is installed
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",  # add if you want social authentication
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
+    "corsheaders",
+    "django_nextjs.apps.DjangoNextJSConfig"
 ]
 
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
+}
+# https://testdriven.io/blog/django-rest-authjs/#nextjs-setup
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,6 +79,22 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": True,
+    "SIGNING_KEY": "58c1dcd6-5c76-44d7-b21a-a09d2bb507a3",  # generate a key and replace me
+    "ALGORITHM": "HS512",
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ]
+}
 
 ROOT_URLCONF = 'franklin_monument.urls'
 
