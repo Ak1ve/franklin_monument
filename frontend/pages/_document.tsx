@@ -10,7 +10,7 @@ export default function Document() {
     <Html lang="en">
       <Head />
       <body className="bg-gradient-to-r from-sky-50/50 to-sky-100">
-        
+      
         <Main />
         <NextScript />
       </body>
