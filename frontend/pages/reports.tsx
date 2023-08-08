@@ -6,11 +6,12 @@ import Base, { Section } from "@/forms/Base";
 import { BasicDatepicker } from "@/utilities/form";
 import { useState } from "react";
 import { useImmer } from "use-immer";
+import { Chart } from "react-google-charts";
 
-const ReportHeader = () => {
+export const ReportHeader = () => {
   const reportHook = useImmer({
-    startDate: new Date("01/01/2000"),
-    endDate: new Date("01/01/2000"),
+    startDate: new Date("2000-02-02"),
+    endDate: new Date("2000-02-02"),
   });
   return (
     <Section className="mt-10">
@@ -57,10 +58,47 @@ export function UserReport() {
 }
 
 export function FinancialSummary() {
+  const data = [
+    ["Month", "$"],
+    ["Jan", 7216],
+    ["Feb", 1294],
+    ["Mar", 8274],
+    ["Apr", 3749],
+    ["May", 2843],
+  ];
+
+  const options = {
+    chart: {
+      title: "Revenue Breakdown",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Total Revenue",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Month",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
+
   return (
     <Base sectionHeader="Financial Summary">
       <ReportHeader />
-      HEYO
+      <div className="p-3 rounded-lg bg-gray-200 mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height="250px"
+          data={data}
+          options={options}
+        />
+      </div>
     </Base>
   );
 }
