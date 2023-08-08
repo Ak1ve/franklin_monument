@@ -175,8 +175,7 @@ export function InputGrid({
   );
 }
 
-export interface StandardDatepickerProps
-  extends Omit<StandardInputProps, "type"> {}
+export interface StandardDatepickerProps extends StandardInputProps {}
 
 export function StandardDatepicker(props: StandardDatepickerProps) {
   const labelClassName = classNames(props.labelClass, "input-label");

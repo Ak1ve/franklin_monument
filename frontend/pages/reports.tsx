@@ -4,28 +4,36 @@ import Sidebar from "@/components/Sidebar";
 import { Report } from "@/data/models/reports";
 import Base, { Section } from "@/forms/Base";
 import { BasicDatepicker } from "@/utilities/form";
-import { useState } from "react";
-import { useImmer } from "use-immer";
+import { Component, useState } from "react";
+import { ImmerHook, useImmer } from "use-immer";
 import { Chart } from "react-google-charts";
+import { dateRange } from "@/utilities/api";
+import { any } from "zod";
 
-export const ReportHeader = () => {
-  const reportHook = useImmer({
-    startDate: new Date("2000-02-02"),
-    endDate: new Date("2000-02-02"),
-  });
+export const ReportHeader = ({ reportHook, onClick }: any) => {
   return (
     <Section className="mt-10">
       <h2 className="section-header mb-5 mt-2">Select a Start and End Date</h2>
       <InputGrid>
         <BasicDatepicker
+          type="month"
           label="Start Date"
           hook={reportHook}
           prop="startDate"
         />
-        <BasicDatepicker label="End Date" hook={reportHook} prop="endDate" />
+        <BasicDatepicker
+          type="month"
+          label="End Date"
+          hook={reportHook}
+          prop="endDate"
+        />
       </InputGrid>
       <div className="flex gap-2 pb-2">
-        <StandardButton type={ButtonTypes.ACTIVE} className="ml-auto">
+        <StandardButton
+          type={ButtonTypes.ACTIVE}
+          className="ml-auto"
+          onClick={onClick}
+        >
           Load
         </StandardButton>
         <StandardButton type={ButtonTypes.STANDARD}>Export</StandardButton>
@@ -58,16 +66,56 @@ export function UserReport() {
 }
 
 export function FinancialSummary() {
-  const data = [
-    ["Month", "$"],
-    ["Jan", 7216],
-    ["Feb", 1294],
-    ["Mar", 8274],
-    ["Apr", 3749],
-    ["May", 2843],
-  ];
+  const reportHook = useImmer({
+    startDate: "2023-01",
+    endDate: "2023-01",
+  });
 
-  const options = {
+  const financialSummaryData = {
+    monthlySummary: [
+      ["", ""],
+      ["Jan 2023", 7216],
+      ["Feb 2023", 1294],
+      ["Mar 2023", 8274],
+      ["Apr 2023", 2849],
+      ["May 2023", 2843],
+      ["Jun 2023", 2094],
+      ["Jul 2023", 4274],
+      ["Aug 2023", 5424],
+      ["Sep 2023", 3850],
+      ["Oct 2023", 3235],
+      ["Nov 2023", 2922],
+      ["Dec 2023", 4575],
+      ["Jan 2024", 7216],
+      ["Feb 2024", 1294],
+      ["Mar 2024", 8274],
+      ["Apr 2024", 3749],
+      ["May 2024", 2843],
+      ["Jun 2024", 2094],
+      ["Jul 2024", 4274],
+      ["Aug 2024", 5424],
+      ["Sep 2024", 3850],
+      ["Oct 2024", 3235],
+      ["Nov 2024", 2922],
+      ["Dec 2024", 4575],
+    ],
+    totalPayments: { quantity: 29, amount: 51306 },
+  };
+
+  const onClick = () => {
+    // let data = [["", ""]];
+    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
+    // range.forEach((rangeElement) => {
+    //   dummyData.forEach((dataElement) => {
+    //     if (rangeElement === dataElement[0]) {
+    //       data.push(dataElement as any);
+    //     }
+    //   });
+    // });
+    // setDisplayData(data);
+  };
+
+  const monthlyOptions = {
     chart: {
       title: "Revenue Breakdown",
       subtitle: "",
@@ -89,15 +137,23 @@ export function FinancialSummary() {
 
   return (
     <Base sectionHeader="Financial Summary">
-      <ReportHeader />
+      <ReportHeader reportHook={reportHook} onClick={onClick} />
       <div className="p-3 rounded-lg bg-gray-200 mt-10">
         <Chart
           chartType="Bar"
           width="100%"
-          height="250px"
-          data={data}
-          options={options}
+          height={`${Math.max(
+            financialSummaryData.monthlySummary.length * 30,
+            150
+          )}px`}
+          data={financialSummaryData.monthlySummary}
+          options={monthlyOptions}
+          key={financialSummaryData.monthlySummary.toString()}
         />
+        <div>
+          Total # of payments: {financialSummaryData.totalPayments.quantity}
+          Total $: {financialSummaryData.totalPayments.amount}
+        </div>
       </div>
     </Base>
   );
