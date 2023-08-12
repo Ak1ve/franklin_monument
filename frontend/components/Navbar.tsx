@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Kite, KiteButton } from "./Icons";
+import { signIn } from "next-auth/react";
 
 const navElements = [
   { title: "Dashboard", href: "dashboard" },
@@ -38,7 +39,7 @@ export default function Navbar({ active = navElements[0].title }) {
           </ul>
         </div>
         <div className="order-2 md:order-3">
-          <button className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-gray-50 rounded-xl flex items-center gap-2">
+          <button className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-gray-50 rounded-xl flex items-center gap-2" onClick={() => signIn()}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"

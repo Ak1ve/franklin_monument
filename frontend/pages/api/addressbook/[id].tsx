@@ -1,23 +1,27 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { PrismaClient } from '@prisma/client'
 import { Address } from '@/data/models/address'
 import { Data } from '@/data/schema'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-type AddressData = Data<typeof Address>;
+const prisma = new PrismaClient();
 
-export default function handler(
+export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<AddressData>
+  res: NextApiResponse<Data<typeof Address>>
 ) {
-  res.status(200).json({
-      id: 0,
-      name: 'asd',
-      organization: 'fafa',
-      email: 'aesaa@gmail.com',
-      phoneNumber: 'haeha',
-      faxNumber: 'age',
-      website: 'agaeg',
-      notes: 'geagae',
-      address: 'gaega'
-  })
+  if (req.method === "GET") {
+    const { id } = req.query!;
+    if (typeof id === "string") {
+      const contact = await prisma.contact.findUnique({
+        where: {
+          id: parseInt(id)
+        },
+      });
+      if (contact === null) {
+        return;
+      }
+      res.status(200).json(contact);
+    }
+  }
 }

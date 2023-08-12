@@ -11,121 +11,267 @@ datasource db {
 }
 
 model Contact {
-  id  Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name  String?
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  name          String?
   organization  String?
-  email String? @unique
-  phoneNumber String?
-  faxNumber String?
-  website String?
-  notes String?
-  address String?
-  user User?
+  email         String?  @unique
+  phoneNumber   String?
+  faxNumber     String?
+  website       String?
+  notes         String?
+  address       String?
+  orderId       Int? // TODO delete!
+  orderContact  Order?   @relation("CustomerContact")
+  orderCemetery Order?   @relation("CemeteryContact")
 }
 
+// 
+
+model Account {
+  id                Int     @id @default(autoincrement())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
 
 model User {
-  id  Int @id @default(autoincrement())
-  
-  contact Contact @relation(fields: [contactId], references: [id])
-  contactId Int @unique
-  
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  accounts      Account[]
+  sessions      Session[]
+  image         String?
+
   // Permissions
   canCreateCatalogedItems Boolean @default(false)
-  canEditCatalogedItems Boolean @default(false)
+  canEditCatalogedItems   Boolean @default(false)
   canDeleteCatalogedItems Boolean @default(false)
-  canViewCatalogedItems Boolean @default(true)
+  canViewCatalogedItems   Boolean @default(true)
 
   //  CatalogedTasks
   canCreateCatalogedTasks Boolean @default(false)
-  canEditCatalogedTasks Boolean @default(false)
+  canEditCatalogedTasks   Boolean @default(false)
   canDeleteCatalogedTasks Boolean @default(false)
-  canViewCatalogedTasks Boolean @default(true)
+  canViewCatalogedTasks   Boolean @default(true)
 
   //  Address
-  canCreateAddresses  Boolean @default(false)
-  canEditAddresses  Boolean @default(false)
-  canDeleteAddresses  Boolean @default(false)
-  canViewAddresses  Boolean @default(true)
+  canCreateAddresses Boolean @default(false)
+  canEditAddresses   Boolean @default(false)
+  canDeleteAddresses Boolean @default(false)
+  canViewAddresses   Boolean @default(true)
 
   //  Orders
   canCreateOrders Boolean @default(false)
-  canEditOrders Boolean @default(false)
-  canViewOrders Boolean @default(false)
+  canEditOrders   Boolean @default(false)
+  canViewOrders   Boolean @default(false)
 
   //  force start a UserTask in the items/[id] menu
-  canForceStartTasks  Boolean @default(false)
+  canForceStartTasks          Boolean @default(false)
   //  upload documents in Order proofs or documents
-  canUploadDocuments  Boolean @default(false)
+  canUploadDocuments          Boolean @default(false)
   //  make a comment in Order Tasks
-  canMakeTaskComments Boolean @default(false)
+  canMakeTaskComments         Boolean @default(false)
   //  mark an Order tasks as complete that isn't theirs
-  canMarkForeignTasksComplete  Boolean @default(false)
+  canMarkForeignTasksComplete Boolean @default(false)
   //  add an order item
-  canCreateOrderItems Boolean @default(false)
-  canEditOrderItems Boolean @default(false)
+  canCreateOrderItems         Boolean @default(false)
+  canEditOrderItems           Boolean @default(false)
   //  review financial info for order items and Order financial summary
-  canViewOrderFinancials  Boolean @default(false)
-
+  canViewOrderFinancials      Boolean @default(false)
 
   //  Reports
-  canViewReports  Boolean @default(false)
+  canViewReports Boolean @default(false)
 
   // Users
-  canCreateUsers  Boolean @default(false)
-  canEditUsers  Boolean @default(false)
-  canDeleteUsers  Boolean @default(false)
+  canCreateUsers Boolean @default(false)
+  canEditUsers   Boolean @default(false)
+  canDeleteUsers Boolean @default(false)
+
+  createdOrders    Order[]
+  assignedTasks    UserTask[]
+  userTaskComments UserTaskComment[]
+  listenedTasks    CatalogedTask[]
 }
 
 model CatalogedItem {
-  id  Int @id @default(autoincrement())
-  type  String
-  subtype String
-  description String
-  catalogedTasks CatalogedTask[]
-  isCommissionable  Boolean
-  isSizeable  Boolean
-  deleted DateTime?
-  options CatalogedItemOption[]
+  id               Int                   @id @default(autoincrement())
+  type             String
+  subtype          String
+  description      String
+  catalogedTasks   CatalogedTask[]
+  isCommissionable Boolean
+  isSizeable       Boolean
+  deleted          DateTime?
+  options          CatalogedItemOption[]
+  orderItems       OrderItem[]
 }
 
 model CatalogedItemOptionValue {
-  id  Int @id @default(autoincrement())
-  label String
-  subtext String
-  deleted DateTime?
-  catalogedItemOptionId Int
-  catalogedItemOption CatalogedItemOption @relation(fields: [catalogedItemOptionId], references: [id])
+  id                      Int                      @id @default(autoincrement())
+  label                   String
+  subtext                 String
+  deleted                 DateTime?
+  catalogedItemOptionId   Int
+  catalogedItemOption     CatalogedItemOption      @relation(fields: [catalogedItemOptionId], references: [id])
+  orderItemSpecifications OrderItemSpecification[]
 }
 
 model CatalogedItemOption {
-  id  Int @id @default(autoincrement())
-  key String
-  allowNull Boolean @default(true)
-  allowMulti  Boolean @default(true)
-  deleted DateTime?
-  values  CatalogedItemOptionValue[]
-  catalogedItemId Int
-  catalogedItem CatalogedItem @relation(fields: [catalogedItemId], references: [id])
+  id                      Int                        @id @default(autoincrement())
+  key                     String
+  allowNull               Boolean                    @default(true)
+  allowMulti              Boolean                    @default(true)
+  deleted                 DateTime?
+  values                  CatalogedItemOptionValue[]
+  catalogedItemId         Int
+  catalogedItem           CatalogedItem              @relation(fields: [catalogedItemId], references: [id])
+  orderItemSpecifications OrderItemSpecification[]
 }
 
 model CatalogedTask {
-  id  Int @id @default(autoincrement())
-  label String
-  description String
-  collation Int
-  catalogedItem CatalogedItem @relation(fields: [catalogedItemId], references: [id])
-  catalogedItemId Int @unique
+  id                    Int             @id @default(autoincrement())
+  label                 String
+  description           String
+  collation             Int
+  catalogedItem         CatalogedItem   @relation(fields: [catalogedItemId], references: [id])
+  catalogedItemId       Int             @unique
+  triggersTaskId        Int?
+  triggersTask          CatalogedTask?  @relation("CatalogedTaskTrigger", fields: [triggersTaskId], references: [id])
+  triggersAfter         CatalogedTask[] @relation("CatalogedTaskTrigger")
+  triggersAtBeginning   Boolean         @default(false)
+  triggersAfterAllTasks Boolean         @default(false)
+  deleted               DateTime?
+  userTasks             UserTask[]
+  listenedUsers         User[]
+}
 
-  triggersTaskId  Int?
-  triggersTask  CatalogedTask?  @relation("CatalogedTaskTrigger", fields: [triggersTaskId], references: [id])
-  triggersAfter CatalogedTask[] @relation("CatalogedTaskTrigger")
-  triggersAtBeginning Boolean @default(false)
-  triggersAfterAllTasks Boolean @default(false)
+model UserTaskComment {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  userTaskId Int
+  userTask   UserTask @relation(fields: [userTaskId], references: [id])
+  postedOn   DateTime @default(now())
+  content    String
+}
 
-  deleted DateTime?
+model UserTask {
+  id              Int               @id @default(autoincrement())
+  userId          Int
+  assignedUser    User?             @relation(fields: [userId], references: [id])
+  catalogedTaskId Int
+  catalogedTask   CatalogedTask     @relation(fields: [catalogedTaskId], references: [id])
+  orderItemId     Int
+  orderItem       OrderItem         @relation(fields: [orderItemId], references: [id])
+  startedOn       DateTime?
+  completedOn     DateTime?
+  comments        UserTaskComment[]
+}
 
+model OrderItemSpecification {
+  id                        Int                        @id @default(autoincrement())
+  catalogedItemOptionId     Int
+  catalogedItemOption       CatalogedItemOption        @relation(fields: [catalogedItemOptionId], references: [id])
+  catalogedItemOptionValues CatalogedItemOptionValue[]
+  orderItemId               Int
+  orderItem                 OrderItem                  @relation(fields: [orderItemId], references: [id])
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name      String
+  filePath  String
+  hash      String
+  fileType  String // proof | document
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+}
+
+model OrderItem {
+  id                      Int                      @id @default(autoincrement())
+  catalogedItemId         Int
+  catalogedItem           CatalogedItem            @relation(fields: [catalogedItemId], references: [id])
+  orderItemSpecifications OrderItemSpecification[]
+  length                  Float?
+  width                   Float?
+  height                  Float?
+  price                   String
+  isTaxExempt             Boolean                  @default(false)
+  orderId                 Int
+  order                   Order                    @relation(fields: [orderId], references: [id])
+  userTasks               UserTask[]
+}
+
+model Order {
+  id                Int         @id @default(autoincrement())
+  status            String      @default("Active") // enum, TODO Cancelled, Active, Production Hold, Ready To Invoice, Invoiced, Paid
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  orderItems        OrderItem[]
+  //  Overview
+  createdByUserId   Int
+  createdByUser     User        @relation(fields: [createdByUserId], references: [id])
+  deceasedName      String?
+  orderType         String? // enum, TODO
+  promiseDate       DateTime?
+  customerContactId Int?        @unique
+  customerContact   Contact?    @relation("CustomerContact", fields: [customerContactId], references: [id])
+  isTaxExempt       Boolean     @default(false)
+  deliveryMethod    String? // enum, TODO
+  cemeteryContactId Int?        @unique
+  cemeteryContact   Contact?    @relation("CemeteryContact", fields: [cemeteryContactId], references: [id])
+  description       String?
+  //  Placement
+  placementName1    String?
+  placementName2    String?
+  placementName3    String?
+  placementName4    String?
+  placementName5    String?
+  placementName6    String?
+  placementName7    String?
+  placementName8    String?
+  memorialPlacement Int         @default(1)
+  readTop           Boolean     @default(true)
+  section           String?
+  lot               String?
+  grave             String?
+  faceStone         String?
+  foundationLength  String?
+  foundationWidth   String?
+  placementNotes    String?
+  //  Documents & Proofs
+  files             File[]
+  deleted           DateTime?
 }

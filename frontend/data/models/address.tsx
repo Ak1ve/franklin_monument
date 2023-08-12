@@ -7,14 +7,14 @@ export const Address = cs(
     // TODO actual validation LMAO
     z.object({
         id: Snowflake,
-        name: z.string(),
-        organization: z.string(),
-        email: z.string().email(),
-        phoneNumber: z.string(),
-        faxNumber: z.string(),
-        website: z.string(),
-        notes: z.string(),
-        address: z.string()
+        name: z.string().nullable(),
+        organization: z.string().nullable(),
+        email: z.string().email().nullable(),
+        phoneNumber: z.string().nullable(),
+        faxNumber: z.string().nullable(),
+        website: z.string().nullable(),
+        notes: z.string().nullable(),
+        address: z.string().nullable()
     }),
     standardRoute()
 )
