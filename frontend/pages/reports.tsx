@@ -100,6 +100,11 @@ export function FinancialSummary() {
       ["Dec 2024", 4575],
     ],
     totalPayments: { quantity: 29, amount: 51306 },
+    numberOfOrders: [
+      ["", ""],
+      ["Paid", 36],
+      ["Unpaid", 20],
+    ],
   };
 
   const onClick = () => {
@@ -135,24 +140,116 @@ export function FinancialSummary() {
     },
   };
 
+  const orderPaidOptions = {
+    legend: "none",
+    pieSliceText: "label",
+    title: "# Orders Paid by end date vs # Orders Not finished Paid",
+    slices: {
+      0: { color: "green" },
+      1: { color: "orange" },
+    },
+  };
+
+  const itemOptions = {
+    chart: {
+      title: "Revenue By Cataloged Item",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Total Revenue",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Month",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
+
+  const subtypeOptions = {
+    chart: {
+      title: "Revenue By Cataloged Item Subtype",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Total Revenue",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Month",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
+
   return (
     <Base sectionHeader="Financial Summary">
       <ReportHeader reportHook={reportHook} onClick={onClick} />
-      <div className="p-3 rounded-lg bg-gray-200 mt-10">
-        <Chart
-          chartType="Bar"
-          width="100%"
-          height={`${Math.max(
-            financialSummaryData.monthlySummary.length * 30,
-            150
-          )}px`}
-          data={financialSummaryData.monthlySummary}
-          options={monthlyOptions}
-          key={financialSummaryData.monthlySummary.toString()}
-        />
-        <div>
-          Total # of payments: {financialSummaryData.totalPayments.quantity}
-          Total $: {financialSummaryData.totalPayments.amount}
+      <div className="rounded-lg mt-10 p-2">
+        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+          <Chart
+            chartType="Bar"
+            width="100%"
+            height={`${Math.max(
+              financialSummaryData.monthlySummary.length * 30,
+              150
+            )}px`}
+            data={financialSummaryData.monthlySummary}
+            options={monthlyOptions}
+            key={financialSummaryData.monthlySummary.toString()}
+          />
+          <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
+            <p>
+              Total # of payments: {financialSummaryData.totalPayments.quantity}
+            </p>
+            <p>Total: ${financialSummaryData.totalPayments.amount}</p>
+            <p>
+              Outstanding Revenue: ${financialSummaryData.totalPayments.amount}
+            </p>
+          </div>
+          <div className="mt-3"></div>
+          <div className="mt-10 items-end">
+            <Chart
+              chartType="PieChart"
+              options={orderPaidOptions}
+              data={financialSummaryData.numberOfOrders}
+              key={financialSummaryData.numberOfOrders.toString()}
+            />
+          </div>
+          <div className="mt-10">
+            <Chart
+              chartType="Bar"
+              width="100%"
+              height={`${Math.max(
+                financialSummaryData.monthlySummary.length * 30,
+                150
+              )}px`}
+              data={financialSummaryData.monthlySummary}
+              options={itemOptions}
+              key={financialSummaryData.monthlySummary.toString()}
+            />
+          </div>
+          <div className="mt-10">
+            <Chart
+              chartType="Bar"
+              width="100%"
+              height={`${Math.max(
+                financialSummaryData.monthlySummary.length * 30,
+                150
+              )}px`}
+              data={financialSummaryData.monthlySummary}
+              options={subtypeOptions}
+              key={financialSummaryData.monthlySummary.toString()}
+            />
+          </div>
         </div>
       </div>
     </Base>
