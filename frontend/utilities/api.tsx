@@ -126,21 +126,3 @@ export function dateRange(
 
 export type UseStateHook<T> = [T, Dispatch<SetStateAction<T>>];
 
-// export function requiresPermission<K extends keyof User, D>(permission: K[] | K, func: APIFunction<D>): APIFunction<D> {
-//   return async (req, res) => {
-//     const session = await userSession(req, res);
-//     if (session === null) {
-//       // TODO no session!!
-//       console.log("NO SESSION");
-//     }
-
-//     const perms = typeof permission === "string" ? [permission] : permission;
-//     for(let p of perms) {
-//       if (!(await userHasPermission(session?.user.email!, p))) {
-//         // TODO not allowed!
-//         console.log("Not allowed!");
-//       }
-//     }
-//     return await func(req, res);
-//   }
-// }
