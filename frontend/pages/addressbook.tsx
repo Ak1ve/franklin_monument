@@ -2,12 +2,15 @@ import { EditButton, TrashButton } from "@/components/Icons";
 import Modal, { StandardModal } from "@/components/Modal";
 import Navbar from "@/components/Navbar";
 import { Address } from "@/data/models/address";
-import { Data } from "@/data/schema";
+import { getter, standardGet } from "@/data/route";
+import cs, { Data, getRouteParams, standardRoute } from "@/data/schema";
 import { addresses } from "@/dummydata";
 import Base, { Section } from "@/forms/Base";
 import ListView, { ListCard } from "@/forms/ListView";
 import AddressForm from "@/forms/addressbook/Address";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 
 export function AddressCard({
   address,
@@ -48,7 +51,7 @@ export function AddressCard({
     </>,
     <>
       Website:
-      <a className="underline ml-1" href={address.website}>
+      <a className="underline ml-1" href={address.website!}>
         {address.website}
       </a>
     </>,
@@ -64,16 +67,36 @@ export function AddressCard({
   );
 }
 
+const AddressBookModel = cs(z.array(Address.schema), standardRoute());
+
 export default function AddressBook() {
   const [showModal, setShowModal] = useState(false);
 
-  const onSubmit = () => {};
+  const onSubmit = () => { };
 
   const onCancel = () => {
     setShowModal(false);
   };
 
-  const addressList = addresses;
+  const [addressList, setAddressList] = useState(null as Data<typeof Address>[] | null);
+  const router = useRouter();
+  useEffect(() => {
+    AddressBookModel.route.get!(getRouteParams({
+      router,
+      schema: AddressBookModel,
+      onSuccess(success) {
+        setAddressList(success.data || null);
+      },
+      onError(err) {
+
+      }
+      
+    }))
+  }, []);
+
+  if (addressList === null) {
+    return "Loading..."
+  }
 
   const addressElements = addressList.map((x) => (
     <AddressCard key={x.name as any} address={x} onClick={setShowModal} />
@@ -93,9 +116,6 @@ export default function AddressBook() {
       <ListView searchPlaceholder="Search orders..." filter="Hello">
         {addressElements}
       </ListView>
-      {/* <Base sectionHeader="Address Book" className="mt-10">
-        <AddressCard address={addresses[0]} onClick={setShowModal} />
-      </Base> */}
     </div>
   );
 }

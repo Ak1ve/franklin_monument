@@ -1,6 +1,7 @@
 import { Router, useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { ZodTypeDef, z } from "zod"
+import {cookies} from "next/headers";
 
 export interface RouteParams<S> {
     path: string
@@ -37,7 +38,7 @@ export type MethodResult<S> = MethodSuccess<S> | MethodError<S>;
 export type MethodFunction<S> = (params: RouteParams<S>) => Promise<MethodResult<S>>;
 
 function fetcher(url: string, init?: RequestInit) {
-    return fetch(url, init).then(res => {
+    return fetch(url, {credentials: "include", ...init}).then(res => {
         if (!res.ok) {
             const error: Error & { info?: any, status?: any } = new Error('An error occurred while fetching the data.');
             error.info = res.json();
