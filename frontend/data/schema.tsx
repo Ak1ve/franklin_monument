@@ -1,4 +1,3 @@
-import useSWR from "swr";
 import { z } from "zod";
 import { MethodError, MethodResult, Route, RouteParams, standardDelete, standardGet, standardPost } from "./route";
 import { NextRouter, useRouter } from "next/router";

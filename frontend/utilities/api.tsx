@@ -1,4 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
+import { User } from "@prisma/client";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getCacheUser, getUser } from "./db";
+import { getServerSession } from "next-auth/next";
+import authOptions from "../pages/api/auth/[...nextauth]";
+import { SessionContextValue } from "next-auth/react";
 
 export function mapGetOr<K, V>(
   map: Map<K, V>,
@@ -123,3 +129,34 @@ export function dateRange(
 }
 
 export type UseStateHook<T> = [T, Dispatch<SetStateAction<T>>];
+
+export async function userSession<D>(req: NextApiRequest, res: NextApiResponse<D>): Promise<{
+  user: {
+    name?: string
+    email?: string
+    image?: string 
+  },
+  expires: string
+} | null> {
+  return await getServerSession(req, res, authOptions);
+  
+}
+
+// export function requiresPermission<K extends keyof User, D>(permission: K[] | K, func: APIFunction<D>): APIFunction<D> {
+//   return async (req, res) => {
+//     const session = await userSession(req, res);
+//     if (session === null) {
+//       // TODO no session!!
+//       console.log("NO SESSION");
+//     }
+
+//     const perms = typeof permission === "string" ? [permission] : permission;
+//     for(let p of perms) {
+//       if (!(await userHasPermission(session?.user.email!, p))) {
+//         // TODO not allowed!
+//         console.log("Not allowed!");
+//       }
+//     }
+//     return await func(req, res);
+//   }
+// }
