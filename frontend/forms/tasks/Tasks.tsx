@@ -1,6 +1,5 @@
 import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import { BasicInput, BasicSelect, BasicTextArea } from "@/utilities/form";
-import options from "tailwind-datepicker-react/types/Options";
 import Base, { Section } from "../Base";
 import { useImmer } from "use-immer";
 import Navbar from "@/components/Navbar";
@@ -8,7 +7,6 @@ import { StandardModal } from "@/components/Modal";
 import { useState } from "react";
 import { CatalogedTask } from "@/models/Tasks";
 import { EditButton, TrashButton } from "@/components/Icons";
-import DraggableList from "react-draggable-lists";
 import useWindowDimensions from "@/utilities/window";
 import { catalogedTasks } from "@/dummydata";
 
