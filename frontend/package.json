@@ -30,6 +30,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.2.0",
+    "react-easy-sort": "^1.5.1",
     "react-google-charts": "^4.0.1",
     "react-tailwindcss-datepicker": "^1.6.6",
     "react-tailwindcss-select": "^1.8.5",

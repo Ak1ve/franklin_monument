@@ -1,20 +1,20 @@
 import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import { BasicInput, BasicSelect, BasicTextArea } from "@/utilities/form";
-import Base, { Section } from "../Base";
+import { Section } from "../Base";
 import { useImmer } from "use-immer";
-import Navbar from "@/components/Navbar";
 import { StandardModal } from "@/components/Modal";
 import { useState } from "react";
 import { CatalogedTask } from "@/models/Tasks";
 import { EditButton, TrashButton } from "@/components/Icons";
-import useWindowDimensions from "@/utilities/window";
 import { catalogedTasks } from "@/dummydata";
+import SortableList, { SortableItem } from "react-easy-sort";
+import arrayMove from "array-move";
 
 export function TaskForm() {
   const task = useImmer({
     label: "Quinn Hipp",
     description: "The coolest guy",
-    somethingBruh: "ello govenor"
+    somethingBruh: "ello govenor",
   });
 
   const options = [
@@ -30,38 +30,16 @@ export function TaskForm() {
         <BasicInput prop="label" label="Label" hook={task} />
         <BasicTextArea prop="description" label="Description" hook={task} />
       </InputGrid>
-      <BasicSelect prop="somethingBruh" label="QCH" options={options} isMultiple={true} hook={task} />
+      <BasicSelect
+        prop="somethingBruh"
+        label="QCH"
+        options={options}
+        isMultiple={true}
+        hook={task}
+      />
     </>
   );
 }
-
-// const tasks: Array<CatalogedTask> = [
-//   {
-//     id: "1",
-//     label: "Task 1",
-//     description: "This is how you do task 1",
-//     isDeleted: false,
-//   },
-//   {
-//     id: "2",
-//     label: "Task 2",
-//     description: "This is how you do task 2",
-//     isDeleted: false,
-//   },
-//   {
-//     id: "3",
-//     label: "Task 3",
-//     description: "This is how you do task 3",
-//     isDeleted: false,
-//   },
-//   {
-//     id: "4",
-//     label: "Task 4",
-//     description: "This is how you do task 4",
-//     isDeleted: false,
-//   },
-// ];
-const tasks = catalogedTasks;
 
 export function TaskCard({
   task,
@@ -86,6 +64,7 @@ export function TaskCard({
 
 export default function TaskList(this: any) {
   const [showModal, setShowModal] = useState(false);
+  const [tasks, setTasks] = useState(catalogedTasks);
 
   const onSubmit = () => {};
 
@@ -93,11 +72,9 @@ export default function TaskList(this: any) {
     setShowModal(false);
   };
 
-  const taskElements = tasks.map((x) => (
-    <TaskCard key={x as any} task={x} onClick={setShowModal} />
-  ));
-
-  const { height, width } = useWindowDimensions();
+  const onSortEnd = (oldIndex: number, newIndex: number) => {
+    setTasks((array) => arrayMove(array, oldIndex, newIndex));
+  };
 
   return (
     <div>
@@ -109,30 +86,44 @@ export default function TaskList(this: any) {
       >
         <TaskForm />
       </StandardModal>
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-4 w-full">
         <StandardButton
           type={ButtonTypes.ACTIVE}
           className="text-center mt-5"
           onClick={() => setShowModal(true)}
         >
-          New Item
+          New Task
+        </StandardButton>
+        <StandardButton
+          type={ButtonTypes.STANDARD}
+          className="text-center mt-5"
+          onClick={() => {}}
+        >
+          Save
         </StandardButton>
       </div>
       {!showModal && (
         <div style={{ width: 1000, margin: "0 auto" }}>
-          <DraggableList width={1000} height={100} rowSize={1}>
+          <SortableList
+            onSortEnd={onSortEnd}
+            className="list"
+            draggedItemClassName="dragged"
+          >
+            {/* {items.map((item) => (
+              <SortableItem key={item}>
+                <div className="item">{item}</div>
+              </SortableItem>
+            ))} */}
             {tasks.map((x) => (
-              <TaskCard key={x as any} task={x} onClick={setShowModal} />
+              <SortableItem key={x.id}>
+                <div className="item">
+                  <TaskCard task={x} onClick={setShowModal} />
+                </div>
+              </SortableItem>
             ))}
-          </DraggableList>
+          </SortableList>
         </div>
       )}
-
-      {/* {taskElements} */}
-      {/* <div>
-        <div>{width}</div>
-        <div>{height}</div>
-      </div> */}
     </div>
   );
 }
