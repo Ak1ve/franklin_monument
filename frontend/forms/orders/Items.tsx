@@ -283,7 +283,6 @@ export default function Items(props: ItemsProps) {
     */
     const [show, setShow] = useState(true);
     const itemModalState = useImmer<OrderItem>(items[1]); // TODO generate!!
-    console.log(items[1]);
     // TODO every cataloged item must be filtered for whether or not the cataloged item is deleted
     const selectHook = useImmer({ "catalogedItem": null });
     // TODO not "Submit Item" for title for standard modal 

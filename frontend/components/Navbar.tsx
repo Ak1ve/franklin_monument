@@ -32,12 +32,13 @@ export default function Navbar({ active = navElements[0].title }) {
       <div className="flex items-center">
         <div className="mr-5 items-center">
           <div className="text-sky-500 text-lg">{session.user?.name}</div>
+          <div className="text-gray-300 hover:cursor-pointer hover:underline text-xs text-right" onClick={() => signOut()}>Sign Out</div>
         </div>
         <img src={session.user?.image!} width={50} height={50}
           className="rounded-full outline outline-2 outline-sky-500" alt="Profile Picture" />
       </div>
     ) :
-    (<button className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-gray-50 rounded-xl flex items-center gap-2" onClick={() => signIn()}>
+    (<button className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-gray-50 rounded-xl flex items-center gap-2" id="signInButton" onClick={() => signIn()}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-5 w-5"
@@ -59,7 +60,7 @@ export default function Navbar({ active = navElements[0].title }) {
         <div className="text-sky-500 md:order-1 text-xl flex">
           <Kite width="40" height="40" iconClassName="justify-center" />
           <div className=" ml-4 justify-center text-center text-4xl">
-            Monere
+            MonuTracker
           </div>
         </div>
         <div className="text-gray-600 order-3 w-full md:w-auto md:order-2">

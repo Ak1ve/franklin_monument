@@ -31,7 +31,7 @@ function FormComponent() {
 
 export default function Order() {
   // const router = useRouter();
-  // console.log(router.asPath)
+  //
   const [body, setBody] = useState("Overview");
   const bodyNav = (name: string) => {
     return { name: name, onClick: () => setBody(name), active: body === name };
@@ -85,7 +85,7 @@ export default function Order() {
   } else {
     bodyContent = <></>;
   }
-  // <Overview initialState={emptyOrderOverview} onSave={(x: OrderOverview) => {console.log(x)}}/>
+  // <Overview initialState={emptyOrderOverview} onSave={(x: OrderOverview) => {co nsole.log(x)}}/>
   return (
     <div className="overflow-x-clip">
       <Navbar active="*****" />

@@ -64,8 +64,9 @@ export function reqPerm<K extends keyof User, D>(perm: K | K[], func: APIFunctio
     const permissions = typeof perm === "string" ? [perm] : perm;
     return async (params) => {
         for (const perm of permissions) {
-            if (!hasPermission(params.user!, perm)) {
-                params.res.status(400).json({type: "Permission", error: `User does not have permission ${perm}`});
+            if (!(await hasPermission(params.user!, perm))) {
+                
+                params.res.status(400).json({type: "Permission", error: `User does not have permission "${perm}"`});
                 return;
             }
         }
