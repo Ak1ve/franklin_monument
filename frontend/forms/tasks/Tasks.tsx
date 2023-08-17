@@ -77,7 +77,7 @@ export default function TaskList(this: any) {
   };
 
   return (
-    <div>
+    <div className="select-none">
       <StandardModal
         showModal={showModal}
         title="Edit Task"
@@ -121,7 +121,7 @@ export default function TaskList(this: any) {
                 </div>
               </SortableItem>
             ))}
-          </DraggableList>
+          </SortableList>
         </div>
       )}
     </div>
