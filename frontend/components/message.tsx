@@ -39,7 +39,7 @@ function getColor(type: MessageProps["type"]): "red" | "sky" | "green" | "yellow
 export default function Message({ title, children, type, buttons }: MessageProps) {
     const color = getColor(type);
     return (
-        <div className="justify-center items-center flex overflow-x-hidden overflow-y-scroll fixed inset-0 z-50 outline-none focus:outline-none">
+        <div className="justify-center items-center flex overflow-x-hidden overflow-y-hidden fixed inset-0 z-50 outline-none focus:outline-none">
             <div className="w-full md:w-1/3 mx-auto ">
                 <div className="flex flex-col p-5 rounded-lg bg-white shadow shadow-gray-200 drop-shadow-xl outline outline-1 outline-gray-300">
                     <div className="flex flex-col items-center text-center">

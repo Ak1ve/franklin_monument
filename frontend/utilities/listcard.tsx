@@ -18,11 +18,13 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
         const [data, setData] = useState(null as D);
         const [endpointError, setEndpointError] = useState(null as EndpointError | null);
         const router = useRouter();
+        const [showInfo, setShowInfo] = useState(false);
         useEffect(() => {
             schema.route.get!(getRouteParams({
                 router, schema,
                 onSuccess(success) {
                     setData(success.data || null!);
+                    // After 5 seconds, show the info screeen
                 },
                 onError(err) {
                     if (err.error.type === "Network") {
@@ -33,6 +35,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                 }
             }))
         }, []);
+        setTimeout(() => setShowInfo(true), 5000);
 
         const isLoading = sessionStatus === "loading" || data === null
 
@@ -46,7 +49,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                         isPermError ? (<>
                             You are not allowed to view this page. If this is a mistake, contact
                             an administrator.  If you were recently granted permission to view this page,
-                            please wait 5-10 minutes before attempting to load this page.<br /><br />Additional information: {endpointError.error}
+                            please wait 5-10 minutes before attempting to load again.<br /><br />Additional information: {endpointError.error}
                         </>) :
                             (<>
                                 An unknown error has occured while loading this page.  Please ensure that your account
@@ -63,10 +66,14 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
             }
             return (<>
                 {base || <Navbar active="****" />}
-                <StandardInfo info="Loading page..." continue="Back To Dashboard" onContinue={() => router.push("/dashboard")}>
-                    Currently loading the page.  If this page loads for too long, ensure the system is working properly.  
-                    <br/>If you can't currently access this page, you can navigate back to the dashboard.
-                </StandardInfo>
+                {
+                    showInfo ? (
+                        <StandardInfo info="Loading page..." continue="Back To Dashboard" onContinue={() => router.push("/dashboard")}>
+                            This page is currently loading.  If this page loads for too long, ensure the system is working properly.  It is
+                            possible the data is taking a while to load, or there is an error with how the data is setup.
+                            <br />If you can't currently access this page, you can navigate back to the dashboard.
+                        </StandardInfo>) : <></>
+                }
             </>);
         }
 

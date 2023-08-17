@@ -94,6 +94,8 @@ export function userParams<D>(cacheUser?: boolean): GetParams<D, {user: User}> {
     }
 }
 
+// const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export function endpoint<D, S>(point: Endpoint<D, S>): Handler<D> {
     return async (req, res) => {
         let isError = false;
