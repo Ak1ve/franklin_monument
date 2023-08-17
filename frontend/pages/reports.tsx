@@ -62,7 +62,38 @@ export function Home() {
 }
 
 export function UserReport() {
-  return <div>User Report</div>;
+  const reportHook = useImmer({
+    startDate: "2023-01",
+    endDate: "2023-01",
+  });
+
+  const onClick = () => {
+    // let data = [["", ""]];
+    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
+    // range.forEach((rangeElement) => {
+    //   dummyData.forEach((dataElement) => {
+    //     if (rangeElement === dataElement[0]) {
+    //       data.push(dataElement as any);
+    //     }
+    //   });
+    // });
+    // setDisplayData(data);
+  };
+
+  return (
+    <Base sectionHeader="User Tasks Report">
+      <ReportHeader reportHook={reportHook} onClick={onClick} />
+      <div className="rounded-lg mt-10 p-2">
+        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+          <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
+            <p># Finished: 12</p>
+            <p># Completed: 18</p>
+            <p># Not Done: 47</p>
+          </div>
+        </div>
+      </div>
+    </Base>
+  );
 }
 
 export function FinancialSummary() {
@@ -256,6 +287,106 @@ export function FinancialSummary() {
   );
 }
 
+export function OrderReport() {
+  const reportHook = useImmer({
+    startDate: "2023-01",
+    endDate: "2023-01",
+  });
+
+  const onClick = () => {
+    // let data = [["", ""]];
+    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
+    // range.forEach((rangeElement) => {
+    //   dummyData.forEach((dataElement) => {
+    //     if (rangeElement === dataElement[0]) {
+    //       data.push(dataElement as any);
+    //     }
+    //   });
+    // });
+    // setDisplayData(data);
+  };
+
+  const orderOptions = {
+    legend: "none",
+    pieSliceText: "label",
+    title: "# Orders by Status",
+    slices: {
+      0: { color: "blue" },
+      1: { color: "skyblue" },
+      2: { color: "#42A5F5" },
+      3: { color: "royalblue" },
+    },
+  };
+
+  const orderData = {
+    totalOrders: 29,
+    ordersByStatus: [
+      ["", ""],
+      ["Not Started", 36],
+      ["In Progress", 15],
+      ["Completed", 43],
+    ],
+    ordersByType: [
+      ["", ""],
+      ["Service", 13],
+      ["Memorial", 5],
+      ["Invoice", 21],
+    ],
+    ordersByCemetary: [
+      ["", ""],
+      ["Pet Cemetary", 7],
+      ["Fisher Titus", 11],
+      ["Loserville", 4],
+    ],
+    ordersByDeliveryMethod: [
+      ["", ""],
+      ["FedEx", 13],
+      ["UPS", 9],
+      ["USPS", 3],
+      ["Pigeon", 10],
+    ],
+  };
+
+  return (
+    <Base sectionHeader="Order Report">
+      <ReportHeader reportHook={reportHook} onClick={onClick} />
+      <div className="rounded-lg mt-10 p-2">
+        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+          <div className="flex gap-10 mt-5 shadow-md text-2xl justify-center rounded-md">
+            <p># of orders: {orderData.totalOrders}</p>
+          </div>
+          <div className="mt-10">
+            <div className="mt-10 flex justify-center">
+              <Chart
+                chartType="PieChart"
+                options={orderOptions}
+                data={orderData.ordersByStatus}
+              />
+              <Chart
+                chartType="PieChart"
+                options={orderOptions}
+                data={orderData.ordersByType}
+              />
+            </div>
+            <div className="mt-10 flex justify-center">
+              <Chart
+                chartType="PieChart"
+                options={orderOptions}
+                data={orderData.ordersByCemetary}
+              />
+              <Chart
+                chartType="PieChart"
+                options={orderOptions}
+                data={orderData.ordersByDeliveryMethod}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Base>
+  );
+}
+
 export default function Reports() {
   const [body, setBody] = useState("Home");
   const bodyNav = (name: string) => {
@@ -265,6 +396,7 @@ export default function Reports() {
     bodyNav("Home"),
     bodyNav("User Report"),
     bodyNav("Financial Summary"),
+    bodyNav("Order Report"),
   ];
 
   let bodyContent;
@@ -274,6 +406,8 @@ export default function Reports() {
     bodyContent = <FinancialSummary />;
   } else if (body === "Home") {
     bodyContent = <Home />;
+  } else if (body === "Order Report") {
+    bodyContent = <OrderReport />;
   } else {
     bodyContent = <></>;
   }
