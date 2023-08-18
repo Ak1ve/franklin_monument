@@ -204,3 +204,10 @@ export const KiteButton = generateIconButton(Kite, {
     textFacing: "right",
     className: "flex"
 });
+
+export const InfoButton = generateIconButton(InfoIcon, {
+    width: "24",
+    height: "24",
+    textFacing: "right",
+    className: "hover:text-blue-600 transition-all hover:scale-125 flex"
+})

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StatusIcon } from "./Icons";
+import { InfoButton, StatusIcon } from "./Icons";
 import { useImmer } from "use-immer";
 import getRandomPass from "@/utilities/words";
 import { BasicInput } from "@/utilities/form";
@@ -30,32 +30,33 @@ export interface MessageProps {
     type: "danger" | "warning" | "success" | "info"
     buttons?: JSX.Element
     children: any
+    width?: string
 }
 
 function getColor(type: MessageProps["type"]): "red" | "sky" | "green" | "yellow" {
     return { danger: "red", info: "sky", success: "green", warning: "yellow" }[type] as any;
 }
 
-export default function Message({ title, children, type, buttons }: MessageProps) {
+export default function Message({ title, children, type, buttons, width }: MessageProps) {
     const color = getColor(type);
     return (
-        <div className="justify-center items-center flex overflow-x-hidden overflow-y-hidden fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className="w-full md:w-1/3 mx-auto ">
-                <div className="flex flex-col p-5 rounded-lg bg-white shadow shadow-gray-200 drop-shadow-xl outline outline-1 outline-gray-300">
-                    <div className="flex flex-col items-center text-center">
-                        <div className={`inline-block p-4 bg-${color}-50 rounded-full`}>
-                            <StatusIcon status={type} iconClassName={`w-12 h-12 fill-current text-${color}-500`} />
+            <div className="justify-center items-center flex fixed inset-0 z-50 outline-none focus:outline-none">
+                <div className={"w-full mx-auto relative " + (width || "md:w-1/3")}>
+                    <div className="relative flex flex-col p-5 rounded-lg bg-white shadow shadow-gray-200 drop-shadow-xl outline outline-1 outline-gray-300">
+                        <div className="flex flex-col items-center text-center">
+                            <div className={`inline-block p-4 bg-${color}-50 rounded-full`}>
+                                <StatusIcon status={type} iconClassName={`w-12 h-12 fill-current text-${color}-500`} />
+                            </div>
+                            <h2 className="mt-2 font-semibold text-gray-800">{title}</h2>
+                            <div className="mt-2 text-sm text-gray-600 leading-relaxed">{children}</div>
                         </div>
-                        <h2 className="mt-2 font-semibold text-gray-800">{title}</h2>
-                        <div className="mt-2 text-sm text-gray-600 leading-relaxed">{children}</div>
-                    </div>
 
-                    <div className="flex items-center mt-3">
-                        {buttons}
+                        <div className="flex items-center mt-3">
+                            {buttons}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
     );
 }
 
@@ -146,7 +147,7 @@ export function StandardImportantConfirm(props: Omit<MessageProps, "title" | "bu
         required: "*****************************************************************************"
     });
     useEffect(() => {
-        inputHook[1](x => {x.required = getRandomPass()});
+        inputHook[1](x => { x.required = getRandomPass() });
     }, []);
 
     const buttons = (
@@ -162,9 +163,23 @@ export function StandardImportantConfirm(props: Omit<MessageProps, "title" | "bu
     return (
         <Message title={props.title || "Are you sure?"} type="danger" buttons={buttons}>
             {...props.children}
-            <br/><br/>Type the following key to confirm:<br/>
+            <br /><br />Type the following key to confirm:<br />
             <b className="select-none">{inputHook[0].required}</b>
-            <BasicInput label="" prop="input" hook={inputHook} placeholder="type..."/>
+            <BasicInput label="" prop="input" hook={inputHook} placeholder="type..." />
         </Message>
     )
 }
+
+
+export function AdditionalInfo({ info, children, width }: any) {
+    const [showInfo, setShowInfo] = useState(false);
+    return (<>
+      {
+        showInfo ?
+          (<StandardInfo continue="Okay" width={width || "md:w-8/12"} info={info || "Additional Info"} onDismiss={() => setShowInfo(false)} onContinue={() => setShowInfo(false)}>
+            {children}
+          </StandardInfo>) : <></>
+      }
+      <InfoButton addClass="text-xs mx-auto self-center" width="15" height="15" onClick={() => setShowInfo(true)}>What's this?</InfoButton>
+    </>);
+  }

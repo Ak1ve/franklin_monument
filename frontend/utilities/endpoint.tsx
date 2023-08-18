@@ -99,6 +99,7 @@ export function userParams<D>(cacheUser?: boolean): GetParams<D, {user: User}> {
 export function endpoint<D, S>(point: Endpoint<D, S>): Handler<D> {
     return async (req, res) => {
         let isError = false;
+        // await sleep(30000);
         const error = (code: number, error: EndpointError) => {
             isError = true;
             res.status(code).json(error);

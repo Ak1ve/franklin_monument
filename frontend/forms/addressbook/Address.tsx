@@ -1,13 +1,12 @@
 import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import { BasicInput, BasicSelect, BasicTextArea } from "@/utilities/form";
-import options from "tailwind-datepicker-react/types/Options";
 import { Section } from "../Base";
 import { useImmer } from "use-immer";
 import { formComponent } from "@/data/form";
 import { Address } from "@/data/models/address";
 
 
-const AddressForm = formComponent(Address, ({ register, errors, form }) => {
+export default formComponent(Address, ({ register, errors, form }) => {
   return (
     <>
     <InputGrid>
@@ -28,7 +27,6 @@ const AddressForm = formComponent(Address, ({ register, errors, form }) => {
   </>
   )
 });
-export default AddressForm;
  /*
 export default function AddressForm() {
 const address = useImmer({

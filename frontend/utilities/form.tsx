@@ -72,7 +72,7 @@ export const BasicSelect: ElementFunc<Omit<StandardSelectProps, "onChange" | "va
 export const BasicCheckbox: ElementFunc<Omit<StandardCheckboxProps, "value">> =
     basicGenerate((props, updater, prop, value) => {
         return (
-            <StandardCheckbox {...props} onChange={(x) => updateProp(updater, prop, !value)} />
+            <StandardCheckbox {...props} onChange={(x) => updateProp(updater, prop, !value)} checked={value}/>
         );
     });
 
