@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5b6fe9ea-259d-4d21-8dd7-47e3aefb3486" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/components/message.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components/message.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/data/form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/data/form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/forms/users/Permissions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/forms/users/Permissions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/pages/api/users/[id]/permissions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/api/users/[id]/permissions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/pages/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/prisma/dev.db" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/prisma/dev.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/styles/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/styles/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/utilities/endpoint.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/utilities/endpoint.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

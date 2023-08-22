@@ -16,7 +16,18 @@ export const Address = cs(
         notes: z.string().nullable(),
         address: z.string().nullable()
     }),
-    standardRoute()
+    standardRoute(),
+    {
+        id: 0,
+        name: null,
+        organization: null,
+        email: null,
+        phoneNumber: null,
+        faxNumber: null,
+        website: null,
+        notes: null,
+        address: null,
+    }
 )
 
 /*

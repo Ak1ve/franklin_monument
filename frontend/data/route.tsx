@@ -2,6 +2,7 @@ import { Router, useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { ZodTypeDef, z } from "zod"
 import {cookies} from "next/headers";
+import { EndpointError } from "@/utilities/endpoint";
 
 export interface RouteParams<S> {
     path: string
@@ -20,7 +21,7 @@ export interface ValidationError<S> {
 
 export interface NetworkError {
     type: "Network"
-    error: Error & { info?: any, status?: string }
+    error: Error & { info?: EndpointError, status?: string }
 }
 
 export interface MethodSuccess<S> {

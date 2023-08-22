@@ -10,6 +10,7 @@ export interface ListCardProps<D> {
     data: D
     isLoading: boolean
     endpointError: EndpointError | null
+    loadingMessage: any
 }
 
 export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardProps<D>) => JSX.Element, loadingComponent?: JSX.Element, base?: JSX.Element): () => JSX.Element {
@@ -18,7 +19,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
         const [data, setData] = useState(null as D);
         const [endpointError, setEndpointError] = useState(null as EndpointError | null);
         const router = useRouter();
-        const [showInfo, setShowInfo] = useState(false);
+        const showInfoHook = useState(false);
         useEffect(() => {
             schema.route.get!(getRouteParams({
                 router, schema,
@@ -28,14 +29,14 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                 },
                 onError(err) {
                     if (err.error.type === "Network") {
-                        err.error.error.info.then((x: EndpointError) => {
+                        (err.error.error.info as any).then((x: EndpointError) => {
                             setEndpointError(x);
                         });
                     }
                 }
             }))
         }, []);
-        setTimeout(() => setShowInfo(true), 5000);
+        setTimeout(() => showInfoHook[1](true), 5000);
 
         const isLoading = sessionStatus === "loading" || data === null
 
@@ -44,7 +45,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
             return (<>
                 {base || <Navbar active="******" />}
                 <StandardError ok="Back to Dashboard" onOk={() => { router.push("/dashboard") }}
-                    error={isPermError ? "Not Allowed" : endpointError.type}>
+                    error={isPermError ? "Not Allowed" : endpointError.type} hook={[true, () => { }]}>
                     {
                         isPermError ? (<>
                             You are not allowed to view this page. If this is a mistake, contact
@@ -60,27 +61,18 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
             </>);
         }
 
-        if (isLoading) {
-            if (loadingComponent) {
-                return loadingComponent;
-            }
-            return (<>
-                {base || <Navbar active="****" />}
-                {
-                    showInfo ? (
-                        <StandardInfo info="Loading page..." continue="Back To Dashboard" onContinue={() => router.push("/dashboard")}>
-                            This page is currently loading.  If this page loads for too long, ensure the system is working properly.  It is
-                            possible the data is taking a while to load, or there is an error with how the data is setup.
-                            <br />If you can't currently access this page, you can navigate back to the dashboard.
-                        </StandardInfo>) : <></>
-                }
-            </>);
-        }
-
         return component(
             {
                 data,
                 isLoading,
+                loadingMessage: (<>
+                    {base || <Navbar active="****" />}
+                    <StandardInfo info="Loading page..." continue="Back To Dashboard" onContinue={() => router.push("/dashboard")} hook={showInfoHook}>
+                        This page is currently loading.  If this page loads for too long, ensure the system is working properly.  It is
+                        possible the data is taking a while to load, or there is an error with how the data is setup.
+                        <br />If you can't currently access this page, you can navigate back to the dashboard.
+                    </StandardInfo>
+                </>),
                 endpointError: endpointError
             }
         );

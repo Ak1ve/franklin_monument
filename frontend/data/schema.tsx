@@ -55,12 +55,13 @@ export function getRouteParams<S>({ router, schema, data, onSuccess, onError, pa
 export interface ModelSchema<S> {
     route: Route<S>
     schema: z.ZodType<S>
+    createNew: S
 }
 
 export type Data<X> = X extends ModelSchema<infer I> ? I : never;
 
-export function createSchema<S>(schema: z.ZodType<S>, route: Route<S>): ModelSchema<S> {
-    return {route, schema};
+export function createSchema<S>(schema: z.ZodType<S>, route: Route<S>, createNew: S): ModelSchema<S> {
+    return {route, schema, createNew};
 }
 
 const cs = createSchema;

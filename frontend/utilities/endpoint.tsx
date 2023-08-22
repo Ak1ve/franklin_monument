@@ -8,7 +8,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 
 export type Handler<D, S = any> = {
-    (req: NextApiRequest, res: NextApiResponse<D | EndpointError>): Promise<S>
+    (req: NextApiRequest, res: NextApiResponse<D | EndpointError | {success: true}>): Promise<S>
 }
 
 
@@ -23,7 +23,7 @@ export type APIFunction<S> = {
 
 export type EndpointParamsBase<D> = {
     req: NextApiRequest
-    res: NextApiResponse<D | EndpointError>
+    res: NextApiResponse<D | EndpointError | {success: true}>
 }
 
 export type GetParams<D, S> = {

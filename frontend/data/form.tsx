@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UseStateHook } from "@/utilities/api";
 import React from "react";
+import { EndpointError } from "@/utilities/endpoint";
 
 
 export interface FormAction<S> {
-    (then?: (success: S) => any): any
+    (then?: (success: S) => any, error?: (error: MethodError<S>["error"]) => any): any
 }
 
-export interface  FormActions<S> {
+export interface FormActions<S> {
     post: FormAction<S>
     delete: FormAction<S>
     get: FormAction<S>
@@ -23,11 +24,13 @@ export interface  FormActions<S> {
 /**
  * The props of function Order({HERE})
  */
-export interface ComponentProps<S> {
+export interface ComponentProps<S, E> {
     stateHook: ImmerHook<S | null>
-    errors: MethodError<S> | null
+    errors: MethodError<S>["error"] | EndpointError | null
     register: (prop: string) => HookProps<S | null>
     form: FormActions<S>
+    isLoading: boolean
+    formProps: FormComponentProps & E
 }
 
 /** 
@@ -38,20 +41,20 @@ export interface FormComponentProps {
     path?: string  // Default is current page
 }
 
-function doNothing(..._: any) {}
+function doNothing(..._: any) { }
 
-export function formComponent<S>(schema: ModelSchema<S>, component: (props: ComponentProps<S>) => JSX.Element): (formProps?: FormComponentProps) => JSX.Element {   
-    return (formProps) => {
+export function formComponent<S, E extends {} = {}>(schema: ModelSchema<S>, component: (props: ComponentProps<S, E>) => JSX.Element): (formProps: FormComponentProps & E) => JSX.Element {
+    return (formProps: FormComponentProps & E) => {
         const stateHook = useImmer(null) as ImmerHook<S | null>;
         const errorHook = useState(null) as UseStateHook<MethodError<S> | null>;
         const router = useRouter();
         const path = formProps?.path;
         const [errors, setErrors] = useState(null as { [x: string]: string; } | null);
         if (errorHook[0]?.error?.type === "Validation" && errors === null) {
-            const errs = {} as {[x: string]: string};
-            errorHook[0]?.error.error.issues.forEach(x => {
+            const errs = {} as { [x: string]: string };
+            errorHook[0]?.error.error.issues.forEach((x: any) => {
                 let prop = ""
-                for(let p of x.path) {
+                for (let p of x.path) {
                     prop += "." + p.toString();
                 }
                 errs[prop.substring(1,)] = x.message;
@@ -63,41 +66,51 @@ export function formComponent<S>(schema: ModelSchema<S>, component: (props: Comp
             setErrors(null);
         };
         useEffect(() => {
-            schema.route.get!(getRouteParams({path, router, schema})).then(divyResultHook(stateHook, errorHook));
+            schema.route.get!(getRouteParams({ path, router, schema })).then(divyResultHook(stateHook, errorHook as any));
         }, []);
-        if (stateHook[0] === null) {
-            return <>Loading...</>;
-        }
         let register = (prop: string) => ({
             hook: stateHook,
             prop: prop,
             errorText: errors === null ? "" : errors[prop]
         });
-        
+
         const form: FormActions<S> = {
-            get: (then) => {
+            get: (then, err) => {
                 //ref.current.forceUpdate();
-                schema.route.get!(getRouteParams({path, router, schema })).then(
-                    divyResult(then || doNothing, errorHook[1])
-                )
+                schema.route.get!(getRouteParams({ path, router, schema })).then(
+                    divyResult(then || doNothing, (e) => {
+                        (e as any).info.then((x: any) => {
+                            (err || doNothing)(x); errorHook[1](x);
+                        });
+                    })
+                );
             },
-            post: (then) => {
+            post: (then, err) => {
                 //setState(!state);
-                schema.route.post!(getRouteParams({path, router, schema, data: stateHook[0]!})).then(
-                    divyResult(then || doNothing, errorHook[1])
-                )
+                schema.route.post!(getRouteParams({ path, router, schema, data: stateHook[0]! })).then(
+                    divyResult(then || doNothing, (e) => {
+                        (e as any).info.then((x: any) => {
+                            (err || doNothing)(x); errorHook[1](x);
+                        });
+                    })
+                );
             },
-            delete: (then) => {
+            delete: (then, err) => {
                 //setState(!state);
-                let data = schema.route.delete!(getRouteParams({path, router, schema })).then(
-                    divyResult(then || doNothing, errorHook[1])
+                schema.route.delete!(getRouteParams({ path, router, schema })).then(
+                    divyResult(then || doNothing, (e) => {
+                        (e as any).info.then((x: any) => {
+                            (err || doNothing)(x); errorHook[1](x);
+                        });
+                    })
                 );
             }
         }
         // set up object state
         // Actually rendered component
         return component({
-            stateHook, register, form, errors: errorHook[0]
+            stateHook, register, form, errors: errorHook[0] as any, isLoading: stateHook[0] === null,
+            formProps
         });
     };
 }

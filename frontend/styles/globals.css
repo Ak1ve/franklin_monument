@@ -53,6 +53,15 @@
   }
 }
 
+.animate-up {
+  animation: animate-up .5s forwards;
+}
+@keyframes animate-up {
+  to {
+    transform: translateY(-110%);
+  }
+}
+
 .stretch-bar {
   width: 100%;
   max-width: 20%;

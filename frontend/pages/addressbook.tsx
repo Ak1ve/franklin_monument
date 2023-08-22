@@ -72,28 +72,36 @@ export function AddressCard({
 }
 
 
-const AddressBookModel = cs(z.array(Address.schema), standardRoute());
+const AddressBookModel = cs(z.array(Address.schema), standardRoute(), []);
 
-export default listCard(AddressBookModel, ({ data }) => {
+export default listCard(AddressBookModel, ({ data, isLoading, loadingMessage }) => {
   const [showModal, setShowModal] = useState(false);
+  const [page, setPage] = useState("1" as number | string);
   const onCancel = () => setShowModal(false);
   const onSubmit = () => false;
+  // TODO 
+
+  if (isLoading) {
+    return loadingMessage;
+  }
 
   const addressElements = data.map((x) => (
-    <AddressCard key={x.name as any} address={x} onClick={setShowModal} />
+    <AddressCard key={x.name as any} address={x} onClick={() => {
+      setShowModal(true);
+      setPage(x.id);
+    }} />
   ));
 
   return (
     <div>
       <Navbar active="Address Book" />
-      <StandardModal
-        showModal={showModal}
-        title=""
-        onSubmit={onSubmit}
-        onCancel={onCancel}
+      <Modal showModal={showModal}
+        title={page === "new" ? "Create Address" : "Edit Address"}
+        onExit={onCancel}
+        footer={null}
       >
-        <AddressForm path="/addressbook/1" />
-      </StandardModal>
+        <AddressForm path={`/addressbook/${page}`} />
+      </Modal>
       <ListView searchPlaceholder="Search orders..." filter="Hello">
         {addressElements}
       </ListView>

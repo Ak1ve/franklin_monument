@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 export default endpoint({
     getParams: userParams<Data<typeof UserPermissions>>(true),
-    get: reqPerm("canViewCatalogedItems", async ({req, res}) => {
+    get: reqPerm("canEditUsers", async ({req, res}) => {
         const userId = parseInt(req.query.id as string);
         const perms = await prisma.user.findUnique({
             select: {
@@ -46,5 +46,17 @@ export default endpoint({
             }
         });
         res.status(200).json(perms!);
+    }),
+    post: reqPerm("canEditUsers", async ({req, res}) => {
+        const userId = parseInt(req.query.id as string);
+        await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                ...req.body
+            }
+        });
+        res.status(200).json({success: true});
     })
 })
