@@ -16,7 +16,7 @@ export interface ListCardProps<D> {
 }
 
 
-export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardProps<D>) => JSX.Element, fetchOnDock: boolean = true): () => JSX.Element {
+export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardProps<D>) => JSX.Element, fetchOnDock: boolean = true, navBase: boolean = true): () => JSX.Element {
 
     return () => {
         const sessionStatus = useSession({ required: true }).status;
@@ -54,7 +54,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
         if (endpointError !== null) {
             const isPermError = endpointError.type === "Permission";
             return (<>
-                <Navbar active="******" />
+                {navBase && <Navbar active="******" />}
                 <StandardError ok="Back to Dashboard" onOk={() => { router.push("/dashboard") }}
                     error={isPermError ? "Not Allowed" : endpointError.type} hook={[true, () => { }]}>
                     {
@@ -85,7 +85,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                 data,
                 isLoading,
                 loadingMessage: (<>
-                    <Navbar active="****" />
+                    {navBase && <Navbar active="******" />}
                     <StandardInfo info="Loading page..." continue="Back To Dashboard" onContinue={() => router.push("/dashboard")} hook={showInfoHook}>
                         This page is currently loading.  If this page loads for too long, ensure the system is working properly.  It is
                         possible the data is taking a while to load, or there is an error with how the data is setup.
