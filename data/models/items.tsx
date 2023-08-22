@@ -29,7 +29,15 @@ export const ItemOption = cs(
     isDeleted: z.boolean(),
     values: z.array(ItemOptionValue.schema),
   }),
-  standardRoute()
+  standardRoute(),
+  {
+    id: 0,
+    key: "",
+    allowNull: false,
+    allowMulti: false,
+    isDeleted: false,
+    values: []
+  }
 );
 
 export const CatalogedItem = cs(
@@ -45,5 +53,17 @@ export const CatalogedItem = cs(
     isDeleted: z.boolean(),
     price: z.string(),
   }),
-  standardRoute()
+  standardRoute(),
+  {
+    id: 0,
+    type: "",
+    subType: "",
+    description: "",
+    commissionable: false,
+    sizeable: false,
+    options: [],
+    tasks: [],
+    isDeleted: false,
+    price: "",
+  }
 );
