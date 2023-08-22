@@ -11,16 +11,27 @@ export interface ListCardProps<D> {
     isLoading: boolean
     endpointError: EndpointError | null
     loadingMessage: any
+    query: (callback: (query: Object) => Object) => Promise<boolean>
+    refresh: () => void
 }
 
-export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardProps<D>) => JSX.Element, loadingComponent?: JSX.Element, base?: JSX.Element): () => JSX.Element {
+
+export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardProps<D>) => JSX.Element, fetchOnDock: boolean = true): () => JSX.Element {
+
     return () => {
         const sessionStatus = useSession({ required: true }).status;
         const [data, setData] = useState(null as D);
         const [endpointError, setEndpointError] = useState(null as EndpointError | null);
         const router = useRouter();
         const showInfoHook = useState(false);
+        const refreshHook = useState(false);
+        const [fetched, setFetched] = useState(false);
         useEffect(() => {
+            if (!fetchOnDock && !fetched) {
+                setFetched(true);
+                return;
+            }
+            setFetched(true);
             schema.route.get!(getRouteParams({
                 router, schema,
                 onSuccess(success) {
@@ -35,7 +46,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                     }
                 }
             }))
-        }, []);
+        }, [refreshHook[0]]);
         setTimeout(() => showInfoHook[1](true), 5000);
 
         const isLoading = sessionStatus === "loading" || data === null
@@ -43,7 +54,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
         if (endpointError !== null) {
             const isPermError = endpointError.type === "Permission";
             return (<>
-                {base || <Navbar active="******" />}
+                <Navbar active="******" />
                 <StandardError ok="Back to Dashboard" onOk={() => { router.push("/dashboard") }}
                     error={isPermError ? "Not Allowed" : endpointError.type} hook={[true, () => { }]}>
                     {
@@ -61,19 +72,29 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
             </>);
         }
 
+        const query = (callback: (query: Object) => Object) => {
+            return router.push({query: callback(router.query as any) as any});
+        }
+
+        const refresh = () => {
+            refreshHook[1]((x) => !x);
+        }
+
         return component(
             {
                 data,
                 isLoading,
                 loadingMessage: (<>
-                    {base || <Navbar active="****" />}
+                    <Navbar active="****" />
                     <StandardInfo info="Loading page..." continue="Back To Dashboard" onContinue={() => router.push("/dashboard")} hook={showInfoHook}>
                         This page is currently loading.  If this page loads for too long, ensure the system is working properly.  It is
                         possible the data is taking a while to load, or there is an error with how the data is setup.
                         <br />If you can't currently access this page, you can navigate back to the dashboard.
                     </StandardInfo>
                 </>),
-                endpointError: endpointError
+                endpointError: endpointError,
+                query,
+                refresh
             }
         );
     };

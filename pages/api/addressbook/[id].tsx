@@ -2,9 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Address } from '@/data/models/address'
 import { Data } from '@/data/schema'
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { endpoint, reqPerm, userParams } from '@/utilities/endpoint';
-import { Contact } from '@/data/models/contacts';
 
 const prisma = new PrismaClient();
 

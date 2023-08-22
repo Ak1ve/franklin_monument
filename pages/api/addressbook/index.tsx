@@ -9,6 +9,7 @@ import { z } from 'zod';
 const prisma = new PrismaClient();
 
 
+
 export default endpoint({
     getParams: userParams<Data<typeof Address>[]>(true),
     get: reqPerm("canViewAddresses", async ({res}) => {
