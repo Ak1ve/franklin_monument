@@ -11,7 +11,13 @@ export const ItemOptionValue = cs(
     subtext: z.string(),
     isDeleted: z.boolean(),
   }),
-  standardRoute()
+  standardRoute(),
+  {
+    id: 0,
+    label: "",
+    subtext: "",
+    isDeleted: false
+  }
 );
 
 export const ItemOption = cs(
