@@ -46,7 +46,6 @@ function fetcher(url: string, init?: RequestInit) {
             error.status = res.status;
             throw error;
         }
-
         return res.json()
     });
 }

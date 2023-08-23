@@ -2,39 +2,9 @@
 import { PrismaClient } from '@prisma/client'
 import { Address } from '@/data/models/address'
 import { Data } from '@/data/schema'
-import { divyQueryId, endpoint, permOrError, reqPerm, userParams } from '@/utilities/endpoint';
+import { divyQueryNew, endpoint, permOrError, reqPerm, userParams } from '@/utilities/endpoint';
 
 const prisma = new PrismaClient();
-
-/*
-async ({ req, res, user }) => {
-    const contactId = req.query.id as string;
-    const  {id, ...body}: Data<typeof Address> = req.body;
-    // new
-    if (contactId === "new") {
-      const canCreate = await permOrError("canCreateAddresses", user, res);
-      if (!canCreate) return;
-      await prisma.contact.create({
-        data: {
-          ...body
-        }
-      })
-      res.status(200).json({success: true});
-      return;
-    }
-    const canEdit = permOrError("canEditAddresses", user, res);
-    if (!canEdit) return;
-    await prisma.contact.update({
-      where: {
-        id: parseInt(contactId)
-      },
-      data: {
-        ...body
-      }
-    })
-    res.status(200).json({success: true});
-  }
-  */
 
 export default endpoint({
   getParams: userParams<Data<typeof Address>>(true),
@@ -62,7 +32,7 @@ export default endpoint({
     });
     res.status(200).json(contact!);
   }),
-  post: divyQueryId(
+  post: divyQueryNew(
     reqPerm("canCreateAddresses", async ({req, res}) => {
       await prisma.contact.create({
         data: {
@@ -93,23 +63,3 @@ export default endpoint({
     res.status(200).json({success: true});
   })
 });
-
-// export default async function handle(
-//   req: NextApiRequest,
-//   res: NextApiResponse<Data<typeof Address>>
-// ) {
-//   if (req.method === "GET") {
-//     const { id } = req.query!;
-//     if (typeof id === "string") {
-//       const contact = await prisma.contact.findUnique({
-//         where: {
-//           id: parseInt(id)
-//         },
-//       });
-//       if (contact === null) {
-//         return;
-//       }
-//       res.status(200).json(contact);
-//     }
-//   }
-// }

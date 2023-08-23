@@ -35,7 +35,7 @@ export interface HookProps<S> {
 
 export type BasicProps<S, P extends React.HTMLProps<HTMLElement>> = HookProps<S> & P;
 
-interface ElementFunc<P extends React.HTMLProps<HTMLElement>> {
+export interface ElementFunc<P extends React.HTMLProps<HTMLElement>> {
     <S>(props: BasicProps<S, P>): JSX.Element;
 }
 

@@ -2,8 +2,7 @@ import { User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { getCacheUser, getUser, hasPermission } from "./db";
-import { ModelSchema } from "@/data/schema";
-import { z } from "zod";
+import Cache from "timed-cache";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 
@@ -93,17 +92,25 @@ export function reqPerm<K extends keyof User, D>(perm: K | K[], func: APIFunctio
     }
 }
 
-
-export function divyQueryId<D, S>(onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>): APIFunction<EndpointParamsBase<D> & S> {
+// onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>
+export function divyQueryId<D, S>(splits: string[], ...funcs: APIFunction<EndpointParamsBase<D> & S>[]): APIFunction<EndpointParamsBase<D> & S> {
     return async (params) => {
-        const id = params.req.query.id as string;
-        if (id === "new") {
-            return await onNew(params);
-        }
-        return await onId(params);
-
+        const id = params.req.query.id;
+        let func = funcs[funcs.length - 1];
+        splits.map((x, i) => {
+            if (id === x) {
+                func = funcs[i];
+            }
+        }) 
+        return await func(params);
     }
 }
+
+export function cacheFor<D, S>(time: number, func: APIFunction<EndpointParamsBase<D> & S>): APIFunction<EndpointParamsBase<D> & S> {
+    const cache = new Cache({defau});
+}
+
+export const divyQueryNew = <D, S>(onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>) =>  divyQueryId(["new"], onNew, onId);
 
 export function userParams<D>(cacheUser?: boolean): GetParams<D, { user: User }> {
     return async ({ req, res, error }) => {
@@ -122,6 +129,12 @@ export function userParams<D>(cacheUser?: boolean): GetParams<D, { user: User }>
             });
         }
         return { user: user };
+    }
+}
+
+export function noGetParams<D>(): GetParams<D, {}> {
+    return async ({}) => {
+        return {};
     }
 }
 

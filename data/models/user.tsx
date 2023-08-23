@@ -85,6 +85,6 @@ export const User = cs(z.object({
     permissions: UserPermissions.schema
 }), standardRoute(), null); // TODO User.createNew
 
-type name = string | null;
-type id = number;
+type name = string;
+type id = string;
 export type UserSelectOptions = {label: name, value: id}[];

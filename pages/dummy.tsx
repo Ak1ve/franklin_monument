@@ -4,25 +4,11 @@ import { FinancialReport } from "@/data/models/reports";
 import { useImmer } from "use-immer";
 import { BasicInput } from "@/utilities/form";
 import { useState } from "react";
+import UserSelect from "@/data/UserSelect";
 
-
-export default listCard(FinancialReport, ({data, isLoading, refresh, query, loadingMessage}) => {
-    const [showReport, setShowReport] = useState(false);
-    const immerHook = useImmer({
-        startDate: "",
-        endDate: ""
+export default function Dummy() {
+    const hook = useImmer({
+        user: null
     });
-    const onLoad = () => {
-        query((query) => ({...query, ...immerHook[0]})).then(x => {
-            setShowReport(true);
-            refresh();
-        })
-    };
-    return (<>
-        <BasicInput prop="startDate" label="" hook={immerHook} />
-        <BasicInput prop="endDate" label="" hook={immerHook} />
-        <button onClick={onLoad}>LOAD</button>
-        { isLoading && showReport && loadingMessage}
-        {!isLoading && showReport && <>{JSON.stringify(data)}</>}
-    </>)
-}, false, false);
+    return <UserSelect hook={hook} prop="user" label="User"/>
+}
