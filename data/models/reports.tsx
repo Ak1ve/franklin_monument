@@ -1,25 +1,30 @@
 import { z } from "zod";
 import { standardRoute } from "../schema";
 import cs from "../schema";
-import { Snowflake } from "./base";
 
-// export const Report = cs(
-//   // TODO actual validation LMAO
-//   z.object({
-//     id: Snowflake,
-//     name: z.string(),
-//     startDate: z.date(),
-//     endDate: z.date(),
-//   }),
-//   {}
-// );
+const DimensionData = z.array(z.array(z.string().or(z.number())));
 
 export const FinancialReport = cs(
   z.object({
-    monthlySummary: z.array(z.array(z.string().or(z.number()))),
-    totalPayments: z.object({ quantity: z.number(), amount: z.number() }),
-    numberOfOrders: z.array(z.array(z.string().or(z.number()))),
+    monthlySummary: DimensionData,
+    totalPayments: z.object({
+      quantity: z.number(),
+      amount: z.number(),
+    }),
+    numberOfOrders: DimensionData,
   }),
   standardRoute(["get"], undefined, "/financial-summary"),
+  null
+);
+
+export const OrderReport = cs(
+  z.object({
+    ordersByStatus: DimensionData,
+    ordersByType: DimensionData,
+    ordersByCemetary: DimensionData,
+    ordersByDeliveryMethod: DimensionData,
+    totalOrders: z.number(),
+  }),
+  standardRoute(["get"], undefined, "/order-report"),
   null
 );

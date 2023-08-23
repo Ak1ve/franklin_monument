@@ -9,7 +9,7 @@ import { Chart } from "react-google-charts";
 import { dateRange } from "@/utilities/api";
 import { any } from "zod";
 import { listCard } from "@/utilities/listcard";
-import { FinancialReport } from "@/data/models/reports";
+import { FinancialReport, OrderReport } from "@/data/models/reports";
 import { Data } from "@/data/schema";
 
 export const ReportHeader = ({ reportHook, onClick }: any) => {
@@ -260,25 +260,7 @@ const FinancialSummary = listCard(
   false
 );
 
-export function OrderReport() {
-  const reportHook = useImmer({
-    startDate: "2023-01",
-    endDate: "2023-01",
-  });
-
-  const onClick = () => {
-    // let data = [["", ""]];
-    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
-    // range.forEach((rangeElement) => {
-    //   dummyData.forEach((dataElement) => {
-    //     if (rangeElement === dataElement[0]) {
-    //       data.push(dataElement as any);
-    //     }
-    //   });
-    // });
-    // setDisplayData(data);
-  };
-
+export function OrderReportData({ data }: { data: Data<typeof OrderReport> }) {
   const orderOptions = {
     legend: "none",
     pieSliceText: "label",
@@ -291,74 +273,78 @@ export function OrderReport() {
     },
   };
 
-  const orderData = {
-    totalOrders: 29,
-    ordersByStatus: [
-      ["", ""],
-      ["Not Started", 36],
-      ["In Progress", 15],
-      ["Completed", 43],
-    ],
-    ordersByType: [
-      ["", ""],
-      ["Service", 13],
-      ["Memorial", 5],
-      ["Invoice", 21],
-    ],
-    ordersByCemetary: [
-      ["", ""],
-      ["Pet Cemetary", 7],
-      ["Fisher Titus", 11],
-      ["Loserville", 4],
-    ],
-    ordersByDeliveryMethod: [
-      ["", ""],
-      ["FedEx", 13],
-      ["UPS", 9],
-      ["USPS", 3],
-      ["Pigeon", 10],
-    ],
-  };
-
   return (
-    <Base sectionHeader="Order Report">
-      <ReportHeader reportHook={reportHook} onClick={onClick} />
-      <div className="rounded-lg mt-10 p-2">
-        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
-          <div className="flex gap-10 mt-5 shadow-md text-2xl justify-center rounded-md">
-            <p># of orders: {orderData.totalOrders}</p>
-          </div>
-          <div className="mt-10">
-            <div className="mt-10 flex justify-center">
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByStatus}
-              />
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByType}
-              />
-            </div>
-            <div className="mt-10 flex justify-center">
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByCemetary}
-              />
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByDeliveryMethod}
-              />
-            </div>
-          </div>
+    <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+      <div className="flex gap-10 mt-5 shadow-md text-2xl justify-center rounded-md">
+        <p># of orders: {data.totalOrders}</p>
+      </div>
+      <div className="mt-10">
+        <div className="mt-10 flex justify-center">
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByStatus}
+          />
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByType}
+          />
+        </div>
+        <div className="mt-10 flex justify-center">
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByCemetary}
+          />
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByDeliveryMethod}
+          />
         </div>
       </div>
-    </Base>
+    </div>
   );
 }
+
+const OrdersReport = listCard(
+  OrderReport,
+  ({
+    data,
+    isLoading,
+    refresh,
+    query,
+    loadingMessage,
+    isError,
+    errorMessage,
+  }) => {
+    const [showReport, setShowReport] = useState(false);
+    const reportHook = useImmer({
+      startDate: "",
+      endDate: "",
+    });
+    const onClick = () => {
+      query((query) => ({ ...query, ...reportHook[0] })).then((x) => {
+        setShowReport(true);
+        refresh();
+      });
+    };
+    if (isError) {
+      return errorMessage;
+    }
+
+    return (
+      <Base sectionHeader="Order Report">
+        <ReportHeader reportHook={reportHook} onClick={onClick} />
+        <div className="rounded-lg mt-10 p-2">
+          {isLoading && showReport && loadingMessage}
+          {!isLoading && showReport && <OrderReportData data={data} />}
+        </div>
+      </Base>
+    );
+  }
+);
 
 export default function Reports() {
   const [body, setBody] = useState("Home");
@@ -380,7 +366,7 @@ export default function Reports() {
   } else if (body === "Home") {
     bodyContent = <Home />;
   } else if (body === "Order Report") {
-    bodyContent = <OrderReport />;
+    bodyContent = <OrdersReport />;
   } else {
     bodyContent = <></>;
   }
