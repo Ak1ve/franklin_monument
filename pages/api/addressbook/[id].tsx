@@ -34,9 +34,10 @@ export default endpoint({
   }),
   post: divyQueryNew(
     reqPerm("canCreateAddresses", async ({req, res}) => {
+      const {id, ...body} = req.body;
       await prisma.contact.create({
         data: {
-          ...req.body
+          ...body
         }
       })
       res.status(200).json({success: true});
