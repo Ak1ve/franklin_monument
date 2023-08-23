@@ -8,12 +8,12 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 
 export type Handler<D, S = any> = {
-    (req: NextApiRequest, res: NextApiResponse<D | EndpointError | {success: true}>): Promise<S>
+    (req: NextApiRequest, res: NextApiResponse<D | EndpointError | { success: true }>): Promise<S>
 }
 
 
 export type EndpointError = {
-    type: "User" | "Permission"
+    type: "User" | "Permission" | "Unknown"
     error: string
 }
 
@@ -23,11 +23,11 @@ export type APIFunction<S> = {
 
 export type EndpointParamsBase<D> = {
     req: NextApiRequest
-    res: NextApiResponse<D | EndpointError | {success: true}>
+    res: NextApiResponse<D | EndpointError | { success: true }>
 }
 
 export type GetParams<D, S> = {
-    ({req, res, error}: {
+    ({ req, res, error }: {
         req: NextApiRequest,
         res: NextApiResponse<D | EndpointError>
         error: (code: number, error: EndpointError) => any
@@ -59,23 +59,54 @@ async function delegate<D, S>(method: string, endpoint: Endpoint<D, S>, params: 
         return await endpoint.delete(params);
     }
 }
-
-export function reqPerm<K extends keyof User, D>(perm: K | K[], func: APIFunction<EndpointParamsBase<D> & {user: User}>): APIFunction<EndpointParamsBase<D>  & {user: User}> {
+/**
+ * 
+ * @param perm 
+ * @param func 
+ * @returns Promise.  true if user has perm
+ */
+export async function permOrError<K extends keyof User, D>(perm: K | K[], user: User, res: NextApiResponse<D | EndpointError>): Promise<boolean> {
     const permissions = typeof perm === "string" ? [perm] : perm;
-    return async (params) => {
-        for (const perm of permissions) {
-            if (!(await hasPermission(params.user!, perm))) {
-                
-                params.res.status(400).json({type: "Permission", error: `User does not have permission "${perm}"`});
-                return;
-            }
+    for (const perm of permissions) {
+        if (!(await hasPermission(user!, perm))) {
+            res.status(400).json({ type: "Permission", error: `User does not have permission "${perm}"` });
+            return false;
         }
-        return await func(params);
+    }
+    return true;
+}
+
+export function reqPerm<K extends keyof User, D>(perm: K | K[], func: APIFunction<EndpointParamsBase<D> & { user: User }>): APIFunction<EndpointParamsBase<D> & { user: User }> {
+    //const permissions = typeof perm === "string" ? [perm] : perm;
+    return async (params) => {
+        // for (const perm of permissions) {
+        //     if (!(await hasPermission(params.user!, perm))) {
+
+        //         params.res.status(400).json({type: "Permission", error: `User does not have permission "${perm}"`});
+        //         return;
+        //     }
+        // }
+        const hasPerm = await permOrError(perm, params.user, params.res);
+        if (hasPerm) {
+            return await func(params);
+        }
     }
 }
 
-export function userParams<D>(cacheUser?: boolean): GetParams<D, {user: User}> {
-    return async ({req, res, error}) => {
+
+export function divyQueryId<D, S>(onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>): APIFunction<EndpointParamsBase<D> & S> {
+    return async (params) => {
+        const id = params.req.query.id as string;
+        if (id === "new") {
+            return await onNew(params);
+        }
+        return await onId(params);
+
+    }
+}
+
+export function userParams<D>(cacheUser?: boolean): GetParams<D, { user: User }> {
+    return async ({ req, res, error }) => {
         const session = await getServerSession(req, res, authOptions as any) as any;
         if (session === null) {
             return error(500, {
@@ -90,7 +121,7 @@ export function userParams<D>(cacheUser?: boolean): GetParams<D, {user: User}> {
                 error: "Could not find required user information"
             });
         }
-        return {user: user};
+        return { user: user };
     }
 }
 
@@ -104,11 +135,18 @@ export function endpoint<D, S>(point: Endpoint<D, S>): Handler<D> {
             isError = true;
             res.status(code).json(error);
         };
-        const innerParams = await point.getParams({req, res, error});
+        const innerParams = await point.getParams({ req, res, error });
         if (isError) {
             return;
         }
-        const params = {req, res, ...innerParams};
-        return await delegate(req.method!, point, params);
+        const params = { req, res, ...innerParams };
+        try {
+            return await delegate(req.method!, point, params);
+        } catch (err) {
+            res.status(500).json({
+                type: "Unknown",
+                error: JSON.stringify(err)
+            });
+        }
     }
 }

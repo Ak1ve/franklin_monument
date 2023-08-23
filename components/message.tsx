@@ -33,13 +33,14 @@ export interface MessageProps {
     children: any
     width?: string
     hook: UseStateHook<boolean>
+    fullChild?: boolean
 }
 
 export function getColor(type: MessageProps["type"]): "red" | "sky" | "green" | "yellow" {
     return { danger: "red", info: "sky", success: "green", warning: "yellow" }[type] as any;
 }
 
-export default function Message({ title, children, type, buttons, width, hook }: MessageProps) {
+export default function Message({ title, children, type, buttons, width, hook, fullChild }: MessageProps) {
     const color = getColor(type);
     if (!hook || !hook[0]) {
         return <></>;
@@ -53,7 +54,7 @@ export default function Message({ title, children, type, buttons, width, hook }:
                             <StatusIcon status={type} iconClassName={`w-12 h-12 fill-current text-${color}-500`} />
                         </div>
                         <h2 className="mt-2 font-semibold text-gray-800">{title}</h2>
-                        <div className="mt-2 text-sm text-gray-600 leading-relaxed">{children}</div>
+                        <div className={"mt-2 text-sm text-gray-600 leading-relaxed" + fullChild && "w-full"}>{children}</div>
                     </div>
 
                     <div className="flex items-center mt-3">
@@ -93,7 +94,7 @@ export function StandardError(props: Omit<MessageProps, "title" | "button" | "ty
     return <StandardMessage title={title} {...props} type="danger" actions={[{
         content: props.ok || "Okay",
         action: props.onOk
-    }]} />
+    }]} fullChild={props.fullChild} />
 }
 
 export function StandardInfo(props: Omit<MessageProps, "title" | "button" | "type"> & {
@@ -119,21 +120,33 @@ export function StandardConfirm(props: Omit<MessageProps, "title" | "button" | "
     title?: string
     cancel?: string,
     confirm?: string,
-    onCancel: () => any,
-    onConfirm: () => any,
-    type?: MessageProps["type"]
+    onCancel?: () => any,
+    onConfirm: () => any
 }) {
     const title = props.title || "Do you want to continue";
     return (<StandardMessage type="danger" title={title} actions={[
         {
             content: props.cancel || "Cancel",
-            action: props.onCancel
+            action: props.onCancel || (() => props.hook[1](false))
         },
         {
             content: props.confirm || "Confirm",
             action: props.onConfirm
         }
     ]} {...props} />);
+}
+
+export function StandardDelete(props: Omit<MessageProps, "title" | "button" | "type"> & {
+    title?: string
+    cancel?: string,
+    onCancel?: () => any,
+    onDelete: () => any,
+    type?: MessageProps["type"]
+}) {
+    return (
+    <StandardConfirm title="Are you sure you want to delete?" fullChild onConfirm={props.onDelete} {...props} confirm="Delete" width="md:w-1/2">
+        <div className="text-left">{props.children}</div>
+    </StandardConfirm>)
 }
 
 export function StandardImportantConfirm(props: Omit<MessageProps, "title" | "button" | "type"> & {
@@ -162,7 +175,7 @@ export function StandardImportantConfirm(props: Omit<MessageProps, "title" | "bu
         </>
     )
     return (
-        <Message title={props.title || "Are you sure?"} type="danger" buttons={buttons} width={props.width} hook={props.hook}>
+        <Message title={props.title || "Are you sure?"} type="danger" buttons={buttons} width={props.width} hook={props.hook} fullChild={props.fullChild}>
             {props.children}
             <br /><br />Type the following key to confirm:<br />
             <b className="select-none">{inputHook[0].required}</b>
@@ -172,7 +185,7 @@ export function StandardImportantConfirm(props: Omit<MessageProps, "title" | "bu
 }
 
 
-export function AdditionalInfo({ info, children, width}: any) {
+export function AdditionalInfo({ info, children, width }: any) {
     const hook = useState(false);
     return (<>
         <StandardInfo continue="Okay" width={width || "md:w-8/12"} info={info || "Additional Info"} hook={hook}>

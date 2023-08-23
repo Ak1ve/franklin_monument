@@ -79,7 +79,10 @@ export function formComponent<S, E extends {} = {}>(schema: ModelSchema<S>, comp
                 //ref.current.forceUpdate();
                 schema.route.get!(getRouteParams({ path, router, schema })).then(
                     divyResult(then || doNothing, (e) => {
-                        (e as any).info.then((x: any) => {
+                        if ((e as any).info === undefined) {
+                            errorHook[1](e);
+                        }
+                        (e as any).info?.then((x: any) => {
                             (err || doNothing)(x); errorHook[1](x);
                         });
                     })
@@ -89,7 +92,10 @@ export function formComponent<S, E extends {} = {}>(schema: ModelSchema<S>, comp
                 //setState(!state);
                 schema.route.post!(getRouteParams({ path, router, schema, data: stateHook[0]! })).then(
                     divyResult(then || doNothing, (e) => {
-                        (e as any).info.then((x: any) => {
+                        if ((e as any).info === undefined) {
+                            errorHook[1](e);
+                        }
+                        (e as any).info?.then((x: any) => {
                             (err || doNothing)(x); errorHook[1](x);
                         });
                     })
@@ -99,7 +105,10 @@ export function formComponent<S, E extends {} = {}>(schema: ModelSchema<S>, comp
                 //setState(!state);
                 schema.route.delete!(getRouteParams({ path, router, schema })).then(
                     divyResult(then || doNothing, (e) => {
-                        (e as any).info.then((x: any) => {
+                        if ((e as any).info === undefined) {
+                            errorHook[1](e);
+                        }
+                        (e as any).info?.then((x: any) => {
                             (err || doNothing)(x); errorHook[1](x);
                         });
                     })

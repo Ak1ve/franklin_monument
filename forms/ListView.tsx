@@ -1,4 +1,5 @@
 import Collapse from "@/components/Collapse";
+import { ButtonTypes, StandardButton } from "@/components/Inputs";
 import StretchButton from "@/components/StretchButton";
 import classNames from "classnames";
 import { useState } from "react";
@@ -10,6 +11,7 @@ export interface ListCardProps {
   rightFields?: React.ReactNode[]
   header?: React.ReactNode
   footer?: React.ReactNode
+  className?: string
 }
 
 export function FooterBadge(props: React.HTMLProps<HTMLSpanElement>) {
@@ -18,12 +20,12 @@ export function FooterBadge(props: React.HTMLProps<HTMLSpanElement>) {
 }
 
 export function HeaderBadge(props: React.HTMLProps<HTMLSpanElement>) {
-  return (<span  {...props} className={"mr-2 badge " + props.className}/>);
+  return (<span  {...props} className={"mr-2 badge " + props.className} />);
 }
 
 export function ListCard(props: ListCardProps) {
   return (
-    <div className="order-card-primary">
+    <div className={"order-card-primary " + props.className}>
       {props.header}
       <div className="grid grid-cols-2 mx-3 my-2 text-gray-500 gap-3 text-sm w-full">
         <div className="divide-x-2 divide-purple-200">
@@ -39,10 +41,22 @@ export function ListCard(props: ListCardProps) {
     </div>);
 }
 
-export default function ListView({ children, searchPlaceholder, filter }: { children: React.ReactNode, searchPlaceholder: string, filter: React.ReactNode }) {
+export interface ListViewProps {
+  children: React.ReactNode
+  searchPlaceholder: string
+  filter: React.ReactNode
+  title?: string
+  onNew?: () => any
+}
+
+export default function ListView({ children, searchPlaceholder, filter, title, onNew }: ListViewProps) {
   const [visible, setVisible] = useState(false);
   return (
     <div className="gap-2 grid place-items-center my-4">
+      <div className="mx-auto">
+        <h1 className="text-5xl">{title}</h1>
+        <StandardButton className="mx-auto mt-3" onClick={onNew} type={ButtonTypes.ACTIVE}>New</StandardButton>
+      </div>
       <div className="mt-5 md:w-7/12 w-11/12 text-lg">
         <label
           htmlFor="default-search"

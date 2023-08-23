@@ -21,7 +21,7 @@ export default function Notification(props: NotificationProps) {
     }
     const color = getColor(props.type);
     return (
-        <div className={`bg-${color}-50 border border-${color}-400 rounded text-${color}-800 border-1 shadow shadow-gray-200 drop-shadow-xl p-3 flex justify-between fixed -bottom-10 z-50 w-10/12 animate-up rounded-xl`}>
+        <div className={`bg-${color}-50 border border-${color}-400 rounded text-${color}-800 border-1 shadow shadow-gray-200 drop-shadow-xl p-3 flex justify-between fixed -bottom-10 z-50 w-10/12 animate-up rounded-xl left-[50%] ml-[-41.6%]`}>
             {/* "bg-red-50 bg-red-500 hover:bg-red-600 disabled:hover:bg-red-500 text-red-900" */}
             <div>
                 <div className="flex items-center">

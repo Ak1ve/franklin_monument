@@ -75,7 +75,7 @@ export const UserPermissions = cs(z.object({
     canCreateUsers: z.boolean(),
     canEditUsers: z.boolean(),
     canDeleteUsers: z.boolean(),
-}), standardRoute(["get", "post"], undefined, "/permissions"))
+}), standardRoute(["get", "post"], undefined, "/permissions"), null);
 
 export const User = cs(z.object({
     id: Snowflake,
@@ -83,4 +83,8 @@ export const User = cs(z.object({
     email: z.string().email().nullable(),
     image: z.string().nullable(),
     permissions: UserPermissions.schema
-}), standardRoute());
+}), standardRoute(), null); // TODO User.createNew
+
+type name = string | null;
+type id = number;
+export type UserSelectOptions = {label: name, value: id}[];
