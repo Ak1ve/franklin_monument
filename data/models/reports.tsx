@@ -28,3 +28,23 @@ export const OrderReport = cs(
   standardRoute(["get"], undefined, "/order-report"),
   null
 );
+
+export const TaskReport = cs(
+  z.object({
+    currentTasks: DimensionData,
+    taskStats: DimensionData,
+    itemStats: DimensionData,
+  }),
+  standardRoute(["get"], undefined, "/task-report"),
+  null
+);
+
+export const UserTasksReport = cs(
+  z.object({
+    totalTaskComments: z.number(),
+    userTaskStats: DimensionData,
+    totalCurrentTasks: z.number(),
+  }),
+  standardRoute(["get"], undefined, "/user-tasks-report"),
+  null
+);

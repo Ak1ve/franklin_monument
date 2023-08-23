@@ -9,7 +9,12 @@ import { Chart } from "react-google-charts";
 import { dateRange } from "@/utilities/api";
 import { any } from "zod";
 import { listCard } from "@/utilities/listcard";
-import { FinancialReport, OrderReport } from "@/data/models/reports";
+import {
+  TaskReport,
+  FinancialReport,
+  OrderReport,
+  UserTasksReport,
+} from "@/data/models/reports";
 import { Data } from "@/data/schema";
 
 export const ReportHeader = ({ reportHook, onClick }: any) => {
@@ -63,40 +68,140 @@ export function Home() {
   );
 }
 
-export function UserReport() {
-  const reportHook = useImmer({
-    startDate: "2023-01",
-    endDate: "2023-01",
-  });
+export function TaskReportData({ data }: { data: Data<typeof TaskReport> }) {
+  const taskOptions = {
+    chart: {
+      title: "Tasks in Progress",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Tasks",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Cataloged Tasks",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
 
-  const onClick = () => {
-    // let data = [["", ""]];
-    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
-    // range.forEach((rangeElement) => {
-    //   dummyData.forEach((dataElement) => {
-    //     if (rangeElement === dataElement[0]) {
-    //       data.push(dataElement as any);
-    //     }
-    //   });
-    // });
-    // setDisplayData(data);
+  const taskStatsOptions = {
+    chart: {
+      title: "Stats About Every Task",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Time in hours",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Task",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
+
+  const itemStatsOptions = {
+    chart: {
+      title: "Stats About Every Item",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Time",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Item",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
   };
 
   return (
-    <Base sectionHeader="User Tasks Report">
-      <ReportHeader reportHook={reportHook} onClick={onClick} />
-      <div className="rounded-lg mt-10 p-2">
-        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
-          <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
-            <p># Finished: 12</p>
-            <p># Completed: 18</p>
-            <p># Not Done: 47</p>
-          </div>
-        </div>
+    <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+      <Chart
+        chartType="Bar"
+        width="100%"
+        height={`${Math.max(data.currentTasks.length * 50, 150)}px`}
+        data={data.currentTasks}
+        options={taskOptions}
+        key={data.currentTasks.toString()}
+      />
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.taskStats.length * 80, 600)}px`}
+          data={data.taskStats}
+          options={taskStatsOptions}
+          key={data.taskStats.toString()}
+        />
       </div>
-    </Base>
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.itemStats.length * 50, 300)}px`}
+          data={data.itemStats}
+          options={itemStatsOptions}
+          key={data.itemStats.toString()}
+        />
+      </div>
+    </div>
   );
 }
+
+const TasksReport = listCard(
+  TaskReport,
+  ({
+    data,
+    isLoading,
+    refresh,
+    query,
+    loadingMessage,
+    isError,
+    errorMessage,
+  }) => {
+    const [showReport, setShowReport] = useState(false);
+    const reportHook = useImmer({
+      startDate: "",
+      endDate: "",
+    });
+    const onClick = () => {
+      query((query) => ({ ...query, ...reportHook[0] })).then((x) => {
+        setShowReport(true);
+        refresh();
+      });
+    };
+    if (isError) {
+      return errorMessage;
+    }
+
+    return (
+      <Base sectionHeader="Task Report">
+        <ReportHeader reportHook={reportHook} onClick={onClick} />
+        <div className="rounded-lg mt-10 p-2">
+          {isLoading && showReport && loadingMessage}
+          {!isLoading && showReport && <TaskReportData data={data} />}
+        </div>
+      </Base>
+    );
+  },
+  false,
+  false
+);
 
 export function FinancialSummaryData({
   data,
@@ -346,6 +451,91 @@ const OrdersReport = listCard(
   }
 );
 
+export function UserTaskReportData({
+  data,
+}: {
+  data: Data<typeof UserTasksReport>;
+}) {
+  const userTaskStatsOptions = {
+    chart: {
+      title: "Time to Complete Each Task",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Time",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Task",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
+
+  return (
+    <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+      <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
+        <p># of Tasks in Progress: {data.totalCurrentTasks}</p>
+        <p># of Task Comments: {data.totalTaskComments}</p>
+      </div>
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.userTaskStats.length * 50, 300)}px`}
+          data={data.userTaskStats}
+          options={userTaskStatsOptions}
+          key={data.userTaskStats.toString()}
+        />
+      </div>
+    </div>
+  );
+}
+
+const UserTaskReport = listCard(
+  UserTasksReport,
+  ({
+    data,
+    isLoading,
+    refresh,
+    query,
+    loadingMessage,
+    isError,
+    errorMessage,
+  }) => {
+    const [showReport, setShowReport] = useState(false);
+    const reportHook = useImmer({
+      startDate: "",
+      endDate: "",
+    });
+    const onClick = () => {
+      query((query) => ({ ...query, ...reportHook[0] })).then((x) => {
+        setShowReport(true);
+        refresh();
+      });
+    };
+    if (isError) {
+      return errorMessage;
+    }
+
+    return (
+      <Base sectionHeader="User Tasks Report">
+        <ReportHeader reportHook={reportHook} onClick={onClick} />
+        <div className="rounded-lg mt-10 p-2">
+          {isLoading && showReport && loadingMessage}
+          {!isLoading && showReport && <UserTaskReportData data={data} />}
+        </div>
+      </Base>
+    );
+  },
+  false,
+  false
+);
+
 export default function Reports() {
   const [body, setBody] = useState("Home");
   const bodyNav = (name: string) => {
@@ -353,20 +543,23 @@ export default function Reports() {
   };
   const navs = [
     bodyNav("Home"),
-    bodyNav("User Report"),
+    bodyNav("Task Report"),
     bodyNav("Financial Summary"),
     bodyNav("Order Report"),
+    bodyNav("User Tasks Report"),
   ];
 
   let bodyContent;
-  if (body === "User Report") {
-    bodyContent = <UserReport />;
+  if (body === "Task Report") {
+    bodyContent = <TasksReport />;
   } else if (body === "Financial Summary") {
     bodyContent = <FinancialSummary />;
   } else if (body === "Home") {
     bodyContent = <Home />;
   } else if (body === "Order Report") {
     bodyContent = <OrdersReport />;
+  } else if (body === "User Tasks Report") {
+    bodyContent = <UserTaskReport />;
   } else {
     bodyContent = <></>;
   }
