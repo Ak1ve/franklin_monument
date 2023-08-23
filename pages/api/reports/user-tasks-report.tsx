@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 export default endpoint({
   getParams: userParams<Data<typeof UserTasksReport>>(true),
   get: reqPerm("canViewReports", async ({ req, res }) => {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, userId } = req.query;
     /*
         req.body = {
             startDate: string,

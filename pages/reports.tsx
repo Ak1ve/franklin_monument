@@ -2,7 +2,7 @@ import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import Base, { Section } from "@/forms/Base";
-import { BasicDatepicker } from "@/utilities/form";
+import { BasicDatepicker, BasicSelect } from "@/utilities/form";
 import { Component, useState } from "react";
 import { ImmerHook, useImmer } from "use-immer";
 import { Chart } from "react-google-charts";
@@ -18,6 +18,11 @@ import {
 import { Data } from "@/data/schema";
 
 export const ReportHeader = ({ reportHook, onClick }: any) => {
+  const users = [
+    { label: "Quinn", value: "1" },
+    { label: "Austin", value: "2" },
+  ];
+
   return (
     <Section className="mt-10">
       <h2 className="section-header mb-5 mt-2">Select a Start and End Date</h2>
@@ -35,6 +40,16 @@ export const ReportHeader = ({ reportHook, onClick }: any) => {
           prop="endDate"
         />
       </InputGrid>
+      {reportHook[0].userId !== undefined && (
+        <div>
+          <BasicSelect
+            hook={reportHook}
+            prop="userId"
+            options={users}
+            label={"User Select"}
+          />
+        </div>
+      )}
       <div className="flex gap-2 pb-2">
         <StandardButton
           type={ButtonTypes.ACTIVE}
@@ -180,7 +195,7 @@ const TasksReport = listCard(
       endDate: "",
     });
     const onClick = () => {
-      query((query) => ({ ...query, ...reportHook[0] })).then((x) => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
         setShowReport(true);
         refresh();
       });
@@ -343,7 +358,7 @@ const FinancialSummary = listCard(
       endDate: "",
     });
     const onClick = () => {
-      query((query) => ({ ...query, ...reportHook[0] })).then((x) => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
         setShowReport(true);
         refresh();
       });
@@ -430,7 +445,7 @@ const OrdersReport = listCard(
       endDate: "",
     });
     const onClick = () => {
-      query((query) => ({ ...query, ...reportHook[0] })).then((x) => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
         setShowReport(true);
         refresh();
       });
@@ -511,9 +526,10 @@ const UserTaskReport = listCard(
     const reportHook = useImmer({
       startDate: "",
       endDate: "",
+      userId: 0,
     });
     const onClick = () => {
-      query((query) => ({ ...query, ...reportHook[0] })).then((x) => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
         setShowReport(true);
         refresh();
       });
