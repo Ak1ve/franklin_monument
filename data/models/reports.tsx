@@ -14,11 +14,12 @@ import { Snowflake } from "./base";
 //   {}
 // );
 
-
 export const FinancialReport = cs(
   z.object({
     monthlySummary: z.array(z.array(z.string().or(z.number()))),
+    totalPayments: z.object({ quantity: z.number(), amount: z.number() }),
+    numberOfOrders: z.array(z.array(z.string().or(z.number()))),
   }),
   standardRoute(["get"], undefined, "/financial-summary"),
   null
-)
+);
