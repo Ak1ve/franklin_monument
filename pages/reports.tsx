@@ -1,16 +1,28 @@
 import { ButtonTypes, InputGrid, StandardButton } from "@/components/Inputs";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
-import { Report } from "@/data/models/reports";
 import Base, { Section } from "@/forms/Base";
-import { BasicDatepicker } from "@/utilities/form";
+import { BasicDatepicker, BasicSelect } from "@/utilities/form";
 import { Component, useState } from "react";
 import { ImmerHook, useImmer } from "use-immer";
 import { Chart } from "react-google-charts";
 import { dateRange } from "@/utilities/api";
 import { any } from "zod";
+import { listCard } from "@/utilities/listcard";
+import {
+  TaskReport,
+  FinancialReport,
+  OrderReport,
+  UserTasksReport,
+} from "@/data/models/reports";
+import { Data } from "@/data/schema";
 
 export const ReportHeader = ({ reportHook, onClick }: any) => {
+  const users = [
+    { label: "Quinn", value: "1" },
+    { label: "Austin", value: "2" },
+  ];
+
   return (
     <Section className="mt-10">
       <h2 className="section-header mb-5 mt-2">Select a Start and End Date</h2>
@@ -28,6 +40,16 @@ export const ReportHeader = ({ reportHook, onClick }: any) => {
           prop="endDate"
         />
       </InputGrid>
+      {reportHook[0].userId !== undefined && (
+        <div>
+          <BasicSelect
+            hook={reportHook}
+            prop="userId"
+            options={users}
+            label={"User Select"}
+          />
+        </div>
+      )}
       <div className="flex gap-2 pb-2">
         <StandardButton
           type={ButtonTypes.ACTIVE}
@@ -61,96 +83,146 @@ export function Home() {
   );
 }
 
-export function UserReport() {
-  const reportHook = useImmer({
-    startDate: "2023-01",
-    endDate: "2023-01",
-  });
+export function TaskReportData({ data }: { data: Data<typeof TaskReport> }) {
+  const taskOptions = {
+    chart: {
+      title: "Tasks in Progress",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Tasks",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Cataloged Tasks",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
 
-  const onClick = () => {
-    // let data = [["", ""]];
-    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
-    // range.forEach((rangeElement) => {
-    //   dummyData.forEach((dataElement) => {
-    //     if (rangeElement === dataElement[0]) {
-    //       data.push(dataElement as any);
-    //     }
-    //   });
-    // });
-    // setDisplayData(data);
+  const taskStatsOptions = {
+    chart: {
+      title: "Stats About Every Task",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Time in hours",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Task",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
+  };
+
+  const itemStatsOptions = {
+    chart: {
+      title: "Stats About Every Item",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Time",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Item",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
   };
 
   return (
-    <Base sectionHeader="User Tasks Report">
-      <ReportHeader reportHook={reportHook} onClick={onClick} />
-      <div className="rounded-lg mt-10 p-2">
-        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
-          <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
-            <p># Finished: 12</p>
-            <p># Completed: 18</p>
-            <p># Not Done: 47</p>
-          </div>
-        </div>
+    <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+      <Chart
+        chartType="Bar"
+        width="100%"
+        height={`${Math.max(data.currentTasks.length * 50, 150)}px`}
+        data={data.currentTasks}
+        options={taskOptions}
+        key={data.currentTasks.toString()}
+      />
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.taskStats.length * 80, 600)}px`}
+          data={data.taskStats}
+          options={taskStatsOptions}
+          key={data.taskStats.toString()}
+        />
       </div>
-    </Base>
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.itemStats.length * 50, 300)}px`}
+          data={data.itemStats}
+          options={itemStatsOptions}
+          key={data.itemStats.toString()}
+        />
+      </div>
+    </div>
   );
 }
 
-export function FinancialSummary() {
-  const reportHook = useImmer({
-    startDate: "2023-01",
-    endDate: "2023-01",
-  });
+const TasksReport = listCard(
+  TaskReport,
+  ({
+    data,
+    isLoading,
+    refresh,
+    query,
+    loadingMessage,
+    isError,
+    errorMessage,
+  }) => {
+    const [showReport, setShowReport] = useState(false);
+    const reportHook = useImmer({
+      startDate: "",
+      endDate: "",
+    });
+    const onClick = () => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
+        setShowReport(true);
+        refresh();
+      });
+    };
+    if (isError) {
+      return errorMessage;
+    }
 
-  const financialSummaryData = {
-    monthlySummary: [
-      ["", ""],
-      ["Jan 2023", 7216],
-      ["Feb 2023", 1294],
-      ["Mar 2023", 8274],
-      ["Apr 2023", 2849],
-      ["May 2023", 2843],
-      ["Jun 2023", 2094],
-      ["Jul 2023", 4274],
-      ["Aug 2023", 5424],
-      ["Sep 2023", 3850],
-      ["Oct 2023", 3235],
-      ["Nov 2023", 2922],
-      ["Dec 2023", 4575],
-      ["Jan 2024", 7216],
-      ["Feb 2024", 1294],
-      ["Mar 2024", 8274],
-      ["Apr 2024", 3749],
-      ["May 2024", 2843],
-      ["Jun 2024", 2094],
-      ["Jul 2024", 4274],
-      ["Aug 2024", 5424],
-      ["Sep 2024", 3850],
-      ["Oct 2024", 3235],
-      ["Nov 2024", 2922],
-      ["Dec 2024", 4575],
-    ],
-    totalPayments: { quantity: 29, amount: 51306 },
-    numberOfOrders: [
-      ["", ""],
-      ["Paid", 36],
-      ["Unpaid", 20],
-    ],
-  };
+    return (
+      <Base sectionHeader="Task Report">
+        <ReportHeader reportHook={reportHook} onClick={onClick} />
+        <div className="rounded-lg mt-10 p-2">
+          {isLoading && showReport && loadingMessage}
+          {!isLoading && showReport && <TaskReportData data={data} />}
+        </div>
+      </Base>
+    );
+  },
+  false,
+  false
+);
 
-  const onClick = () => {
-    // let data = [["", ""]];
-    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
-    // range.forEach((rangeElement) => {
-    //   dummyData.forEach((dataElement) => {
-    //     if (rangeElement === dataElement[0]) {
-    //       data.push(dataElement as any);
-    //     }
-    //   });
-    // });
-    // setDisplayData(data);
-  };
-
+export function FinancialSummaryData({
+  data,
+}: {
+  data: Data<typeof FinancialReport>;
+}) {
   const monthlyOptions = {
     chart: {
       title: "Revenue Breakdown",
@@ -222,90 +294,93 @@ export function FinancialSummary() {
   };
 
   return (
-    <Base sectionHeader="Financial Summary">
-      <ReportHeader reportHook={reportHook} onClick={onClick} />
-      <div className="rounded-lg mt-10 p-2">
-        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
-          <Chart
-            chartType="Bar"
-            width="100%"
-            height={`${Math.max(
-              financialSummaryData.monthlySummary.length * 30,
-              150
-            )}px`}
-            data={financialSummaryData.monthlySummary}
-            options={monthlyOptions}
-            key={financialSummaryData.monthlySummary.toString()}
-          />
-          <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
-            <p>
-              Total # of payments: {financialSummaryData.totalPayments.quantity}
-            </p>
-            <p>Total: ${financialSummaryData.totalPayments.amount}</p>
-            <p>
-              Outstanding Revenue: ${financialSummaryData.totalPayments.amount}
-            </p>
-          </div>
-          <div className="mt-3"></div>
-          <div className="mt-10 items-end">
-            <Chart
-              chartType="PieChart"
-              options={orderPaidOptions}
-              data={financialSummaryData.numberOfOrders}
-              key={financialSummaryData.numberOfOrders.toString()}
-            />
-          </div>
-          <div className="mt-10">
-            <Chart
-              chartType="Bar"
-              width="100%"
-              height={`${Math.max(
-                financialSummaryData.monthlySummary.length * 30,
-                150
-              )}px`}
-              data={financialSummaryData.monthlySummary}
-              options={itemOptions}
-              key={financialSummaryData.monthlySummary.toString()}
-            />
-          </div>
-          <div className="mt-10">
-            <Chart
-              chartType="Bar"
-              width="100%"
-              height={`${Math.max(
-                financialSummaryData.monthlySummary.length * 30,
-                150
-              )}px`}
-              data={financialSummaryData.monthlySummary}
-              options={subtypeOptions}
-              key={financialSummaryData.monthlySummary.toString()}
-            />
-          </div>
-        </div>
+    <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+      <Chart
+        chartType="Bar"
+        width="100%"
+        height={`${Math.max(data.monthlySummary.length * 30, 150)}px`}
+        data={data.monthlySummary}
+        options={monthlyOptions}
+        key={data.monthlySummary.toString()}
+      />
+      <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
+        <p>Total # of payments: {data.totalPayments.quantity}</p>
+        <p>Total: ${data.totalPayments.amount}</p>
+        <p>Outstanding Revenue: ${data.totalPayments.amount}</p>
       </div>
-    </Base>
+      <div className="mt-3"></div>
+      <div className="mt-10 items-end">
+        <Chart
+          chartType="PieChart"
+          options={orderPaidOptions}
+          data={data.numberOfOrders}
+          key={data.numberOfOrders.toString()}
+        />
+      </div>
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.monthlySummary.length * 30, 150)}px`}
+          data={data.monthlySummary}
+          options={itemOptions}
+          key={data.monthlySummary.toString()}
+        />
+      </div>
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.monthlySummary.length * 30, 150)}px`}
+          data={data.monthlySummary}
+          options={subtypeOptions}
+          key={data.monthlySummary.toString()}
+        />
+      </div>
+    </div>
   );
 }
 
-export function OrderReport() {
-  const reportHook = useImmer({
-    startDate: "2023-01",
-    endDate: "2023-01",
-  });
+const FinancialSummary = listCard(
+  FinancialReport,
+  ({
+    data,
+    isLoading,
+    refresh,
+    query,
+    loadingMessage,
+    isError,
+    errorMessage,
+  }) => {
+    const [showReport, setShowReport] = useState(false);
+    const reportHook = useImmer({
+      startDate: "",
+      endDate: "",
+    });
+    const onClick = () => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
+        setShowReport(true);
+        refresh();
+      });
+    };
+    if (isError) {
+      return errorMessage;
+    }
+    return (
+      <Base sectionHeader="Financial Summary">
+        <ReportHeader reportHook={reportHook} onClick={onClick} />
+        <div className="rounded-lg mt-10 p-2">
+          {isLoading && showReport && loadingMessage}
+          {!isLoading && showReport && <FinancialSummaryData data={data} />}
+        </div>
+      </Base>
+    );
+  },
+  false,
+  false
+);
 
-  const onClick = () => {
-    // let data = [["", ""]];
-    // range = dateRange(reportHook[0].startDate, reportHook[0].endDate);
-    // range.forEach((rangeElement) => {
-    //   dummyData.forEach((dataElement) => {
-    //     if (rangeElement === dataElement[0]) {
-    //       data.push(dataElement as any);
-    //     }
-    //   });
-    // });
-    // setDisplayData(data);
-  };
-
+export function OrderReportData({ data }: { data: Data<typeof OrderReport> }) {
   const orderOptions = {
     legend: "none",
     pieSliceText: "label",
@@ -318,74 +393,164 @@ export function OrderReport() {
     },
   };
 
-  const orderData = {
-    totalOrders: 29,
-    ordersByStatus: [
-      ["", ""],
-      ["Not Started", 36],
-      ["In Progress", 15],
-      ["Completed", 43],
-    ],
-    ordersByType: [
-      ["", ""],
-      ["Service", 13],
-      ["Memorial", 5],
-      ["Invoice", 21],
-    ],
-    ordersByCemetary: [
-      ["", ""],
-      ["Pet Cemetary", 7],
-      ["Fisher Titus", 11],
-      ["Loserville", 4],
-    ],
-    ordersByDeliveryMethod: [
-      ["", ""],
-      ["FedEx", 13],
-      ["UPS", 9],
-      ["USPS", 3],
-      ["Pigeon", 10],
-    ],
+  return (
+    <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+      <div className="flex gap-10 mt-5 shadow-md text-2xl justify-center rounded-md">
+        <p># of orders: {data.totalOrders}</p>
+      </div>
+      <div className="mt-10">
+        <div className="mt-10 flex justify-center">
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByStatus}
+          />
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByType}
+          />
+        </div>
+        <div className="mt-10 flex justify-center">
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByCemetary}
+          />
+          <Chart
+            chartType="PieChart"
+            options={orderOptions}
+            data={data.ordersByDeliveryMethod}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const OrdersReport = listCard(
+  OrderReport,
+  ({
+    data,
+    isLoading,
+    refresh,
+    query,
+    loadingMessage,
+    isError,
+    errorMessage,
+  }) => {
+    const [showReport, setShowReport] = useState(false);
+    const reportHook = useImmer({
+      startDate: "",
+      endDate: "",
+    });
+    const onClick = () => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
+        setShowReport(true);
+        refresh();
+      });
+    };
+    if (isError) {
+      return errorMessage;
+    }
+
+    return (
+      <Base sectionHeader="Order Report">
+        <ReportHeader reportHook={reportHook} onClick={onClick} />
+        <div className="rounded-lg mt-10 p-2">
+          {isLoading && showReport && loadingMessage}
+          {!isLoading && showReport && <OrderReportData data={data} />}
+        </div>
+      </Base>
+    );
+  }
+);
+
+export function UserTaskReportData({
+  data,
+}: {
+  data: Data<typeof UserTasksReport>;
+}) {
+  const userTaskStatsOptions = {
+    chart: {
+      title: "Time to Complete Each Task",
+      subtitle: "",
+    },
+    hAxis: {
+      title: "Time",
+      minValue: 0,
+    },
+    vAxis: {
+      title: "Task",
+    },
+    bars: "horizontal",
+    axes: {
+      y: {
+        0: { side: "left" },
+      },
+    },
   };
 
   return (
-    <Base sectionHeader="Order Report">
-      <ReportHeader reportHook={reportHook} onClick={onClick} />
-      <div className="rounded-lg mt-10 p-2">
-        <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
-          <div className="flex gap-10 mt-5 shadow-md text-2xl justify-center rounded-md">
-            <p># of orders: {orderData.totalOrders}</p>
-          </div>
-          <div className="mt-10">
-            <div className="mt-10 flex justify-center">
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByStatus}
-              />
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByType}
-              />
-            </div>
-            <div className="mt-10 flex justify-center">
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByCemetary}
-              />
-              <Chart
-                chartType="PieChart"
-                options={orderOptions}
-                data={orderData.ordersByDeliveryMethod}
-              />
-            </div>
-          </div>
-        </div>
+    <div className="mt-5 mb-5 p-10 bg-white shadow-md rounded-md">
+      <div className="flex gap-10 mt-10 shadow-md text-2xl justify-between rounded-md">
+        <p># of Tasks in Progress: {data.totalCurrentTasks}</p>
+        <p># of Task Comments: {data.totalTaskComments}</p>
       </div>
-    </Base>
+      <div className="mt-10">
+        <Chart
+          chartType="Bar"
+          width="100%"
+          height={`${Math.max(data.userTaskStats.length * 50, 300)}px`}
+          data={data.userTaskStats}
+          options={userTaskStatsOptions}
+          key={data.userTaskStats.toString()}
+        />
+      </div>
+    </div>
   );
 }
+
+const UserTaskReport = listCard(
+  UserTasksReport,
+  ({
+    data,
+    isLoading,
+    refresh,
+    query,
+    loadingMessage,
+    isError,
+    errorMessage,
+  }) => {
+    const [showReport, setShowReport] = useState(false);
+    const reportHook = useImmer({
+      startDate: "",
+      endDate: "",
+      userId: 0,
+    });
+    const onClick = () => {
+      query((query) => ({ ...reportHook[0] })).then((x) => {
+        setShowReport(true);
+        refresh();
+      });
+    };
+    if (isError) {
+      return errorMessage;
+    }
+
+    return (
+      <Base sectionHeader="User Tasks Report">
+        <ReportHeader reportHook={reportHook} onClick={onClick} />
+        <div className="rounded-lg mt-10 p-2">
+          {isLoading && showReport && loadingMessage}
+          {!isLoading && showReport && <UserTaskReportData data={data} />}
+        </div>
+      </Base>
+    );
+  },
+  false,
+  false
+);
 
 export default function Reports() {
   const [body, setBody] = useState("Home");
@@ -394,20 +559,23 @@ export default function Reports() {
   };
   const navs = [
     bodyNav("Home"),
-    bodyNav("User Report"),
+    bodyNav("Task Report"),
     bodyNav("Financial Summary"),
     bodyNav("Order Report"),
+    bodyNav("User Tasks Report"),
   ];
 
   let bodyContent;
-  if (body === "User Report") {
-    bodyContent = <UserReport />;
+  if (body === "Task Report") {
+    bodyContent = <TasksReport />;
   } else if (body === "Financial Summary") {
     bodyContent = <FinancialSummary />;
   } else if (body === "Home") {
     bodyContent = <Home />;
   } else if (body === "Order Report") {
-    bodyContent = <OrderReport />;
+    bodyContent = <OrdersReport />;
+  } else if (body === "User Tasks Report") {
+    bodyContent = <UserTaskReport />;
   } else {
     bodyContent = <></>;
   }

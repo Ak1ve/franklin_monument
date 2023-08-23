@@ -106,8 +106,9 @@ export function divyQueryId<D, S>(splits: string[], ...funcs: APIFunction<Endpoi
     }
 }
 
-export function cacheFor<D, S>(time: number, func: APIFunction<EndpointParamsBase<D> & S>): APIFunction<EndpointParamsBase<D> & S> {
-    const cache = new Cache({defau});
+export function cacheFor<D, S>(func: APIFunction<EndpointParamsBase<D> & S>, time: number = 5 * 60 * 1000): APIFunction<EndpointParamsBase<D> & S> {
+    const cache = new Cache({defaultTtl: time});
+    
 }
 
 export const divyQueryNew = <D, S>(onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>) =>  divyQueryId(["new"], onNew, onId);

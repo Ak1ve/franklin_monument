@@ -16,11 +16,11 @@ export interface ListCardProps<D> {
     refresh: () => void
     isError: boolean
     errorMessage: any
-    deleteId: (id: number) => any
 }
 
 
 export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardProps<D>) => JSX.Element, fetchOnDock: boolean = true, navBase: boolean = true): () => JSX.Element {
+
     return () => {
         const sessionStatus = useSession({ required: true }).status;
         const [data, setData] = useState(null as D);
@@ -29,13 +29,6 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
         const showInfoHook = useState(false);
         const refreshHook = useState(false);
         const [fetched, setFetched] = useState(false);
-        const [errorMessage, setErrorMessage] = useState(null as null | string);
-        const [showMessage, setShowMessage] = useState(false);
-
-        const refresh = () => {
-            refreshHook[1]((x) => !x);
-        }
-
         useEffect(() => {
             if (!fetchOnDock && !fetched) {
                 setFetched(true);
@@ -57,37 +50,21 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                 }
             }))
         }, [refreshHook[0]]);
-
-        const deleteId = (id: number) => {
-            schema.route.delete!(getRouteParams({
-                router, schema, path: router.asPath + "/" + id.toString(),
-                onSuccess(success) {
-                    refresh();
-                },
-                onError(err) {
-                    if (err.error.type === "Network") {
-                        (err.error.error.info as any).then((x: EndpointError) => {
-                            setErrorMessage(`Error: Could not delete. ${JSON.stringify(x)}`);
-                            setShowMessage(true);
-                        });
-                    }
-                }
-            }));
-        }
-
-
         setTimeout(() => showInfoHook[1](true), 5000);
 
-        const isLoading = sessionStatus === "loading" || data === null
+    const isLoading = sessionStatus === "loading" || data === null;
 
         const isPermError = endpointError?.type === "Permission";
-
+        
         const query = (callback: (query: Object) => Object) => {
-            return router.push({ query: callback(router.query as any) as any });
+            return router.push({query: callback(router.query as any) as any});
         }
 
-        return (<>
-        {component(
+        const refresh = () => {
+            refreshHook[1]((x) => !x);
+        }
+
+        return component(
             {
                 data,
                 isLoading,
@@ -102,7 +79,7 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                 endpointError: endpointError,
                 query,
                 refresh,
-                isError: endpointError !== null,
+                isError: endpointError === null,
                 errorMessage: (<>
                     {navBase && <Navbar active="******" />}
                     <StandardError ok="Back to Dashboard" onOk={() => { router.push("/dashboard") }}
@@ -119,13 +96,8 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                                 </>)
                         }
                     </StandardError>
-                </>),
-                deleteId
+                </>)
             }
-        )}
-            <Notification hook={[showMessage, setShowMessage]} type="danger">
-                {errorMessage}
-            </Notification>
-        </>)
+        );
     };
 }
