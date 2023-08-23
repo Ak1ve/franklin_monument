@@ -74,12 +74,15 @@ export function AddressCard({
 
 const AddressBookModel = cs(z.array(Address.schema), standardRoute(), []);
 
-export default listCard(AddressBookModel, ({ data, isLoading, loadingMessage }) => {
+export default listCard(AddressBookModel, ({ data, isLoading, loadingMessage, isError, errorMessage }) => {
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState("1" as number | string);
   const onCancel = () => setShowModal(false);
   const onSubmit = () => false;
-  // TODO 
+
+  if (isError) {
+    return errorMessage;
+  }
 
   if (isLoading) {
     return loadingMessage;

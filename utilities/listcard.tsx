@@ -13,6 +13,8 @@ export interface ListCardProps<D> {
     loadingMessage: any
     query: (callback: (query: Object) => Object) => Promise<boolean>
     refresh: () => void
+    isError: boolean
+    errorMessage: any
 }
 
 
@@ -51,27 +53,8 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
 
         const isLoading = sessionStatus === "loading" || data === null
 
-        if (endpointError !== null) {
-            const isPermError = endpointError.type === "Permission";
-            return (<>
-                {navBase && <Navbar active="******" />}
-                <StandardError ok="Back to Dashboard" onOk={() => { router.push("/dashboard") }}
-                    error={isPermError ? "Not Allowed" : endpointError.type} hook={[true, () => { }]}>
-                    {
-                        isPermError ? (<>
-                            You are not allowed to view this page. If this is a mistake, contact
-                            an administrator.  If you were recently granted permission to view this page,
-                            please wait 5-10 minutes before attempting to load again.<br /><br />Additional information: {endpointError.error}
-                        </>) :
-                            (<>
-                                An unknown error has occured while loading this page.  Please ensure that your account
-                                has been set up correctly.<br /><br />Additional informaiton: ${endpointError.error}
-                            </>)
-                    }
-                </StandardError>
-            </>);
-        }
-
+        const isPermError = endpointError?.type === "Permission";
+        
         const query = (callback: (query: Object) => Object) => {
             return router.push({query: callback(router.query as any) as any});
         }
@@ -94,7 +77,25 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
                 </>),
                 endpointError: endpointError,
                 query,
-                refresh
+                refresh,
+                isError: endpointError === null,
+                errorMessage: (<>
+                    {navBase && <Navbar active="******" />}
+                    <StandardError ok="Back to Dashboard" onOk={() => { router.push("/dashboard") }}
+                        error={isPermError ? "Not Allowed" : endpointError?.type} hook={[true, () => { }]}>
+                        {
+                            isPermError ? (<>
+                                You are not allowed to view this page. If this is a mistake, contact
+                                an administrator.  If you were recently granted permission to view this page,
+                                please wait 5-10 minutes before attempting to load again.<br /><br />Additional information: {endpointError.error}
+                            </>) :
+                                (<>
+                                    An unknown error has occured while loading this page.  Please ensure that your account
+                                    has been set up correctly.<br /><br />Additional informaiton: ${endpointError?.error}
+                                </>)
+                        }
+                    </StandardError>
+                </>)
             }
         );
     };
