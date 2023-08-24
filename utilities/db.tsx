@@ -1,5 +1,6 @@
 import { PrismaClient, User } from "@prisma/client";
 import Cache from "timed-cache";
+import { getOrCache } from "./api";
 
 
 const prisma = new PrismaClient();
@@ -26,16 +27,7 @@ const __getUserCache: Cache<User> = new Cache({ defaultTtl: 5 * 60 * 1000 }); //
  * @param email 
  */
 export async function getCacheUser(email: string): Promise<User | null> {
-    const user = __getUserCache.get(email);
-    if (user === undefined) {
-        const newUser = await getUser(email);
-        if (newUser === null) {
-            return null;
-        }
-        __getUserCache.put(email, newUser);
-        return newUser;
-    }
-    return user;
+    return await getOrCache(__getUserCache, email, async () => await getUser(email));
 }
 
 /**

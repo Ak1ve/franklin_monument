@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
+import Cache from "timed-cache";
 
 export function mapGetOr<K, V>(
   map: Map<K, V>,
@@ -122,6 +123,19 @@ export function dateRange(
     }
   }
   return dates;
+}
+
+export async function getOrCache<D>(cache: Cache<D | null>, key: string, value: () => Promise<D | null>, cacheNull: boolean = false): Promise<D | null> {
+  const val = cache.get(key);
+  if (val === undefined) {
+    const newVal = await value();
+    if (newVal === null && !cacheNull) {
+      return null;
+    }
+    cache.put(key, newVal);
+    return newVal;
+  }
+  return val;
 }
 
 export type UseStateHook<T> = [T, Dispatch<SetStateAction<T>>];

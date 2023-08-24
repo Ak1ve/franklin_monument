@@ -4,9 +4,11 @@ import { getServerSession } from "next-auth/next";
 import { getCacheUser, getUser, hasPermission } from "./db";
 import Cache from "timed-cache";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { extractProp } from "./form";
+import { getOrCache } from "./api";
 
 
-export type Handler<D, S = any> = {
+export type Handler<D, S = void> = {
     (req: NextApiRequest, res: NextApiResponse<D | EndpointError | { success: true }>): Promise<S>
 }
 
@@ -16,8 +18,8 @@ export type EndpointError = {
     error: string
 }
 
-export type APIFunction<S> = {
-    (params: S): Promise<any>
+export type APIFunction<S, R = any> = {
+    (params: S): Promise<R>
 }
 
 export type EndpointParamsBase<D> = {
@@ -93,7 +95,7 @@ export function reqPerm<K extends keyof User, D>(perm: K | K[], func: APIFunctio
 }
 
 // onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>
-export function divyQueryId<D, S>(splits: string[], ...funcs: APIFunction<EndpointParamsBase<D> & S>[]): APIFunction<EndpointParamsBase<D> & S> {
+export function divyQueryId<D, S>(splits: string[], ...funcs: APIFunction<EndpointParamsBase<D> & S>[]): APIFunction<EndpointParamsBase<D> & S, D> {
     return async (params) => {
         const id = params.req.query.id;
         let func = funcs[funcs.length - 1];
@@ -106,9 +108,14 @@ export function divyQueryId<D, S>(splits: string[], ...funcs: APIFunction<Endpoi
     }
 }
 
-export function cacheFor<D, S>(func: APIFunction<EndpointParamsBase<D> & S>, time: number = 5 * 60 * 1000): APIFunction<EndpointParamsBase<D> & S> {
-    const cache = new Cache({defaultTtl: time});
-    
+export function cacheFor<D, S>(func: APIFunction<EndpointParamsBase<D> & S, D>, depencyProps: string[] = [],  time: number = 5 * 60 * 1000): APIFunction<EndpointParamsBase<D> & S, D> {
+    const cache: Cache<D> = new Cache({defaultTtl: time});
+    return async (props) => {
+        const key = depencyProps.map(x => (extractProp(props, x))).toString();
+        const val = await getOrCache(cache, key, async () => await func(props));
+        props.res.status(200).json(val!);
+        return val!;
+    }
 }
 
 export const divyQueryNew = <D, S>(onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>) =>  divyQueryId(["new"], onNew, onId);
@@ -155,7 +162,7 @@ export function endpoint<D, S>(point: Endpoint<D, S>): Handler<D> {
         }
         const params = { req, res, ...innerParams };
         try {
-            return await delegate(req.method!, point, params);
+            await delegate(req.method!, point, params);
         } catch (err) {
             res.status(500).json({
                 type: "Unknown",

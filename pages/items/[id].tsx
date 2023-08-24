@@ -1,6 +1,7 @@
+"use client";
 import Navbar from "@/components/Navbar";
 import ItemForm from "@/forms/items/Item";
-import { CatalogedItem } from "@/models/CatalogedItem";
+//import { CatalogedItem } from "@/models/CatalogedItem";
 
 
 /*

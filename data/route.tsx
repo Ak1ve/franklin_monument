@@ -107,7 +107,7 @@ export function networkError<S>(error: Error & { info?: any, status?: string }):
 export function standardGet<S>(prepend: string = "/api/", append: string = ""): MethodFunction<S> {
     return ({ path, schema, onError, onSuccess }) => {
         const [beforeQuery, afterQuery] = path.split("?", 2);
-        const newPath = prepend + beforeQuery + append + "?" + afterQuery;
+        const newPath = path.includes("?") ?  prepend + beforeQuery + append + "?" + afterQuery : prepend + path + append;
         return getter(newPath).then(success => {
             let value = schemaParse(schema, success);
             if (value.success) {

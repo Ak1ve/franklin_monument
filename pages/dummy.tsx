@@ -4,7 +4,7 @@ import { FinancialReport } from "@/data/models/reports";
 import { useImmer } from "use-immer";
 import { BasicInput } from "@/utilities/form";
 import { useState } from "react";
-import UserSelect from "@/data/UserSelect";
+import UserSelect from "@/components/UserSelect";
 
 export default function Dummy() {
     const hook = useImmer({

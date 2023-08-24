@@ -1,37 +1,37 @@
-import { Order, OrderItem } from "@/models/Orders";
 import Base, { Section } from "../Base";
-import { CatalogedItem } from "@/models/CatalogedItem";
 import { OrderItemCard, SpecificationCards } from "./Items";
-import { CatalogedTask, TaskComment, UserTask } from "@/models/Tasks";
 import { MapType } from "@/utilities/api";
 import { flattenArray } from "@/utilities/api";
 import { ButtonTypes, StandardButton } from "@/components/Inputs";
 import { StandardSelect } from "@/components/Inputs";
-import { User } from "@/models/User";
 import { useEffect, useState } from "react";
 import { Option, SelectValue } from "react-tailwindcss-select/dist/components/type";
-import { getSelectValue, normalizeSelectValue } from "@/utilities/select";
 import Collapse from "@/components/Collapse";
 import classNames from "classnames";
 import StretchButton from "@/components/StretchButton";
 import { Edit, EditButton, Trash, TrashButton, UserButton } from "@/components/Icons";
+import { CatalogedTask, TaskComment, UserTask } from "@/data/models/tasks";
+import { Data } from "@/data/schema";
+import { useImmer } from "use-immer";
+import UserSelect from "@/components/UserSelect";
+import { OrderItem } from "@/data/models/orders";
 
 const tasks = [{ id: 1, label: "Task 1", description: "This is a description", isDeleted: false },
 { id: 2, label: "Task 2", description: "Words are really cool!", isDeleted: false },
 { id: 3, label: "Task 3", description: "I hate words :(", isDeleted: false }];
 
-const users: User[] = [
+const users = [
     {
         id: 1,
-        userName: "Austin"
+        name: "Austin"
     },
     {
         id: 2,
-        userName: "Boston"
+        name: "Boston"
     },
 ];
 
-const basicCatalogedItem: CatalogedItem = {
+const basicCatalogedItem = {
     id: 1,
     type: "Base",
     subType: "Memorial",
@@ -151,7 +151,7 @@ const basicCatalogedItem: CatalogedItem = {
 }
 
 
-const items: Array<OrderItem> = [
+const items: Array<Data<typeof OrderItem>> = [
     {
         id: 1,
         catalogedItem: basicCatalogedItem,
@@ -167,26 +167,26 @@ const items: Array<OrderItem> = [
                 taskId: 1,
                 assignedUser: {
                     id: 1,
-                    userName: "Hello!"
+                    name: "Hello!"
                 },
                 startedOn: new Date(2023, 5),
                 finishedOn: new Date(),
                 comments: [
                     {
                         id: 1,
-                        user: { id: 5, userName: "USERNAME" },
+                        user: { id: 5, name: "USERNAME" },
                         postedOn: new Date(2020, 5),
                         content: "This is a comment that is nice and fancy!!"
                     },
                     {
                         id: 2,
-                        user: { id: 5, userName: "USERNAME" },
+                        user: { id: 5, name: "USERNAME" },
                         postedOn: new Date(2020, 5),
                         content: "This is a comment that is nice and fancy!!"
                     },
                     {
                         id: 3,
-                        user: { id: 5, userName: "USERNAME" },
+                        user: { id: 5, name: "USERNAME" },
                         postedOn: new Date(2020, 5),
                         content: "This is a comment that is nice and fancy!!"
                     }
@@ -197,7 +197,7 @@ const items: Array<OrderItem> = [
                 taskId: 2,
                 assignedUser: {
                     id: 1,
-                    userName: "Hello!"
+                    name: "Hello!"
                 },
                 startedOn: new Date(2023, 5),
                 finishedOn: null,
@@ -208,7 +208,7 @@ const items: Array<OrderItem> = [
                 taskId: 3,
                 assignedUser: {
                     id: 1,
-                    userName: "Hello!"
+                    name: "Hello!"
                 },
                 startedOn: new Date(2023, 5),
                 finishedOn: new Date(2023, 5),
@@ -234,7 +234,7 @@ const items: Array<OrderItem> = [
                 taskId: 3,
                 assignedUser: {
                     id: 1,
-                    userName: "Hello!"
+                    name: "Hello!"
                 },
                 startedOn: null,
                 finishedOn: null,
@@ -255,7 +255,7 @@ export enum TaskStatus {
     FINISHED = "color-completed",
 }
 
-export function getTaskStatus(task: UserTask): TaskStatus {
+export function getTaskStatus(task: Data<typeof UserTask>): TaskStatus {
     if (task.finishedOn !== null) {
         return TaskStatus.FINISHED;
     }
@@ -266,12 +266,12 @@ export function getTaskStatus(task: UserTask): TaskStatus {
     return TaskStatus.NOT_STARTED
 }
 
-export function Comment({ comment }: { comment: TaskComment }) {
+export function Comment({ comment }: { comment: Data<typeof TaskComment> }) {
     return (
         <div className="bg-gray-50 rounded-xl p-3 mb-3 last:mb-0">
             <div className="flex">
                 <UserButton href="#" />
-                <div className="text-m">{comment.user.userName} <small className="text-gray-400 text-xs">{comment.postedOn.toLocaleDateString()} {comment.postedOn.toLocaleTimeString()}</small></div>
+                <div className="text-m">{comment.user.name} <small className="text-gray-400 text-xs">{comment.postedOn.toLocaleDateString()} {comment.postedOn.toLocaleTimeString()}</small></div>
                 <EditButton addClass="ml-auto" title="Edit Comment" />
                 {/* ADD BEHAVIOR */}
                 <TrashButton title="Delete Comment" />
@@ -282,17 +282,16 @@ export function Comment({ comment }: { comment: TaskComment }) {
 }
 
 
-export function Task({ task, catalogedTasks }: { task: UserTask, catalogedTasks: MapType<number, CatalogedTask> }) {
+export function Task({ task, catalogedTasks }: { task: Data<typeof UserTask>, catalogedTasks: MapType<number, Data<typeof CatalogedTask>> }) {
     const catalogedTask = catalogedTasks[task.taskId];
     // TODO on change for select 
     // TODO users
     // TODO API LOL
-    const userValues = users.map(x => { return { label: x.userName, value: x.id.toString() } }) as Option[];
-    const [user, setUser] = useState(task.assignedUser?.id);
-    const onChange = (val: SelectValue) => {
-        const value = normalizeSelectValue(val);
-        setUser(value.length === 1 ? value[0] : undefined);
-    }
+    const userValues = users.map(x => { return { label: x.name, value: x.id.toString() } }) as Option[];
+    const userHook = useImmer({
+        assignedUser: task.assignedUser?.id
+    });
+
     const [showComments, setShowComments] = useState(false);
     return (<>
         <div className="bg-white rounded-xl p-3 my-3 shadow-lg drop-shadow-lg">
@@ -301,9 +300,10 @@ export function Task({ task, catalogedTasks }: { task: UserTask, catalogedTasks:
                     <div className={`text-lg w-fit badge ${getTaskStatus(task)}`}>{catalogedTask.label}</div>
                     <p className="text-gray-400">{catalogedTask.description}</p>
                 </div>
-                <StandardSelect classNames={{
-                    menu: "relative z-20 w-full bg-white shadow-lg border rounded py-1 mt-1.5 text-sm text-gray-700 overflow-visible"
-                }} onChange={onChange} label="User" id={`userTask${task.id}`} value={getSelectValue(userValues, user as any, false)} options={userValues} />
+                {/* TODO maybe fix menu? */}
+                <UserSelect classNames={{
+                    menu: "relative z-50 w-full bg-white shadow-lg border rounded py-1 mt-1.5 text-sm text-gray-700 overflow-visible"
+                }} hook={userHook} prop="assignedUser" />
             </div>
             <div className="grid grid-cols-3">
                 <div>
@@ -335,7 +335,7 @@ export function Task({ task, catalogedTasks }: { task: UserTask, catalogedTasks:
     );
 }
 
-export function getItemStatus(item: OrderItem): TaskStatus {
+export function getItemStatus(item: Data<typeof OrderItem>): TaskStatus {
     let isFinished = true;
     for (let task of item.userTasks) {
         if (getTaskStatus(task) === TaskStatus.IN_PROGRESS) {
@@ -351,11 +351,11 @@ export function getItemStatus(item: OrderItem): TaskStatus {
     return TaskStatus.NOT_STARTED;
 }
 
-export function TasksCard(item: OrderItem) {
+export function TasksCard(item: Data<typeof OrderItem>) {
     const catalogedTasks = flattenArray(item.catalogedItem.tasks);
     const [showTasks, setShowTasks] = useState(true);
     return (
-        <div className="mt-5 w-full flex justify-center relative z-1" key={item.id as string}>
+        <div className="mt-5 w-full flex justify-center relative" key={item.id}>
             <Section className="transition">
                 <div className="px-10 py-5">
                     <div className="flex justify-between">

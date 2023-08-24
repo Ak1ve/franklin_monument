@@ -23,13 +23,13 @@ export const Dimensions = cs(
     width: z.coerce.number(),
     height: z.coerce.number(),
   }),
-  {}
+  {}, null
 );
 
 // map of ItemOption: item option values
 export const Specifications = cs(
   z.map(Snowflake, z.array(ItemOptionValue.schema)),
-  {}
+  {}, null
 );
 
 export const OrderItem = cs(
@@ -43,7 +43,8 @@ export const OrderItem = cs(
     notes: z.string(),
     taxExempt: z.boolean(),
   }),
-  standardRoute()
+  standardRoute(),
+  null
 );
 
 export const OrderOverview = cs(
@@ -57,7 +58,8 @@ export const OrderOverview = cs(
     cemetery: Address.schema,
     description: z.string(),
   }),
-  standardRoute()
+  standardRoute(),
+  null
 );
 
 export const Payment = cs(
@@ -68,7 +70,8 @@ export const Payment = cs(
     paymentType: z.string(),
     notes: z.string(),
   }),
-  {}
+  {},
+  null
 );
 
 export const Order = cs(
@@ -85,7 +88,8 @@ export const Order = cs(
     status: z.string(),
     isDeleted: z.boolean(),
   }),
-  {}
+  {},
+  null
 ); // TODo
 
 // export interface Order {

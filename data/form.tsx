@@ -67,7 +67,7 @@ export function formComponent<S, E extends {} = {}>(schema: ModelSchema<S>, comp
         };
         useEffect(() => {
             schema.route.get!(getRouteParams({ path, router, schema })).then(divyResultHook(stateHook, errorHook as any));
-        }, []);
+        }, [router.asPath]);
         let register = (prop: string) => ({
             hook: stateHook,
             prop: prop,

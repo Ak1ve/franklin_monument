@@ -1,6 +1,6 @@
 import { ModelSchema, getRouteParams } from "@/data/schema";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { EndpointError } from "./endpoint";
 import { StandardError, StandardInfo } from "@/components/message";
@@ -17,6 +17,7 @@ export interface ListCardProps<D> {
   isError: boolean
   errorMessage: any
   deleteId: (id: number) => any
+  router: NextRouter
 }
 
 
@@ -120,7 +121,8 @@ export function listCard<D>(schema: ModelSchema<D>, component: (props: ListCardP
               }
             </StandardError>
           </>),
-          deleteId
+          deleteId,
+          router
         }
       )}
       <Notification hook={[showMessage, setShowMessage]} type="danger">

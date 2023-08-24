@@ -4,7 +4,6 @@ import { Section } from "../Base";
 import { useImmer } from "use-immer";
 import { StandardModal } from "@/components/Modal";
 import { useState } from "react";
-import { CatalogedTask } from "@/models/Tasks";
 import { EditButton, TrashButton } from "@/components/Icons";
 import { catalogedTasks } from "@/dummydata";
 import SortableList, { SortableItem } from "react-easy-sort";
@@ -45,7 +44,7 @@ export function TaskCard({
   task,
   onClick,
 }: {
-  task: CatalogedTask;
+  task: any;
   onClick: any;
 }) {
   return (
@@ -109,11 +108,6 @@ export default function TaskList(this: any) {
             className="list"
             draggedItemClassName="dragged"
           >
-            {/* {items.map((item) => (
-              <SortableItem key={item}>
-                <div className="item">{item}</div>
-              </SortableItem>
-            ))} */}
             {tasks.map((x) => (
               <SortableItem key={x.id}>
                 <div className="item">

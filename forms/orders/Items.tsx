@@ -11,6 +11,7 @@ import { flattenArray, mapGetOr, unflattenIDMap, unflattenMap } from "@/utilitie
 import { useState } from "react";
 import classNames from "classnames";
 import Collapse from "@/components/Collapse";
+import UserSelect from "@/components/UserSelect";
 
 export interface ItemsProps {
 
@@ -205,11 +206,12 @@ function getFullSpecs(orderItem: OrderItem, catalogedItem: CatalogedItem): Array
     });
 }
 
-export function OptionCard({ option, values, header}: { option: ItemOption, values?: ItemOptionValue[],
+export function OptionCard({ option, values, header }: {
+    option: ItemOption, values?: ItemOptionValue[],
     header?: JSX.Element
 }) {
     const vals = values === undefined ? option.values : values as ItemOptionValue[];
-    
+
     return (
         <div className="mt-2 shadow-lg drop-shadow-sm p-1 rounded-lg bg-sky-100 mr-3">
             {header === undefined ? <h3 className="underline text-black text-center text-m mb-1">{option.key}</h3> : header}
@@ -262,25 +264,7 @@ export function OrderItemCard(item: OrderItem) {
     );
 }
 
-
-
 export default function Items(props: ItemsProps) {
-    /*
-    {
-        id: 2,
-        catalogedItem: basicCatalogedItem,
-        specifications: { 1: [1, 2, 3], 2: [10, 11, 12], 3: [100, 101, 102, 103], 7: [200, 201, 203] },
-        dimensions: {
-            length: 4.5,
-            width: 8.4,
-            height: 9.3
-        },
-        userTasks: [],
-        price: "4.50",
-        notes: "These are some notes to describe the item!!",
-        taxExempt: false,
-    }
-    */
     const [show, setShow] = useState(true);
     const itemModalState = useImmer<OrderItem>(items[1]); // TODO generate!!
     // TODO every cataloged item must be filtered for whether or not the cataloged item is deleted
@@ -291,7 +275,7 @@ export default function Items(props: ItemsProps) {
             <StandardModal title="Submit Item" showModal={show} onCancel={() => setShow(false)}>
                 <ModalSection header="Calaloged Item">
                     {/* TODO */}
-                    <BasicSelect prop="catalogedItem" label= "Item" options={[{ label: "Hooks", value: "1" }, { label: "Hooks", value: "2" }]} hook={selectHook} />
+                    <BasicSelect prop="catalogedItem" label="Item" options={[{ label: "Hooks", value: "1" }, { label: "Hooks", value: "2" }]} hook={selectHook} />
                 </ModalSection>
                 <ModalSection header="Specifications">
                     <InputGrid maxColumns={2}>
@@ -301,16 +285,16 @@ export default function Items(props: ItemsProps) {
                 <ModalSection header="Item Details">
                     {itemModalState[0].catalogedItem.sizeable &&
                         <InputGrid>
-                            <BasicInput label="Length" type="number" step= "any" hook={itemModalState} prop="dimensions.length" />
-                            <BasicInput label="Width" type="number" step= "any" hook={itemModalState} prop="dimensions.width" />
-                            <BasicInput label="Height" type="number" step= "any" hook={itemModalState} prop="dimensions.height" />
+                            <BasicInput label="Length" type="number" step="any" hook={itemModalState} prop="dimensions.length" />
+                            <BasicInput label="Width" type="number" step="any" hook={itemModalState} prop="dimensions.width" />
+                            <BasicInput label="Height" type="number" step="any" hook={itemModalState} prop="dimensions.height" />
                         </InputGrid>
                     }
                     <InputGrid>
-                        <BasicInput label= "Price" type= "number" step= ".01" hook={itemModalState} prop="price" />
-                        <BasicCheckbox label="Tax Exempt"  hook={itemModalState} prop="taxExempt" />
+                        <BasicInput label="Price" type="number" step=".01" hook={itemModalState} prop="price" />
+                        <BasicCheckbox label="Tax Exempt" hook={itemModalState} prop="taxExempt" />
                     </InputGrid>
-                    <BasicTextArea label= "Notes" rows={5} hook={itemModalState} prop="notes" />
+                    <BasicTextArea label="Notes" rows={5} hook={itemModalState} prop="notes" />
                 </ModalSection>
                 {/* TODO remove if not editing tasks */}
                 <ModalSection header={<div className="flex w-100 justify-between">
@@ -325,7 +309,8 @@ export default function Items(props: ItemsProps) {
 
                             </div>
                             {/* TODO for users */}
-                            <BasicSelect prop={"tasks" + task.id.toString()} label="User" options={[{ label: "Dog", value: "1" }, { label: "Dog", value: "2" }, { label: "Dog", value: "3" }]} hook={selectHook} />
+                            <UserSelect prop={"tasks" + task.id.toString()} hook={selectHook} />
+                            {/* <BasicSelect prop={"tasks" + task.id.toString()} label="User" options={[{ label: "Dog", value: "1" }, { label: "Dog", value: "2" }, { label: "Dog", value: "3" }]} hook={selectHook} /> */}
                         </div>
                     ))}
                 </ModalSection>

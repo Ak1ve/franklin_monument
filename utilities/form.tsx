@@ -16,7 +16,7 @@ function navigatePropString<T>(obj: T, property: keyof T | string, callback: (ob
 }
 
 
-const extractProp = (state: any, prop: any) => navigatePropString(state, prop, (state: any, lastProp: string) => state[lastProp]);
+export const extractProp = (state: any, prop: any) => navigatePropString(state, prop, (state: any, lastProp: string) => state[lastProp]);
 
 function updateProp<S>(updater: Updater<S>, property: keyof S | string, value: any) {
     updater((draft: Draft<S>) => {
