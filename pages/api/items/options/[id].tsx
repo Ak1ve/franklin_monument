@@ -1,21 +1,22 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { PrismaClient } from '@prisma/client'
-import { Address } from '@/data/models/address'
 import { Data } from '@/data/schema'
-import { divyQueryNew, endpoint, permOrError, reqPerm, standardAPIGetNew, userParams } from '@/utilities/endpoint';
+import { divyQueryNew, endpoint, permOrError, reqPerm, userParams } from '@/utilities/endpoint';
+import { CatalogedItemOption } from '@/data/models/items';
 
 const prisma = new PrismaClient();
 
-/*
-get: reqPerm("canViewAddresses", async ({ req, res }) => {
+export default endpoint({
+  getParams: userParams<Data<typeof CatalogedItemOption>>(true),
+  get: reqPerm("canViewAddresses", async ({ req, res }) => {
     if (req.query.id === "new") {
-      res.status(200).json(Address.createNew!);
+      res.status(200).json(CatalogedItemOption.createNew!);
       return;
     }
-    const contactId = parseInt(req.query.id as string);
-    const contact = await prisma.contact.findUnique({
+    const optionId = parseInt(req.query.id as string);
+    const option = await prisma.catalogedItemOption.findUnique({
       where: {
-        id: contactId
+        id: optionId
       },
       select: {
         id: true,
@@ -31,26 +32,17 @@ get: reqPerm("canViewAddresses", async ({ req, res }) => {
     });
     res.status(200).json(contact!);
   }),
-  */
-export default endpoint({
-  getParams: userParams<Data<typeof Address>>(true),
-  get: standardAPIGetNew({
-    perms: "canViewAddresses",
-    schema: Address,
-    modelName: "contact",
-    prisma,
-  }),
   post: divyQueryNew(
-    reqPerm("canCreateAddresses", async ({ req, res }) => {
-      const { id, ...body } = req.body;
+    reqPerm("canCreateAddresses", async ({req, res}) => {
+      const {id, ...body} = req.body;
       await prisma.contact.create({
         data: {
           ...body
         }
       })
-      res.status(200).json({ success: true });
+      res.status(200).json({success: true});
     }),
-    reqPerm("canEditAddresses", async ({ req, res }) => {
+    reqPerm("canEditAddresses", async ({req, res}) => {
       await prisma.contact.update({
         where: {
           id: parseInt(req.query.id as string)
@@ -59,16 +51,16 @@ export default endpoint({
           ...req.body
         }
       });
-      res.status(200).json({ success: true });
+      res.status(200).json({success: true});
     })
   ),
-  delete: reqPerm("canDeleteAddresses", async ({ req, res }) => {
+  delete: reqPerm("canDeleteAddresses", async ({req, res}) => {
     const id = parseInt(req.query.id as string);
     await prisma.contact.delete({
       where: {
         id: id
       }
     });
-    res.status(200).json({ success: true });
+    res.status(200).json({success: true});
   })
 });

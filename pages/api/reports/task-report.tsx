@@ -17,7 +17,6 @@ export default endpoint({
         }
         */
     // make the appropriate database calls
-    console.log(startDate, endDate);
 
     res.status(200).json({
       currentTasks: [

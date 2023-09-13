@@ -16,8 +16,7 @@ export default endpoint({
             endDate: string
         }
         */
-    // make the appropriate database calls
-    console.log(startDate, endDate);
+    // make the appropriate database callss
 
     res.status(200).json({
       totalOrders: 29,

@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { getCacheUser, getUser, hasPermission } from "./db";
@@ -6,6 +6,7 @@ import Cache from "timed-cache";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { extractProp } from "./form";
 import { getOrCache } from "./api";
+import { ModelSchema, zodKeys } from "@/data/schema";
 
 
 export type Handler<D, S = void> = {
@@ -93,6 +94,47 @@ export function reqPerm<K extends keyof User, D>(perm: K | K[], func: APIFunctio
         }
     }
 }
+export type StandardAPIGetNew<K extends keyof User, D, M extends keyof PrismaClient> = {
+    perms: {
+        onNew: K,
+        onId: K
+    } | K,
+    prisma: PrismaClient,
+    modelName: M,
+    schema: ModelSchema<D>,
+    onGetId?: (m: PrismaClient[M], req: NextApiRequest) => Promise<D>
+    selector?: any
+};
+
+export function standardAPIGetNew<K extends keyof User, D, M extends keyof PrismaClient>(params: StandardAPIGetNew<K, D, M>): APIFunction<EndpointParamsBase<D> & { user: User }> {
+    let {perms, prisma, schema, modelName, onGetId, selector} = params;
+
+    const get = onGetId || (async (m, req) => {
+        const selectObj = {} as any;
+        for (const x of zodKeys(schema.schema)) {
+            selectObj[x] = true;
+        }
+        const result = await (m as any).findUnique({
+            where: {
+                id: parseInt(req.query.id as string)
+            },
+            select: selector || selectObj
+        });
+        console.log(result);
+        return result;
+    });
+    const onNew = (typeof perms) === "string" ? perms : (perms as any).onNew;
+    const onId = (typeof perms) === "string" ? perms : (perms as any).onId;
+
+    return divyQueryNew(
+        reqPerm(onNew, async ({ res }) => {
+            res.status(200).json(schema.createNew!);
+        }),
+        reqPerm(onId, async ({ req, res }) => {
+            res.status(200).json(await get(prisma[modelName], req))
+        })
+    );
+}
 
 // onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>
 export function divyQueryId<D, S>(splits: string[], ...funcs: APIFunction<EndpointParamsBase<D> & S>[]): APIFunction<EndpointParamsBase<D> & S, D> {
@@ -103,13 +145,13 @@ export function divyQueryId<D, S>(splits: string[], ...funcs: APIFunction<Endpoi
             if (id === x) {
                 func = funcs[i];
             }
-        }) 
+        })
         return await func(params);
     }
 }
 
-export function cacheFor<D, S>(func: APIFunction<EndpointParamsBase<D> & S, D>, depencyProps: string[] = [],  time: number = 5 * 60 * 1000): APIFunction<EndpointParamsBase<D> & S, D> {
-    const cache: Cache<D> = new Cache({defaultTtl: time});
+export function cacheFor<D, S>(func: APIFunction<EndpointParamsBase<D> & S, D>, depencyProps: string[] = [], time: number = 5 * 60 * 1000): APIFunction<EndpointParamsBase<D> & S, D> {
+    const cache: Cache<D> = new Cache({ defaultTtl: time });
     return async (props) => {
         const key = depencyProps.map(x => (extractProp(props, x))).toString();
         const val = await getOrCache(cache, key, async () => await func(props));
@@ -118,7 +160,7 @@ export function cacheFor<D, S>(func: APIFunction<EndpointParamsBase<D> & S, D>, 
     }
 }
 
-export const divyQueryNew = <D, S>(onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>) =>  divyQueryId(["new"], onNew, onId);
+export const divyQueryNew = <D, S>(onNew: APIFunction<EndpointParamsBase<D> & S>, onId: APIFunction<EndpointParamsBase<D> & S>) => divyQueryId(["new"], onNew, onId);
 
 export function userParams<D>(cacheUser?: boolean): GetParams<D, { user: User }> {
     return async ({ req, res, error }) => {
@@ -141,7 +183,7 @@ export function userParams<D>(cacheUser?: boolean): GetParams<D, { user: User }>
 }
 
 export function noGetParams<D>(): GetParams<D, {}> {
-    return async ({}) => {
+    return async ({ }) => {
         return {};
     }
 }

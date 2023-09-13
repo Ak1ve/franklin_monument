@@ -20,7 +20,14 @@ export const CatalogedItemOption = cs(z.object({
   allowMulti: z.boolean(),
   deleted: deletedDate,
   values: z.array(CatalogedItemOptionValue.schema),
-}), {}, null);
+}), {}, {
+  id: 0,
+  key: "",
+  allowMulti: false,
+  allowNull: false,
+  deleted: null,
+  values: []
+});
 
 export const CatalogedItem = cs(z.object({
   id: Snowflake,
@@ -43,3 +50,5 @@ export const CatalogedItem = cs(z.object({
   deleted: null,
   options: []
 });
+
+export const AllCatalogedItems = cs(z.array(CatalogedItem.schema), standardRoute(["get"], undefined), []);

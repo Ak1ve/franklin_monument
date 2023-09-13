@@ -8,10 +8,13 @@ import { ItemCard } from "@/pages/items";
 import { Edit, EditButton, TrashButton } from "@/components/Icons";
 import { StandardModal } from "@/components/Modal";
 import { UseStateHook } from "@/utilities/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formComponent } from "@/data/form";
-import { CatalogedItem, CatalogedItemOption } from "@/data/models/items";
-import { Data } from "@/data/schema";
+import { AllCatalogedItems, CatalogedItem, CatalogedItemOption } from "@/data/models/items";
+import cs, { Data, getAPIPath, getRouteParams, standardRoute } from "@/data/schema";
+import { z } from "zod";
+import { getter, standardGet } from "@/data/route";
+import { useRouter } from "next/router";
 
 // const basicCatalogedItem: CatalogedItem = {
 //     id: 1,
@@ -205,16 +208,28 @@ function OptionModal({ hook }: { hook: UseStateHook<boolean> }) {
     )
 }
 
-export default formComponent(CatalogedItem, ({register, stateHook, isLoading}) => {
-    const showOptionHook = useState(true);
-    if (isLoading) {
+export default formComponent(CatalogedItem, ({ register, stateHook, isLoading }) => {
+    const showOptionHook = useState(false);
+    const [allItems, setAllItems] = useState(null as null | Data<typeof AllCatalogedItems>); // excludes current item
+    useEffect(() => {
+        getAPIPath({
+            path: "items",
+            schema: AllCatalogedItems,
+            onSuccess(success) {
+                setAllItems(success.data!.filter(x => x.id !== stateHook[0]?.id));
+            }
+            
+        })
+    }, [isLoading]);
+    if (isLoading || allItems === null) {
         return <>Loading...</>;
     }
     return (
         <>
             <OptionModal hook={showOptionHook} />
             <Base sectionHeader="Cataloged Item">
-                <Section className="mt-10">
+                <StandardButton type={ButtonTypes.ACTIVE} className="mt-5 mx-auto">Save</StandardButton>
+                <Section className="mt-8">
                     <h2 className="section-header mb-2">Item Information</h2>
                     <InputGrid>
                         <BasicInput label="Item Type" placeholder="Enter text..." {...register("type")} />
@@ -229,7 +244,7 @@ export default formComponent(CatalogedItem, ({register, stateHook, isLoading}) =
                 <Section className="mt-10 mb-10">
                     <h2 className="section-header">Options</h2>
                     <div className="flex justify-center w-100">
-                        <StandardButton type={ButtonTypes.ACTIVE} className="mr-2">New</StandardButton>
+                        <StandardButton type={ButtonTypes.ACTIVE} className="mr-2" onClick={() => showOptionHook[1](true)}>New</StandardButton>
                         <StandardButton type={ButtonTypes.STANDARD}>Reference</StandardButton>
                     </div>
                     <div className="flex flex-wrap justify-center w-100 gap-2 p-3">
