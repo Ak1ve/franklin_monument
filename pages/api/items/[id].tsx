@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { CatalogedItem } from '@/data/models/items';
 import { Data } from '@/data/schema'
 import { divyQueryNew, endpoint, permOrError, reqPerm, standardAPIGetNew, userParams } from '@/utilities/endpoint';
-import { catalogedItemSelector } from '.';
+import { catalogedItemSelector } from '@/utilities/selectors';
 
 const prisma = new PrismaClient();
 

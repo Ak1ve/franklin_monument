@@ -246,7 +246,7 @@ export function OrderItemCard(item: OrderItem) {
                     <div className="flex justify-between">
                         <h3 className="text-lg align-text-top">{item.catalogedItem.type} <span className="text-sm text-gray-500 align-text-bottom">{item.catalogedItem.subType}</span></h3>
                         <div className="flex">
-                            <div className="badge color-secondary mr-2">{item.dimensions?.length as number}x{item.dimensions?.width as number}x{item.dimensions?.height as number}</div>
+                            <div className="badge color-secondary mr-2">{item.dimensions?.length as number} x {item.dimensions?.width as number} x {item.dimensions?.height as number}</div>
                             <div className="badge color-active">${item.price}</div>
                         </div>
                     </div>

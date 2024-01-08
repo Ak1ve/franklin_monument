@@ -90,7 +90,7 @@ export const Order = cs(
   }),
   {},
   null
-); // TODo
+);
 
 // export interface Order {
 //     id: number | string

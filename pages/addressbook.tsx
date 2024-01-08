@@ -36,21 +36,22 @@ export function AddressCard({address, onDelete, onEdit}: AddressCardProp) {
     <>Phone: {address.phoneNumber}</>,
     <>
       Email:
-      <a className="underline ml-1" href="#">
+      <a className="underline ml-1" href={`mailto:${address.email}`} target="_blank">
         {address.email}
       </a>
     </>,
   ];
+  const mapsLink = `http://maps.google.com/?q=${address.address?.replace(" ", "+")}`;
   const rightSide = [
     <>
       Cemetery Address:
-      <a className="underline ml-1" href="#">
+      <a className="underline ml-1" href={address.address === "" ? "" : mapsLink} target="_blank">
         {address.address}
       </a>
     </>,
     <>
       Website:
-      <a className="underline ml-1" href={address.website!}>
+      <a className="underline ml-1" href={address.website!} target="_blank">
         {address.website}
       </a>
     </>,

@@ -46,7 +46,7 @@ export default function Message({ title, children, type, buttons, width, hook, f
         return <></>;
     }
     return (
-        <div className="justify-center items-center flex fixed inset-0 z-50 outline-none focus:outline-none">
+        <div className="justify-center items-center flex top-auto fixed inset-0 z-50 outline-none focus:outline-none">
             <div className={"w-full mx-auto relative " + (width || "md:w-1/3")}>
                 <div className="relative flex flex-col p-5 rounded-lg bg-white shadow shadow-gray-200 drop-shadow-xl outline outline-1 outline-gray-300">
                     <div className="flex flex-col items-center text-center">

@@ -5,6 +5,7 @@ import { Data } from '@/data/schema'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { endpoint, reqPerm, userParams } from '@/utilities/endpoint';
 import { z } from 'zod';
+import { addressContactSelector } from '@/utilities/selectors';
 
 const prisma = new PrismaClient();
 
@@ -14,17 +15,7 @@ export default endpoint({
     getParams: userParams<Data<typeof Address>[]>(true),
     get: reqPerm("canViewAddresses", async ({res}) => {
         const contacts = await prisma.contact.findMany({
-            select: {
-                id: true,
-                name: true,
-                organization: true,
-                email: true,
-                phoneNumber: true,
-                faxNumber: true,
-                website: true,
-                notes: true,
-                address: true,
-            },
+            select: addressContactSelector,
             where: {
                 orderContact: null
             }
